@@ -1,0 +1,63 @@
+---
+interface Item {
+  slug: string;
+  title: string;
+}
+interface Props {
+  seriesId?: string;
+  prev?: Item | null;
+  next?: Item | null;
+}
+const { seriesId, prev, next } = Astro.props;
+---
+{(prev || next || seriesId) ? (
+  <nav class="series-nav" aria-label="系列导航">
+    {seriesId ? (
+      <a class="series-nav__all" href={`/series/${seriesId}/`}>查看系列</a>
+    ) : null}
+    <div class="series-nav__row">
+      {prev ? (
+        <a class="card" href={`/posts/${prev.slug}/`}>
+          <span class="muted">上一篇</span>
+          <strong>{prev.title}</strong>
+        </a>
+      ) : <span></span>}
+      {next ? (
+        <a class="card next" href={`/posts/${next.slug}/`}>
+          <span class="muted">下一篇</span>
+          <strong>{next.title}</strong>
+        </a>
+      ) : null}
+    </div>
+  </nav>
+) : null}
+
+<style>
+  .series-nav {
+    margin-top: 2.5rem;
+    display: grid;
+    gap: 0.8rem;
+  }
+  .series-nav__all {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
+  .series-nav__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  .series-nav a.card {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    gap: 0.25rem;
+  }
+  .series-nav a.card.next {
+    text-align: right;
+  }
+  @media (max-width: 640px) {
+    .series-nav__row { grid-template-columns: 1fr; }
+    .series-nav a.card.next { text-align: left; }
+  }
+</style>

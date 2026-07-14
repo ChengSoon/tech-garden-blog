@@ -1,0 +1,101 @@
+---
+import { getGraph } from '../../lib/build-graph';
+import { layoutNodes } from '../../lib/garden-layout';
+
+const graph = await getGraph();
+const nodes = graph.nodes.slice(0, 12);
+const pos = layoutNodes(nodes);
+const xs = nodes.map((n) => pos[n.slug]?.x ?? 0);
+const ys = nodes.map((n) => pos[n.slug]?.y ?? 0);
+const minX = Math.min(...xs, 0) - 40;
+const maxX = Math.max(...xs, 300) + 40;
+const minY = Math.min(...ys, 0) - 40;
+const maxY = Math.max(...ys, 220) + 40;
+---
+<section class="glimpse">
+  <div class="section-head">
+    <h2>花园一瞥</h2>
+    <a href="/garden">进入花园 →</a>
+  </div>
+  <a class="card canvas" href="/garden" aria-label="打开花园">
+    <div class="canvas__label">
+      <div>
+        <strong class="display">{graph.nodes.length}</strong>
+        <span class="muted">nodes</span>
+      </div>
+      <div>
+        <strong class="display">{graph.edges.length}</strong>
+        <span class="muted">links</span>
+      </div>
+    </div>
+    <svg viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`}>
+      {graph.edges.map((e) => {
+        const a = pos[e.source];
+        const b = pos[e.target];
+        if (!a || !b) return null;
+        return (
+          <line
+            x1={a.x}
+            y1={a.y}
+            x2={b.x}
+            y2={b.y}
+            stroke="currentColor"
+            stroke-opacity="0.18"
+            stroke-width="1.2"
+          />
+        );
+      })}
+      {nodes.map((n) => {
+        const p = pos[n.slug];
+        if (!p) return null;
+        return (
+          <circle
+            cx={p.x}
+            cy={p.y}
+            r={n.type === 'essay' ? 9 : 7}
+            fill={n.type === 'essay' ? 'var(--accent)' : 'var(--bg-elevated)'}
+            stroke="var(--accent)"
+            stroke-width="1.75"
+          />
+        );
+      })}
+    </svg>
+  </a>
+</section>
+
+<style>
+  .glimpse { margin: 2.5rem 0; }
+  .canvas {
+    display: grid;
+    gap: 0.35rem;
+    text-decoration: none;
+    color: var(--text);
+    padding: 1rem 1rem 0.55rem;
+    overflow: hidden;
+    background:
+      radial-gradient(600px 220px at 50% 0%, color-mix(in oklab, var(--brass) 10%, transparent), transparent 65%),
+      var(--bg-elevated);
+  }
+  .canvas__label {
+    display: flex;
+    gap: 1.6rem;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .canvas__label div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+  }
+  .canvas__label strong {
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+  }
+  .canvas svg {
+    width: 100%;
+    height: 210px;
+    display: block;
+  }
+</style>

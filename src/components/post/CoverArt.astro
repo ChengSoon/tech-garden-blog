@@ -1,0 +1,109 @@
+---
+import { coverPalette, coverSeed } from '../../lib/cover';
+
+interface Props {
+  title: string;
+  slug: string;
+  hero?: string;
+  tags?: string[];
+  type?: string;
+  variant?: 'hero' | 'card' | 'thumb';
+  class?: string;
+}
+const {
+  title,
+  slug,
+  hero,
+  tags = [],
+  type = 'essay',
+  variant = 'hero',
+  class: className = '',
+} = Astro.props;
+
+const seed = coverSeed(slug + title);
+const palette = coverPalette(seed);
+const label = tags[0] ?? type;
+const short = [...title].slice(0, 12).join('');
+---
+<div class={`cover cover--${variant} ${className}`.trim()} data-cover={slug}>
+  {hero ? (
+    <img src={hero} alt="" class="cover__img" loading="lazy" />
+  ) : (
+    <svg class="cover__svg" viewBox="0 0 800 480" role="img" aria-label={title}>
+      <defs>
+        <linearGradient id={`g-${slug}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color={palette.a} />
+          <stop offset="100%" stop-color={palette.b} />
+        </linearGradient>
+        <radialGradient id={`r-${slug}`} cx="70%" cy="20%" r="55%">
+          <stop offset="0%" stop-color={palette.c} stop-opacity="0.35" />
+          <stop offset="100%" stop-color={palette.c} stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width="800" height="480" fill={`url(#g-${slug})`} />
+      <rect width="800" height="480" fill={`url(#r-${slug})`} />
+      <!-- abstract photographic geometry -->
+      <circle cx="620" cy="140" r="110" fill={palette.c} opacity="0.12" />
+      <circle cx="180" cy="360" r="160" fill={palette.a} opacity="0.25" />
+      <path
+        d={`M0 320 C 160 ${280 + (seed % 40)}, 280 ${360 - (seed % 50)}, 800 300 L800 480 L0 480 Z`}
+        fill={palette.c}
+        opacity="0.14"
+      />
+      <line x1="48" y1="48" x2="200" y2="48" stroke={palette.ink} stroke-width="1.5" opacity="0.55" />
+      <text x="48" y="78" fill={palette.ink} opacity="0.7" font-size="18" font-family="Sora, sans-serif" letter-spacing="4">
+        {label.toUpperCase()}
+      </text>
+      <text x="48" y="400" fill={palette.ink} font-size="42" font-family="Cormorant Garamond, serif" font-weight="600">
+        {short}
+      </text>
+    </svg>
+  )}
+  <div class="cover__vignette" aria-hidden="true"></div>
+</div>
+
+<style>
+  .cover {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-soft);
+    isolation: isolate;
+  }
+  .cover--hero {
+    border-radius: var(--radius-lg);
+    aspect-ratio: 21 / 9;
+    margin: 0 0 1.6rem;
+  }
+  .cover--card {
+    border-radius: var(--radius-lg);
+    aspect-ratio: 16 / 10;
+    margin: 0 0 0.85rem;
+  }
+  .cover--thumb {
+    border-radius: var(--radius);
+    aspect-ratio: 4 / 3;
+    width: 100%;
+  }
+  .cover__img,
+  .cover__svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .cover__vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, white 8%, transparent);
+    background: linear-gradient(
+      180deg,
+      transparent 55%,
+      color-mix(in oklab, black 18%, transparent)
+    );
+  }
+  .cover--thumb .cover__vignette {
+    background: none;
+  }
+</style>

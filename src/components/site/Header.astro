@@ -1,0 +1,168 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import SearchDialog from './SearchDialog';
+import type { SearchItem } from '../../lib/types';
+
+interface Props {
+  searchItems?: SearchItem[];
+}
+const { searchItems = [] } = Astro.props;
+const path = Astro.url.pathname;
+const links = [
+  { href: '/articles', label: '文章' },
+  { href: '/garden', label: '花园' },
+  { href: '/series', label: '系列' },
+  { href: '/now', label: 'Now' },
+  { href: '/about', label: '关于' },
+];
+---
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="/" transition:name="brand">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__text">
+        <span class="brand__name">Cheng</span>
+        <span class="brand__sub">Technical Journal</span>
+      </span>
+    </a>
+    <nav class="nav desktop" aria-label="主导航">
+      {links.map((l) => (
+        <a href={l.href} aria-current={path.startsWith(l.href) ? 'page' : undefined}>{l.label}</a>
+      ))}
+    </nav>
+    <div class="site-header__actions">
+      <SearchDialog client:idle items={searchItems} />
+      <ThemeToggle />
+      <details class="mobile-nav">
+        <summary class="btn" aria-label="打开菜单">菜单</summary>
+        <div class="mobile-nav__panel">
+          {links.map((l) => (
+            <a href={l.href}>{l.label}</a>
+          ))}
+        </div>
+      </details>
+    </div>
+  </div>
+  <div class="site-header__rule" aria-hidden="true"></div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: var(--header-height);
+    backdrop-filter: blur(16px) saturate(1.15);
+    background: color-mix(in oklab, var(--bg) 78%, var(--bg-elevated));
+    border-bottom: 0;
+  }
+  .site-header__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .site-header__rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--border-strong) 12%,
+      var(--brass) 50%,
+      var(--border-strong) 88%,
+      transparent
+    );
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: var(--text);
+    text-decoration: none;
+    margin-right: auto;
+  }
+  .brand__mark {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .brand__text {
+    display: grid;
+    line-height: 1.05;
+  }
+  .brand__name {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .brand__sub {
+    font-family: var(--font-ui);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .nav {
+    display: flex;
+    gap: 0.15rem;
+  }
+  .nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    font-family: var(--font-ui);
+    transition:
+      color var(--motion-base) var(--ease-inout),
+      background-color var(--motion-base) var(--ease-inout),
+      transform var(--motion-fast) var(--ease-out);
+  }
+  .nav a[aria-current='page'],
+  .nav a:hover {
+    color: var(--text);
+    background: var(--accent-soft);
+  }
+  .nav a:active {
+    transform: scale(0.97);
+  }
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .mobile-nav { display: none; position: relative; }
+  .mobile-nav__panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.45rem);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0.55rem;
+    display: grid;
+    gap: 0.25rem;
+    min-width: 9rem;
+    box-shadow: var(--shadow);
+    animation: motion-scale-in var(--motion-base) var(--ease-out) both;
+    transform-origin: top right;
+  }
+  .mobile-nav__panel a {
+    color: var(--text);
+    text-decoration: none;
+    padding: 0.45rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.9rem;
+  }
+  .mobile-nav__panel a:hover { background: var(--accent-soft); }
+  @media (max-width: 860px) {
+    .desktop { display: none; }
+    .mobile-nav { display: block; }
+    .brand__sub { display: none; }
+  }
+</style>

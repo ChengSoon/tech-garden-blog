@@ -1,0 +1,60 @@
+---
+import { site } from '../../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <p class="display site-footer__name">{site.name}</p>
+      <p class="muted site-footer__tag">{site.tagline}</p>
+    </div>
+    <div class="site-footer__links">
+      <a href="/subscribe">订阅 RSS</a>
+      <a href={site.github} rel="noreferrer" target="_blank">GitHub</a>
+      <a href="/now">Now</a>
+      <a href="/about">关于</a>
+    </div>
+    <p class="muted site-footer__copy">© {year} · Printed in pixels</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4.5rem;
+    padding: 2.4rem 0 2.8rem;
+    border-top: 1px solid var(--border);
+    background: color-mix(in oklab, var(--bg-soft) 45%, transparent);
+  }
+  .site-footer__inner {
+    display: grid;
+    gap: 1.2rem;
+  }
+  .site-footer__name {
+    margin: 0;
+    font-size: 1.8rem;
+  }
+  .site-footer__tag {
+    margin: 0.35rem 0 0;
+    max-width: 34rem;
+    font-size: 0.92rem;
+  }
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.35rem;
+  }
+  .site-footer__links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .site-footer__links a:hover { color: var(--accent); }
+  .site-footer__copy {
+    margin: 0.4rem 0 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+  }
+</style>

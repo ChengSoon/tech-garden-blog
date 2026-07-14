@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import FeaturedPosts from '../components/home/FeaturedPosts.astro';
+import GardenGlimpse from '../components/home/GardenGlimpse.astro';
+import ImmersiveDeck from '../components/media/ImmersiveDeck';
+import { catalog } from '../data/listening';
+import { getPublishedPosts, postSlug } from '../lib/posts';
+import { getCollection } from 'astro:content';
+
+const posts = await getPublishedPosts();
+const seriesEntries = await getCollection('series');
+const seriesCards = seriesEntries.map((s) => {
+  const count = posts.filter((p) => p.data.series === s.id).length;
+  const first = posts
+    .filter((p) => p.data.series === s.id)
+    .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))[0];
+  return {
+    id: s.id,
+    title: s.data.title,
+    summary: s.data.summary,
+    count,
+    href: first ? `/posts/${postSlug(first)}/` : `/series/${s.id}/`,
+  };
+});
+---
+<BaseLayout title="Home" bodyClass="has-bg-deck">
+  <div class="home-shell">
+    <ImmersiveDeck client:load tracks={catalog} mode="bg" />
+
+    <div class="container home-shell__content">
+      <Hero />
+      <FeaturedPosts />
+      <GardenGlimpse />
+
+      {seriesCards.length > 0 ? (
+        <section class="series-home">
+          <div class="section-head">
+            <h2>进行中的系列</h2>
+            <a href="/series">全部系列 →</a>
+          </div>
+          <div class="series-home__grid">
+            {seriesCards.map((s, i) => (
+              <a class="card series-card" href={`/series/${s.id}/`}>
+                <span class="series-card__n">{String(i + 1).padStart(2, '0')}</span>
+                <strong class="display">{s.title}</strong>
+                <span class="muted">{s.summary}</span>
+                <span class="badge">已发布 {s.count} 章</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .home-shell__content {
+    padding-top: 0.5rem;
+    padding-bottom: 3rem;
+  }
+  .series-home { margin: 2.5rem 0; }
+  .series-home__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.95rem;
+  }
+  .series-card {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .series-card__n {
+    font-family: var(--font-display);
+    color: var(--brass);
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+  .series-card strong {
+    font-size: 1.4rem;
+    line-height: 1.15;
+  }
+</style>

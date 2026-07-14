@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ImmersiveDeck from '../components/media/ImmersiveDeck';
+import { site } from '../data/site';
+import { catalog } from '../data/listening';
+---
+<BaseLayout title="Now" description={site.now} bodyClass="has-bg-deck">
+  <div class="now-shell">
+    <ImmersiveDeck client:load tracks={catalog} mode="bg" />
+    <div class="container now-page-content">
+      <header class="now-head">
+        <p class="eyebrow">Now</p>
+        <h1 class="display">这季在做什么</h1>
+        <p class="muted">背景是一整台大碟机，点击碟片即可切换。</p>
+      </header>
+      <article class="card now-note">
+        <p class="now-note__body">{site.now}</p>
+        <p class="muted">更新于 {site.nowUpdated}</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .now-page-content {
+    padding: 2.4rem 0 3rem;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .now-head h1 {
+    margin: 0.35rem 0 0.55rem;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+  }
+  .now-head p { margin: 0; max-width: 32rem; line-height: 1.65; }
+  .now-note { display: grid; gap: 0.5rem; }
+  .now-note__body {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 1.45;
+  }
+  .now-note p { margin: 0; }
+</style>

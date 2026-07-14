@@ -1,0 +1,164 @@
+---
+import { site } from '../../data/site';
+import { getPublishedPosts, postSlug, statusLabel } from '../../lib/posts';
+import CoverArt from '../post/CoverArt.astro';
+
+const posts = await getPublishedPosts();
+const bySlug = new Map(posts.map((p) => [postSlug(p), p]));
+let featured = site.featuredSlugs.map((s) => bySlug.get(s)).filter(Boolean) as typeof posts;
+if (featured.length === 0) {
+  featured = posts.filter((p) => p.data.type === 'essay').slice(0, 3);
+}
+const [main, ...rest] = featured;
+---
+<section id="featured" class="featured">
+  <div class="section-head">
+    <h2>本季精选</h2>
+    <a href="/articles">全部文章 →</a>
+  </div>
+  {main ? (
+    <div class="featured__grid motion-enter-scale">
+      <a class="card main" href={`/posts/${postSlug(main)}/`}>
+        <CoverArt
+          title={main.data.title}
+          slug={postSlug(main)}
+          hero={main.data.hero}
+          tags={main.data.tags}
+          type={main.data.type}
+          variant="card"
+          transition:name={`cover-${postSlug(main)}`}
+        />
+        <div class="main__index" aria-hidden="true">01</div>
+        <div class="meta">
+          <span class="badge">{main.data.type === 'essay' ? '长文' : '笔记'}</span>
+          <span class="badge"><span class="dot" data-status={main.data.status}></span>{statusLabel(main.data.status)}</span>
+        </div>
+        <h3 class="display" transition:name={`title-${postSlug(main)}`}>{main.data.title}</h3>
+        <p class="muted">{main.data.summary}</p>
+        <span class="more">开始阅读</span>
+      </a>
+      <div class="side">
+        {rest.map((p, i) => (
+          <a class="card side-card" href={`/posts/${postSlug(p)}/`}>
+            <div class="side-card__media">
+              <CoverArt
+                title={p.data.title}
+                slug={postSlug(p)}
+                hero={p.data.hero}
+                tags={p.data.tags}
+                type={p.data.type}
+                variant="thumb"
+                transition:name={`cover-${postSlug(p)}`}
+              />
+            </div>
+            <div class="side-card__body">
+              <span class="side-card__n" aria-hidden="true">{String(i + 2).padStart(2, '0')}</span>
+              <div class="meta">
+                <span class="badge">{p.data.type === 'essay' ? '长文' : '笔记'}</span>
+              </div>
+              <strong class="display" transition:name={`title-${postSlug(p)}`}>{p.data.title}</strong>
+              <span class="muted">{p.data.summary}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <p class="muted">还没有文章，去 src/content/posts 写第一篇吧。</p>
+  )}
+</section>
+
+<style>
+  .featured { margin: 2.8rem 0 2.8rem; }
+  .featured__grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 1rem;
+  }
+  .main .more {
+    transition: transform var(--motion-base) var(--ease-out), letter-spacing var(--motion-base) var(--ease-out);
+  }
+  .main:hover .more {
+    transform: translate3d(4px, 0, 0);
+    letter-spacing: 0.12em;
+  }
+  .main, .side-card {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    gap: 0.65rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .main {
+    padding: 1rem 1rem 1.35rem;
+    min-height: 280px;
+  }
+  .main :global(.cover--card) {
+    margin: 0 0 0.35rem;
+  }
+  .main__index {
+    position: absolute;
+    right: 0.9rem;
+    top: 10.5rem;
+    font-family: var(--font-display);
+    font-size: 4.2rem;
+    line-height: 1;
+    color: color-mix(in oklab, var(--brass) 30%, transparent);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .main h3 {
+    margin: 0;
+    font-size: clamp(1.55rem, 2.5vw, 2rem);
+    max-width: 14em;
+    position: relative;
+  }
+  .main p { margin: 0; line-height: 1.65; max-width: 34em; position: relative; }
+  .more {
+    margin-top: 0.2rem;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font-ui);
+    position: relative;
+  }
+  .meta { display: flex; gap: 0.35rem; flex-wrap: wrap; position: relative; }
+  .side { display: grid; gap: 1rem; }
+  .side-card {
+    grid-template-columns: 118px 1fr;
+    gap: 0.9rem;
+    padding: 0.8rem;
+    align-items: stretch;
+  }
+  .side-card__media { min-width: 0; }
+  .side-card__body {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    min-width: 0;
+  }
+  .side-card__n {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--brass);
+    line-height: 1;
+  }
+  .side-card strong {
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+  .side-card .muted {
+    font-size: 0.88rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  @media (max-width: 860px) {
+    .featured__grid { grid-template-columns: 1fr; }
+    .side-card { grid-template-columns: 96px 1fr; }
+  }
+</style>

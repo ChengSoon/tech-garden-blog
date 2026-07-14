@@ -1,0 +1,151 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PostMeta from '../components/post/PostMeta.astro';
+import TableOfContents from '../components/post/TableOfContents.astro';
+import ReadingProgress from '../components/post/ReadingProgress.astro';
+import NeighborCards from '../components/post/NeighborCards.astro';
+import SeriesNav from '../components/post/SeriesNav.astro';
+import Backlinks from '../components/post/Backlinks.astro';
+import CodeEnhance from '../components/post/CodeEnhance.astro';
+import ReadingTools from '../components/post/ReadingTools.astro';
+import MobileToc from '../components/post/MobileToc.astro';
+import CoverArt from '../components/post/CoverArt.astro';
+import AuthorCard from '../components/post/AuthorCard.astro';
+import type { GraphNode } from '../lib/types';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface SeriesItem {
+  slug: string;
+  title: string;
+}
+interface Props {
+  title: string;
+  description: string;
+  type: string;
+  status: string;
+  date: Date;
+  tags: string[];
+  readingMinutes: number;
+  headings: Heading[];
+  neighbors: GraphNode[];
+  backlinks: GraphNode[];
+  seriesId?: string;
+  prev?: SeriesItem | null;
+  next?: SeriesItem | null;
+  slug: string;
+  hero?: string;
+}
+const props = Astro.props;
+const showToc = props.type === 'essay' && props.headings.some((h) => h.depth === 2);
+const isEssay = props.type === 'essay';
+---
+<BaseLayout title={props.title} description={props.description}>
+  <ReadingProgress />
+  <article class="container post" data-article>
+    {isEssay ? (
+      <CoverArt
+        title={props.title}
+        slug={props.slug}
+        hero={props.hero}
+        tags={props.tags}
+        type={props.type}
+        variant="hero"
+        transition:name={`cover-${props.slug}`}
+      />
+    ) : null}
+    <div class={`post__grid ${showToc ? 'has-toc' : ''}`}>
+      <div class="post__main">
+        <header class="post__header">
+          <div class="post__header-top">
+            <p class="eyebrow">{isEssay ? 'Essay' : 'Note'}</p>
+            <ReadingTools />
+          </div>
+          <h1 class="display" transition:name={`title-${props.slug}`}>{props.title}</h1>
+          <PostMeta
+            date={props.date}
+            readingMinutes={props.readingMinutes}
+            tags={props.tags}
+            status={props.status}
+            type={props.type}
+          />
+          <hr class="rule" />
+        </header>
+        {showToc ? <MobileToc headings={props.headings} /> : null}
+        <div class={`prose ${isEssay ? 'prose--essay' : 'prose--note'}`}>
+          <slot />
+        </div>
+        {props.type === 'note' ? <Backlinks backlinks={props.backlinks} /> : null}
+        <SeriesNav seriesId={props.seriesId} prev={props.prev} next={props.next} />
+        <NeighborCards neighbors={props.neighbors} />
+        {props.type === 'essay' ? <Backlinks backlinks={props.backlinks} /> : null}
+        <AuthorCard />
+      </div>
+      {showToc ? (
+        <aside class="post__aside">
+          <TableOfContents headings={props.headings} />
+        </aside>
+      ) : null}
+    </div>
+  </article>
+  <CodeEnhance />
+</BaseLayout>
+
+<style>
+  .post {
+    padding: 2.2rem 0 4rem;
+  }
+  .post__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.4rem;
+    align-items: start;
+  }
+  .post__grid.has-toc {
+    grid-template-columns: minmax(0, 1fr) 200px;
+  }
+  .post__main {
+    min-width: 0;
+  }
+  .post__header {
+    max-width: 42rem;
+    margin-bottom: 1.4rem;
+  }
+  .post__header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+  }
+  .post__main h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(2.1rem, 4vw, 3.1rem);
+    max-width: 16em;
+  }
+  .post__header .rule {
+    margin-top: 1.25rem;
+  }
+  /* clear floats from sidenotes */
+  :global(.prose--essay)::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  :global(.prose--note > p:first-of-type::first-letter) {
+    float: none;
+    font-size: inherit;
+    line-height: inherit;
+    padding: 0;
+    color: inherit;
+    font-weight: inherit;
+  }
+  @media (max-width: 960px) {
+    .post__grid.has-toc {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

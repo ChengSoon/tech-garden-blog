@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Midnight Commit">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#171512"/>
+      <stop offset="100%" stop-color="#0f0e0c"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <g stroke="#2f6f66" stroke-width="1.2" opacity="0.55">
+    <path d="M0 180 H800"/><path d="M0 240 H800"/><path d="M0 300 H800"/>
+    <path d="M0 360 H800"/><path d="M0 420 H800"/><path d="M0 480 H800"/>
+  </g>
+  <rect x="90" y="150" width="14" height="360" fill="#5f7d3b"/>
+  <rect x="130" y="220" width="10" height="220" fill="#a67c2d"/>
+  <rect x="165" y="190" width="12" height="280" fill="#2f6f66"/>
+  <circle cx="560" cy="300" r="120" fill="none" stroke="#d4b483" stroke-width="2" opacity="0.7"/>
+  <circle cx="560" cy="300" r="48" fill="#1b3a57"/>
+  <text x="90" y="620" fill="#f3ebe1" font-family="Georgia, serif" font-size="46">Midnight</text>
+  <text x="90" y="680" fill="#d4b483" font-family="Georgia, serif" font-size="46">Commit</text>
+  <text x="90" y="740" fill="#a39686" font-family="ui-monospace,monospace" font-size="16">git log --oneline · 02</text>
+</svg>

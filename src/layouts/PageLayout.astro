@@ -1,0 +1,43 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  lede?: string;
+}
+const { title, description, lede } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <div class="container page">
+    <header class="page__header">
+      <p class="eyebrow">Journal</p>
+      <h1 class="display">{title}</h1>
+      {lede ? <p class="muted lede">{lede}</p> : null}
+      <hr class="rule" />
+    </header>
+    <slot />
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding: 3rem 0 3.5rem;
+  }
+  .page__header {
+    margin-bottom: 2rem;
+    max-width: 40rem;
+  }
+  .page__header .eyebrow {
+    margin-bottom: 0.7rem;
+  }
+  .page__header h1 {
+    margin: 0 0 0.7rem;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+  }
+  .lede {
+    margin: 0 0 1.2rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+</style>

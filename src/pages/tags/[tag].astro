@@ -1,0 +1,47 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getPublishedPosts, postSlug, statusLabel } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts.filter((p) => p.data.tags.includes(tag)),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+<PageLayout title={`#${tag}`} lede={`标签「${tag}」下的 ${posts.length} 篇内容。`}>
+  <ul class="list">
+    {posts.map((p) => (
+      <li class="card">
+        <a href={`/posts/${postSlug(p)}/`}>
+          <strong>{p.data.title}</strong>
+          <span class="muted">{p.data.summary}</span>
+          <span class="badge"><span class="dot" data-status={p.data.status}></span>{statusLabel(p.data.status)}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</PageLayout>
+
+<style>
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .list a {
+    display: grid;
+    gap: 0.35rem;
+    text-decoration: none;
+    color: inherit;
+  }
+</style>

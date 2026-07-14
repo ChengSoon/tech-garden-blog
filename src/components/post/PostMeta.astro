@@ -1,0 +1,53 @@
+---
+import { statusLabel } from '../../lib/posts';
+
+interface Props {
+  date: Date;
+  readingMinutes: number;
+  tags: string[];
+  status: string;
+  type: string;
+}
+const { date, readingMinutes, tags, status, type } = Astro.props;
+const dateText = date.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+<div class="post-meta">
+  <span>{dateText}</span>
+  <span>·</span>
+  <span>{readingMinutes} 分钟阅读</span>
+  <span>·</span>
+  <span class="badge"><span class="dot" data-status={status}></span>{statusLabel(status)}</span>
+  <span class="badge">{type === 'essay' ? '长文' : '笔记'}</span>
+  <div class="tags">
+    {tags.map((tag) => (
+      <a class="badge" href={`/tags/${tag}/`}>#{tag}</a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.55rem;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin-bottom: 1.6rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    width: 100%;
+    margin-top: 0.2rem;
+  }
+  .tags a {
+    text-decoration: none;
+    color: var(--text-muted);
+  }
+</style>

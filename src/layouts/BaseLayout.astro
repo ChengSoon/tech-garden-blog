@@ -1,0 +1,76 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import '../styles/prose.css';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import { getPublishedPosts, postSlug } from '../lib/posts';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  bodyClass?: string;
+}
+const {
+  title,
+  description = site.tagline,
+  ogImage = '/favicon.svg',
+  bodyClass = '',
+} = Astro.props;
+const fullTitle = title === 'Home' ? `${site.name} · 技术刊` : `${title} · ${site.name}`;
+
+const searchItems = (await getPublishedPosts()).map((p) => ({
+  slug: postSlug(p),
+  title: p.data.title,
+  tags: p.data.tags,
+  summary: p.data.summary,
+  type: p.data.type,
+}));
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f2ebe0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f0e0c" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} RSS`} href="/rss.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Sora:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{fullTitle}</title>
+    <ClientRouter />
+    <script is:inline>
+      (function () {
+        const key = 'theme';
+        const apply = () => {
+          const saved = localStorage.getItem(key);
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const dark = saved === 'dark' || (!saved && prefersDark);
+          document.documentElement.classList.toggle('dark', dark);
+        };
+        apply();
+        document.addEventListener('astro:after-swap', apply);
+      })();
+    </script>
+  </head>
+  <body class={bodyClass || undefined}>
+    <a class="skip-link" href="#main">跳到正文</a>
+    <Header searchItems={searchItems} />
+    <main id="main" transition:name="page-main" transition:animate="none">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

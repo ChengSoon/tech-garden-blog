@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Garden Static">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e8dfd0"/>
+      <stop offset="45%" stop-color="#f2ebe0"/>
+      <stop offset="100%" stop-color="#d9cebc"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <circle cx="250" cy="320" r="90" fill="#5f7d3b" opacity="0.85"/>
+  <circle cx="360" cy="280" r="70" fill="#2f6f66" opacity="0.75"/>
+  <circle cx="300" cy="400" r="60" fill="#a67c2d" opacity="0.7"/>
+  <path d="M120 560 C220 480 320 620 420 520 S620 480 720 560" fill="none" stroke="#1b3a57" stroke-width="3" opacity="0.45"/>
+  <rect x="520" y="140" width="180" height="240" fill="none" stroke="#9b7b4a" stroke-width="2"/>
+  <text x="72" y="120" fill="#14110e" font-family="Georgia, serif" font-size="40" letter-spacing="3">GARDEN STATIC</text>
+  <text x="72" y="720" fill="#6a6156" font-family="system-ui,sans-serif" font-size="18" letter-spacing="4">FIELD RECORDINGS · 03</text>
+</svg>

@@ -1,0 +1,209 @@
+/* Motion system — GPU-friendly, editorial, respects reduced motion */
+
+:root {
+  --motion-fast: 140ms;
+  --motion-base: 220ms;
+  --motion-slow: 360ms;
+  --motion-enter: 480ms;
+  --motion-theme: 280ms;
+  --motion-stagger: 42ms;
+  --motion-stagger-max: 8;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-inout: cubic-bezier(0.45, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Cheap theme cross-fade (color/background only) */
+html {
+  transition:
+    background-color var(--motion-theme) var(--ease-inout),
+    color var(--motion-theme) var(--ease-inout);
+}
+
+body {
+  transition: background-color var(--motion-theme) var(--ease-inout);
+}
+
+/* Enter: subtle rise — opacity + transform only */
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes motion-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes motion-scale-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes motion-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translate3d(18px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.motion-enter {
+  animation: motion-rise var(--motion-enter) var(--ease-out) both;
+}
+
+.motion-enter-fade {
+  animation: motion-fade var(--motion-slow) var(--ease-out) both;
+}
+
+.motion-enter-scale {
+  animation: motion-scale-in var(--motion-enter) var(--ease-out) both;
+}
+
+/* Stagger children via --i (0-based). Cap delay so long lists stay snappy. */
+.motion-stagger > * {
+  --_delay: min(
+    calc(var(--i, 0) * var(--motion-stagger)),
+    calc(var(--motion-stagger-max) * var(--motion-stagger))
+  );
+  animation: motion-rise var(--motion-enter) var(--ease-out) both;
+  animation-delay: var(--_delay);
+}
+
+.motion-stagger-fast > * {
+  --_delay: min(
+    calc(var(--i, 0) * 28ms),
+    calc(var(--motion-stagger-max) * 28ms)
+  );
+  animation: motion-rise var(--motion-slow) var(--ease-out) both;
+  animation-delay: var(--_delay);
+}
+
+/* Interactive surfaces: transform + border only */
+.motion-lift {
+  transition:
+    transform var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) var(--ease-inout);
+}
+
+.motion-lift:hover,
+.motion-lift:focus-visible {
+  transform: translate3d(0, -2px, 0);
+}
+
+.motion-lift:active {
+  transform: translate3d(0, 0, 0);
+  transition-duration: var(--motion-fast);
+}
+
+/* Soft press for buttons */
+.motion-press:active {
+  transform: translate3d(0, 1px, 0) scale(0.985);
+}
+
+/* View Transitions — opacity only on root; no blur (GPU/paint jank) */
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+::view-transition-old(root) {
+  animation: vt-fade-out var(--motion-fast) var(--ease-in) both;
+}
+
+::view-transition-new(root) {
+  animation: vt-fade-in var(--motion-base) var(--ease-out) both;
+}
+
+/* Named main content: light rise on enter only */
+::view-transition-old(page-main) {
+  animation: vt-fade-out 160ms var(--ease-in) both;
+}
+
+::view-transition-new(page-main) {
+  animation: vt-rise-in var(--motion-slow) var(--ease-out) both;
+}
+
+::view-transition-old(page-main),
+::view-transition-new(page-main) {
+  height: auto;
+  mix-blend-mode: normal;
+  overflow: clip;
+}
+
+/* Shared element morphs stay crisp and short */
+::view-transition-group(*) {
+  animation-duration: var(--motion-base);
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    transition: none !important;
+  }
+
+  .motion-enter,
+  .motion-enter-fade,
+  .motion-enter-scale,
+  .motion-stagger > *,
+  .motion-stagger-fast > * {
+    animation: none !important;
+  }
+
+  .motion-lift,
+  .motion-press {
+    transition: none !important;
+  }
+
+  .motion-lift:hover,
+  .motion-lift:focus-visible,
+  .motion-lift:active,
+  .motion-press:active {
+    transform: none !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(page-main),
+  ::view-transition-new(page-main) {
+    animation: none !important;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,154 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { site } from '../data/site';
+import { getPublishedPosts, postSlug } from '../lib/posts';
+import CoverArt from '../components/post/CoverArt.astro';
+
+const posts = await getPublishedPosts();
+const bySlug = new Map(posts.map((p) => [postSlug(p), p]));
+const featured = site.featuredSlugs.map((s) => bySlug.get(s)).filter(Boolean);
+---
+<PageLayout title="关于" lede={site.bio}>
+  <div class="about">
+    <section class="profile card">
+      <img class="profile__avatar" src={site.avatar} alt={site.fullName} width="96" height="96" transition:name="author-avatar" />
+      <div>
+        <p class="eyebrow">{site.role}</p>
+        <h2 class="display profile__name">{site.fullName}</h2>
+        <p class="muted profile__loc">{site.location}</p>
+        <p class="profile__bio">{site.bio}</p>
+        <div class="profile__links">
+          {site.socials.map((s) => (
+            <a class="btn" href={s.href} target={s.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+              {s.label}
+            </a>
+          ))}
+          <a class="btn" href="/now">Now</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="display section-title">兴趣方向</h2>
+      <div class="tags">
+        {site.interests.map((i) => <span class="badge">{i}</span>)}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="display section-title">代表作</h2>
+      <ol class="works">
+        {featured.map((p, i) => (
+          <li class="card work">
+            <CoverArt
+              title={p!.data.title}
+              slug={postSlug(p!)}
+              hero={p!.data.hero}
+              tags={p!.data.tags}
+              type={p!.data.type}
+              variant="thumb"
+              transition:name={`cover-${postSlug(p!)}`}
+            />
+            <div class="work__body">
+              <span class="n">{String(i + 1).padStart(2, '0')}</span>
+              <a class="display" href={`/posts/${postSlug(p!)}/`} transition:name={`title-${postSlug(p!)}`}>
+                {p!.data.title}
+              </a>
+              <p class="muted">{p!.data.summary}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
+</PageLayout>
+
+<style>
+  .about {
+    display: grid;
+    gap: 2.4rem;
+  }
+  .profile {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 1.25rem;
+    padding: 1.35rem 1.4rem;
+    align-items: start;
+  }
+  .profile__avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    object-fit: cover;
+  }
+  .profile__name {
+    margin: 0.15rem 0;
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+  .profile__loc {
+    margin: 0;
+    font-size: 0.88rem;
+  }
+  .profile__bio {
+    margin: 0.7rem 0 0.9rem;
+    max-width: 40rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .profile__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+  .section-title {
+    margin: 0 0 0.9rem;
+    font-size: 1.6rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .works {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+  .work {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1rem;
+    padding: 0.8rem;
+    align-items: center;
+  }
+  .work__body {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .work .n {
+    font-family: var(--font-display);
+    color: var(--brass);
+    font-size: 1.15rem;
+  }
+  .work a {
+    text-decoration: none;
+    color: var(--text);
+    font-size: 1.3rem;
+    line-height: 1.2;
+  }
+  .work a:hover { color: var(--accent); }
+  .work p {
+    margin: 0;
+    font-size: 0.94rem;
+  }
+  @media (max-width: 700px) {
+    .profile,
+    .work {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../../lib/posts';
+
+const seriesEntries = await getCollection('series');
+const posts = await getPublishedPosts();
+const cards = seriesEntries.map((s) => ({
+  id: s.id,
+  title: s.data.title,
+  summary: s.data.summary,
+  count: posts.filter((p) => p.data.series === s.id).length,
+}));
+---
+<PageLayout title="系列" lede="有序长文合集，适合按章节连续阅读。">
+  <div class="grid">
+    {cards.map((s) => (
+      <a class="card" href={`/series/${s.id}/`}>
+        <strong>{s.title}</strong>
+        <span class="muted">{s.summary}</span>
+        <span class="badge">已发布 {s.count} 章</span>
+      </a>
+    ))}
+  </div>
+</PageLayout>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.85rem;
+  }
+  .grid a {
+    display: grid;
+    gap: 0.45rem;
+    text-decoration: none;
+    color: inherit;
+  }
+</style>

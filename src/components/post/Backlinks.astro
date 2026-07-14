@@ -1,0 +1,43 @@
+---
+import type { GraphNode } from '../../lib/types';
+
+interface Props {
+  backlinks: GraphNode[];
+}
+const { backlinks } = Astro.props;
+---
+<section class="backlinks">
+  <h2>反向链接</h2>
+  {backlinks.length > 0 ? (
+    <ul>
+      {backlinks.map((b) => (
+        <li>
+          <a href={`/posts/${b.slug}/`}>{b.title}</a>
+          <span class="muted"> — {b.summary}</span>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="muted">还没有其他节点链到这里。</p>
+  )}
+</section>
+
+<style>
+  .backlinks {
+    margin-top: 2rem;
+    padding: 1rem 1.1rem;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: color-mix(in oklab, var(--bg-elevated) 80%, transparent);
+  }
+  .backlinks h2 {
+    margin: 0 0 0.7rem;
+    font-size: 1rem;
+  }
+  .backlinks ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+import type { GraphNode } from '../../lib/types';
+import { statusLabel } from '../../lib/posts';
+
+interface Props {
+  neighbors: GraphNode[];
+}
+const { neighbors } = Astro.props;
+---
+{neighbors.length > 0 ? (
+  <section class="neighbors">
+    <div class="section-head">
+      <h2>邻居节点</h2>
+      <a href="/garden">在花园中查看 →</a>
+    </div>
+    <div class="neighbors__grid">
+      {neighbors.map((n) => (
+        <a class="card neighbor" href={`/posts/${n.slug}/`}>
+          <div class="neighbor__meta">
+            <span class="badge">{n.type === 'essay' ? '长文' : '笔记'}</span>
+            <span class="badge"><span class="dot" data-status={n.status}></span>{statusLabel(n.status)}</span>
+          </div>
+          <strong>{n.title}</strong>
+          <p class="muted">{n.summary}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+) : null}
+
+<style>
+  .neighbors {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .neighbors .section-head h2 {
+    font-size: 1.1rem;
+  }
+  .neighbors__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.85rem;
+  }
+  .neighbor {
+    text-decoration: none;
+    color: inherit;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .neighbor strong {
+    font-family: var(--font-ui);
+    letter-spacing: -0.02em;
+  }
+  .neighbor__meta {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .neighbor p {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+</style>

@@ -1,0 +1,161 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { site } from '../data/site';
+import { getPublishedPosts, postSlug } from '../lib/posts';
+
+const posts = (await getPublishedPosts()).slice(0, 5);
+const origin = Astro.site?.toString().replace(/\/$/, '') ?? '';
+// In local dev Astro.site may be example.com; prefer current origin when available at request time
+const feedPath = '/rss.xml';
+---
+<PageLayout
+  title="订阅"
+  description="通过 RSS 订阅本站更新"
+  lede="RSS 是给「阅读器」用的订阅源，不是普通网页。把地址加到阅读器里，有新文章会自动推送。"
+>
+  <div class="subscribe">
+    <section class="card subscribe__feed">
+      <p class="eyebrow">Feed URL</p>
+      <h2 class="display">RSS 源地址</h2>
+      <p class="muted">复制下面地址，粘贴到 Reeder、NetNewsWire、Feedly、Inoreader 等应用中。</p>
+      <div class="feed-box">
+        <code id="feed-url" data-path={feedPath}>{feedPath}</code>
+        <button type="button" class="btn btn-primary" id="copy-feed">复制</button>
+      </div>
+      <p class="fine muted">
+        原始 feed 文件：
+        <a href="/rss.xml"><code>/rss.xml</code></a>
+        （浏览器打开会显示 XML 源码，这是正常现象）
+      </p>
+    </section>
+
+    <section class="card">
+      <p class="eyebrow">How to</p>
+      <h2 class="display">怎么用</h2>
+      <ol class="steps">
+        <li>安装任意 RSS 阅读器（桌面 / 手机均可）</li>
+        <li>选择「添加订阅 / Add feed」</li>
+        <li>粘贴本站 feed 地址并确认</li>
+        <li>之后更新会自动出现在阅读器里</li>
+      </ol>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>最近文章</h2>
+        <a href="/articles">全部文章 →</a>
+      </div>
+      <ul class="recent">
+        {posts.map((p) => (
+          <li class="card">
+            <a href={`/posts/${postSlug(p)}/`}>
+              <strong class="display">{p.data.title}</strong>
+              <span class="muted">{p.data.summary}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <p class="muted note">
+      搜索引擎用地图文件在 <code>/sitemap.xml</code>，一般不必手动打开；站点页脚也不再放该入口。
+    </p>
+  </div>
+</PageLayout>
+
+<script>
+  const code = document.getElementById('feed-url');
+  const btn = document.getElementById('copy-feed');
+  if (code) {
+    const path = code.dataset.path || '/rss.xml';
+    const absolute = `${window.location.origin}${path}`;
+    code.textContent = absolute;
+  }
+  btn?.addEventListener('click', async () => {
+    const text = code?.textContent ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = '已复制';
+      setTimeout(() => {
+        btn.textContent = '复制';
+      }, 1400);
+    } catch {
+      btn.textContent = '失败';
+      setTimeout(() => {
+        btn.textContent = '复制';
+      }, 1400);
+    }
+  });
+</script>
+
+<style>
+  .subscribe {
+    display: grid;
+    gap: 1.4rem;
+    max-width: 44rem;
+  }
+  .subscribe__feed h2,
+  .card h2 {
+    margin: 0.2rem 0 0.55rem;
+    font-size: 1.7rem;
+  }
+  .subscribe .muted {
+    margin: 0;
+    line-height: 1.65;
+  }
+  .feed-box {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .feed-box code {
+    flex: 1 1 16rem;
+    display: block;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    word-break: break-all;
+  }
+  .fine {
+    margin-top: 0.85rem !important;
+    font-size: 0.88rem;
+  }
+  .steps {
+    margin: 0.7rem 0 0;
+    padding-left: 1.15rem;
+    display: grid;
+    gap: 0.45rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .recent {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+  .recent a {
+    display: grid;
+    gap: 0.3rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .recent strong {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+  .note {
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+  .note code {
+    font-family: var(--font-mono);
+    font-size: 0.84em;
+  }
+</style>

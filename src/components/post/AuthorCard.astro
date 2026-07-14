@@ -1,0 +1,80 @@
+---
+import { site } from '../../data/site';
+---
+<section class="author-card card" transition:name="author-card">
+  <img class="author-card__avatar" src={site.avatar} alt="" width="64" height="64" />
+  <div class="author-card__body">
+    <p class="eyebrow">Written by</p>
+    <h2 class="display">{site.fullName}</h2>
+    <p class="role muted">{site.role} · {site.location}</p>
+    <p class="bio">{site.bio}</p>
+    <div class="author-card__links">
+      <a href="/about">关于作者</a>
+      {site.socials.map((s) => (
+        <a href={s.href} target={s.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+          {s.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .author-card {
+    margin-top: 2.8rem;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 1.1rem;
+    padding: 1.25rem 1.3rem;
+    align-items: start;
+  }
+  .author-card__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    object-fit: cover;
+    background: var(--bg-soft);
+  }
+  .author-card__body {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .author-card h2 {
+    margin: 0;
+    font-size: 1.55rem;
+    line-height: 1.15;
+  }
+  .role {
+    margin: 0;
+    font-size: 0.86rem;
+    letter-spacing: 0.03em;
+  }
+  .bio {
+    margin: 0.35rem 0 0.2rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 40rem;
+  }
+  .author-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 0.35rem;
+  }
+  .author-card__links a {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-muted);
+  }
+  .author-card__links a:hover { color: var(--accent); }
+  @media (max-width: 560px) {
+    .author-card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GardenView from '../components/garden/GardenView';
+import { getGraph } from '../lib/build-graph';
+
+const graph = await getGraph();
+const essayCount = graph.nodes.filter((n) => n.type === 'essay').length;
+const noteCount = graph.nodes.filter((n) => n.type === 'note').length;
+const tagCount = new Set(graph.nodes.flatMap((n) => n.tags)).size;
+---
+<BaseLayout title="花园" description="生长时间线与主题书架">
+  <div class="garden-page">
+    <div class="container garden-page__intro motion-enter">
+      <div class="garden-page__copy">
+        <p class="eyebrow">Digital Garden</p>
+        <h1 class="display">知识花园</h1>
+        <p class="lede muted">
+          两条路径逛同一座园：<strong>时间线</strong>回看生长史，
+          <strong>主题书架</strong>按标签分架浏览。悬停与点击都能顺着链接继续走。
+        </p>
+      </div>
+      <dl class="garden-page__stats">
+        <div>
+          <dt>{graph.nodes.length}</dt>
+          <dd>节点</dd>
+        </div>
+        <div>
+          <dt>{graph.edges.length}</dt>
+          <dd>连接</dd>
+        </div>
+        <div>
+          <dt>{essayCount + noteCount}</dt>
+          <dd>长文+笔记</dd>
+        </div>
+        <div>
+          <dt>{tagCount}</dt>
+          <dd>主题架</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="container">
+      <GardenView client:load graph={graph} />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .garden-page { padding: 2.4rem 0 3.5rem; }
+  .garden-page__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.8fr);
+    gap: 1.5rem 2rem;
+    align-items: end;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .garden-page__copy h1 {
+    margin: 0.35rem 0 0.7rem;
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    line-height: 1.05;
+  }
+  .lede {
+    margin: 0;
+    max-width: 38rem;
+    font-size: 1.02rem;
+    line-height: 1.7;
+  }
+  .lede strong { color: var(--text); font-weight: 600; }
+  .garden-page__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1rem;
+    margin: 0;
+  }
+  .garden-page__stats div {
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--bg-elevated) 88%, transparent);
+    border-radius: var(--radius-lg);
+    transition:
+      transform var(--motion-base) var(--ease-out),
+      border-color var(--motion-base) var(--ease-inout),
+      background-color var(--motion-base) var(--ease-inout);
+  }
+  .garden-page__stats div:hover {
+    transform: translate3d(0, -2px, 0);
+    border-color: color-mix(in oklab, var(--brass) 40%, var(--border));
+  }
+  .garden-page__stats dt {
+    font-family: var(--font-display);
+    font-size: 1.85rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .garden-page__stats dd {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  @media (max-width: 800px) {
+    .garden-page__intro { grid-template-columns: 1fr; }
+    .garden-page__stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .garden-page__stats div { text-align: center; }
+    .garden-page__stats dt { font-size: 1.4rem; }
+  }
+  @media (max-width: 520px) {
+    .garden-page__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>

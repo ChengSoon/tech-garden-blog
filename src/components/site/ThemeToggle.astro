@@ -1,0 +1,67 @@
+<button type="button" class="theme-toggle btn" data-theme-toggle aria-label="切换深浅色">
+  <span class="sun" aria-hidden="true">☀</span>
+  <span class="moon" aria-hidden="true">☾</span>
+</button>
+
+<script>
+  const KEY = 'theme';
+
+  function apply(theme) {
+    const root = document.documentElement;
+    root.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem(KEY, theme);
+    // keep browser chrome in sync
+    const metaLight = document.querySelector('meta[name="theme-color"][media*="light"]');
+    const metaDark = document.querySelector('meta[name="theme-color"][media*="dark"]');
+    if (metaLight instanceof HTMLMetaElement) metaLight.content = theme === 'dark' ? '#0f0e0c' : '#f2ebe0';
+    if (metaDark instanceof HTMLMetaElement) metaDark.content = theme === 'dark' ? '#0f0e0c' : '#f2ebe0';
+  }
+
+  function current() {
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  }
+
+  function onToggle(e) {
+    const btn = e.target instanceof Element ? e.target.closest('[data-theme-toggle]') : null;
+    if (!btn) return;
+    e.preventDefault();
+    apply(current() === 'dark' ? 'light' : 'dark');
+  }
+
+  // Event delegation survives View Transitions page swaps
+  if (!window.__themeToggleBound) {
+    window.__themeToggleBound = true;
+    document.addEventListener('click', onToggle);
+    document.addEventListener('astro:after-swap', () => {
+      // html may be restored without dark class in rare cases — re-apply from storage
+      const saved = localStorage.getItem(KEY);
+      if (saved === 'dark' || saved === 'light') apply(saved);
+    });
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    position: relative;
+  }
+  .sun, .moon {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+    transition:
+      opacity var(--motion-base) var(--ease-out),
+      transform var(--motion-base) var(--ease-spring);
+  }
+  html:not(.dark) .moon { opacity: 0; transform: scale(0.55) rotate(-40deg); }
+  html.dark .sun { opacity: 0; transform: scale(0.55) rotate(40deg); }
+  html.dark .moon { transform: scale(1) rotate(0deg); }
+  html:not(.dark) .sun { transform: scale(1) rotate(0deg); }
+  @media (prefers-reduced-motion: reduce) {
+    .sun, .moon { transition: none; }
+  }
+</style>

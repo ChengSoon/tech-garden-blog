@@ -1,0 +1,63 @@
+---
+import { site } from '../../data/site';
+import { catalog } from '../../data/listening';
+import CdPlayer from '../media/CdPlayer';
+---
+<section class="now-block">
+  <div class="now-strip card">
+    <div class="now-strip__label">
+      <span class="eyebrow">Now</span>
+      <span class="muted date">{site.nowUpdated}</span>
+    </div>
+    <p>{site.now}</p>
+    <a href="/now">进入听碟室 →</a>
+  </div>
+
+  <CdPlayer client:visible tracks={catalog} variant="compact" />
+</section>
+
+<style>
+  .now-block {
+    display: grid;
+    gap: 1rem;
+    margin: 2.6rem 0 0.5rem;
+  }
+  .now-strip {
+    display: grid;
+    grid-template-columns: 8rem 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.15rem 1.25rem;
+    margin: 0;
+  }
+  .now-strip__label {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .date {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .now-strip p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+  .now-strip a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--font-ui);
+    white-space: nowrap;
+  }
+  .now-strip a:hover { color: var(--accent); }
+  @media (max-width: 760px) {
+    .now-strip {
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+    }
+  }
+</style>
