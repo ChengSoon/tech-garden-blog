@@ -1,0 +1,4 @@
+# Cloudflare Pages — 静态产物目录
+name = "tech-garden-blog"
+compatibility_date = "2026-07-14"
+pages_build_output_dir = "dist"

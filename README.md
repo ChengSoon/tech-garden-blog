@@ -75,6 +75,51 @@ git push
 
 ---
 
+
+---
+
+## Cloudflare Pages 自动部署
+
+仓库已配置 **Cloudflare Pages** 部署（`wrangler.toml` + GitHub Actions）。
+
+### 方式一：Cloudflare 控制台绑定 Git（推荐，最省事）
+
+1. 打开 [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+2. 授权 GitHub，选择仓库 `ChengSoon/tech-garden-blog`
+3. 构建设置：
+   - **Framework preset**: Astro（或 None）
+   - **Build command**: `npm run build`
+   - **Build output directory**: `dist`
+   - **Root directory**: `/`（默认）
+4. 环境变量（可选）：`ASTRO_TELEMETRY_DISABLED=1`
+5. Save and Deploy
+
+之后每次 `git push` 到 `main` 都会自动构建发布。  
+部署成功后会得到 `https://tech-garden-blog.pages.dev`（项目名可能略有不同）。
+
+### 方式二：GitHub Actions + API Token
+
+1. Cloudflare → **My Profile** → **API Tokens** → **Create Token**
+   - 使用模板 **Edit Cloudflare Workers**，或自定义权限包含 **Account · Cloudflare Pages · Edit**
+2. 记下 **Account ID**（Workers & Pages 右侧边栏）
+3. GitHub 仓库 → **Settings** → **Secrets and variables** → **Actions**，新增：
+   - `CLOUDFLARE_API_TOKEN`
+   - `CLOUDFLARE_ACCOUNT_ID`
+4. 推送到 `main` 后，工作流 `Deploy Cloudflare Pages` 会自动部署
+
+### 本地手动部署（可选）
+
+```bash
+npm install
+npx wrangler login
+npm run cf:deploy
+```
+
+### 部署后记得改域名
+
+把 `astro.config.mjs` 里的 `site` 改成你的 `*.pages.dev` 或自定义域名，然后 push 一次。
+
+
 ## 唱机
 
 - 组件：`src/components/media/ImmersiveDeck.tsx`  
