@@ -20,12 +20,13 @@ npm run preview
 
 ---
 
-## 部署后如何发布文章
+## 日常发布文章（一行流程）
 
-本站是 **Git 驱动的静态站**（无后台 CMS）。发文流程：
+线上地址：**https://tech-garden-blog.pages.dev/**  
+已接通 **GitHub Actions → Cloudflare Pages**：推 `main` 即自动构建上线。
 
 ```text
-写 Markdown → 本地预览 → git push → 托管平台自动构建上线
+写 Markdown → git push origin main → Actions 绿了 → 站点更新
 ```
 
 ### 1. 新建文章
@@ -48,76 +49,63 @@ links: []            # 出链 slug，如 [welcome-essay]
 正文……
 ```
 
-### 2. 本地检查
+### 2. 本地预览（可选）
 
 ```bash
 npm run dev
+# 确认无误后
 npm run build
 ```
 
-### 3. 上线（推荐自动部署）
-
-1. 推送到 GitHub，在 Vercel / Netlify / Cloudflare Pages 导入仓库  
-2. 构建命令：`npm run build`，输出目录：`dist`  
-3. 以后每次发文：
+### 3. 推送上线
 
 ```bash
 git add src/content/posts/my-post.md
 git commit -m "feat(posts): 发布《文章标题》"
-git push
+git push origin main
 ```
 
-### 4. 部署前必改
+去 GitHub → **Actions** → **Deploy Cloudflare Pages** 看是否成功（约 1 分钟）。
 
-- `astro.config.mjs` 的 `site` → 真实域名  
-- 作者：`src/data/site.ts`  
+> 不在本机写代码时：用 GitHub 网页编辑 `src/content/posts/`，提交到 `main` 同样会触发部署。
+
+### 站点信息
+
+- `astro.config.mjs` → `site`（现为 Pages 域名）
+- 作者：`src/data/site.ts`
 - 唱机曲目：`src/data/listening.ts` + `public/covers/listening/`
 
 ---
 
+## Cloudflare Pages 自动部署（已配置）
 
----
+| 项 | 值 |
+| --- | --- |
+| 项目 | `tech-garden-blog` |
+| 线上 | https://tech-garden-blog.pages.dev/ |
+| 触发 | `push` → `main`，或手动 `workflow_dispatch` |
+| 工作流 | `.github/workflows/deploy-cloudflare-pages.yml` |
+| Secrets | `CLOUDFLARE_API_TOKEN` · `CLOUDFLARE_ACCOUNT_ID` |
 
-## Cloudflare Pages 自动部署
+### Token 失效时
 
-仓库已配置 **Cloudflare Pages** 部署（`wrangler.toml` + GitHub Actions）。
+当前 Secret 可能来自本机 `wrangler login` 的 OAuth，**会过期**。失效后：
 
-### 方式一：Cloudflare 控制台绑定 Git（推荐，最省事）
-
-1. 打开 [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
-2. 授权 GitHub，选择仓库 `ChengSoon/tech-garden-blog`
-3. 构建设置：
-   - **Framework preset**: Astro（或 None）
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-   - **Root directory**: `/`（默认）
-4. 环境变量（可选）：`ASTRO_TELEMETRY_DISABLED=1`
-5. Save and Deploy
-
-之后每次 `git push` 到 `main` 都会自动构建发布。  
-部署成功后会得到 `https://tech-garden-blog.pages.dev`（项目名可能略有不同）。
-
-### 方式二：GitHub Actions + API Token
-
-1. Cloudflare → **My Profile** → **API Tokens** → **Create Token**
-   - 使用模板 **Edit Cloudflare Workers**，或自定义权限包含 **Account · Cloudflare Pages · Edit**
-2. 记下 **Account ID**（Workers & Pages 右侧边栏）
-3. GitHub 仓库 → **Settings** → **Secrets and variables** → **Actions**，新增：
-   - `CLOUDFLARE_API_TOKEN`
-   - `CLOUDFLARE_ACCOUNT_ID`
-4. 推送到 `main` 后，工作流 `Deploy Cloudflare Pages` 会自动部署
+1. 打开 [Create API Token](https://dash.cloudflare.com/profile/api-tokens)
+2. 用模板 **Edit Cloudflare Workers**（含 Pages 写权限）
+3. 在仓库 **Settings → Secrets → Actions** 更新 `CLOUDFLARE_API_TOKEN`
+4. Account ID 固定为：`4555fd402f493f78358d5f5d98abcdca`
 
 ### 本地手动部署（可选）
 
 ```bash
-npm install
-npx wrangler login
+npx wrangler login   # 仅首次或登录过期时
 npm run cf:deploy
 ```
 
-### 部署后记得改域名
+### 备选：Cloudflare 原生连 Git
 
-把 `astro.config.mjs` 里的 `site` 改成你的 `*.pages.dev` 或自定义域名，然后 push 一次。
+若不想维护 Actions Token，可在 CF Dashboard → **Workers & Pages** → 项目 → **Settings → Builds** 里 **Connect to Git**，由 Cloudflare 直接构建（与 Actions 二选一即可，避免重复部署）。
 
 
 ## 唱机
