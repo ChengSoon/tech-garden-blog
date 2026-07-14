@@ -54,7 +54,6 @@ const isEssay = props.type === 'essay';
         tags={props.tags}
         type={props.type}
         variant="hero"
-        transition:name={`cover-${props.slug}`}
       />
     ) : null}
     <div class={`post__grid ${showToc ? 'has-toc' : ''}`}>
@@ -64,7 +63,7 @@ const isEssay = props.type === 'essay';
             <p class="eyebrow">{isEssay ? 'Essay' : 'Note'}</p>
             <ReadingTools />
           </div>
-          <h1 class="display" transition:name={`title-${props.slug}`}>{props.title}</h1>
+          <h1 class="display">{props.title}</h1>
           <PostMeta
             date={props.date}
             readingMinutes={props.readingMinutes}

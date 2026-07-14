@@ -22,6 +22,10 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
   const rafRef = useRef<number | null>(null);
   const startedAtRef = useRef<number | null>(null);
   const accumulatedRef = useRef(0);
+  const currentRef = useRef(0);
+  const fillRef = useRef<HTMLSpanElement | null>(null);
+  const timeRef = useRef<HTMLSpanElement | null>(null);
+  const lastTextAt = useRef(0);
 
   const [index, setIndex] = useState(startIndex === -1 ? 0 : startIndex);
   const [playing, setPlaying] = useState(false);
@@ -32,6 +36,23 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
   const track = list[index] ?? list[0];
   const duration = track?.durationSec ?? 0;
   const hasAudio = Boolean(track?.src);
+
+  const paintProgress = useCallback((elapsed: number, dur: number) => {
+    currentRef.current = elapsed;
+    const ratio = dur > 0 ? Math.min(1, elapsed / dur) : 0;
+    if (fillRef.current) {
+      fillRef.current.style.transform = `scaleX(${ratio})`;
+    }
+    const now = performance.now();
+    // Throttle React text updates; DOM bar is rAF-direct
+    if (now - lastTextAt.current > 200) {
+      lastTextAt.current = now;
+      setCurrent(elapsed);
+      if (timeRef.current) {
+        timeRef.current.textContent = formatTime(elapsed);
+      }
+    }
+  }, []);
 
   const stopRaf = useCallback(() => {
     if (rafRef.current != null) {
@@ -44,8 +65,12 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
     stopRaf();
     startedAtRef.current = null;
     accumulatedRef.current = 0;
+    currentRef.current = 0;
+    lastTextAt.current = 0;
     setCurrent(0);
     setPlaying(false);
+    if (fillRef.current) fillRef.current.style.transform = 'scaleX(0)';
+    if (timeRef.current) timeRef.current.textContent = formatTime(0);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -57,6 +82,7 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
     if (started == null) return;
     const elapsed = accumulatedRef.current + (performance.now() - started) / 1000;
     if (elapsed >= duration) {
+      paintProgress(duration, duration);
       setCurrent(duration);
       setPlaying(false);
       accumulatedRef.current = 0;
@@ -64,20 +90,38 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
       stopRaf();
       return;
     }
-    setCurrent(elapsed);
+    paintProgress(elapsed, duration);
     rafRef.current = requestAnimationFrame(tickSim);
-  }, [duration, stopRaf]);
+  }, [duration, paintProgress, stopRaf]);
 
   useEffect(() => () => stopRaf(), [stopRaf]);
+
+  // Pause demo RAF when tab hidden
+  useEffect(() => {
+    const onVis = () => {
+      if (document.visibilityState !== 'hidden') return;
+      if (!playing || hasAudio) return;
+      if (startedAtRef.current != null) {
+        accumulatedRef.current += (performance.now() - startedAtRef.current) / 1000;
+        startedAtRef.current = null;
+      }
+      stopRaf();
+      setPlaying(false);
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [playing, hasAudio, stopRaf]);
 
   useEffect(() => {
     if (!hasAudio || !audioRef.current || !track?.src) return;
     const el = audioRef.current;
     el.src = track.src;
-    const onTime = () => setCurrent(el.currentTime);
+    const onTime = () => paintProgress(el.currentTime, duration || el.duration || 0);
     const onEnded = () => {
       setPlaying(false);
       setCurrent(0);
+      currentRef.current = 0;
+      if (fillRef.current) fillRef.current.style.transform = 'scaleX(0)';
     };
     el.addEventListener('timeupdate', onTime);
     el.addEventListener('ended', onEnded);
@@ -85,7 +129,7 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
       el.removeEventListener('timeupdate', onTime);
       el.removeEventListener('ended', onEnded);
     };
-  }, [hasAudio, track?.src, track?.id]);
+  }, [hasAudio, track?.src, track?.id, duration, paintProgress]);
 
   async function toggle() {
     if (!track) return;
@@ -112,11 +156,13 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
       startedAtRef.current = null;
       stopRaf();
       setPlaying(false);
+      setCurrent(currentRef.current);
       return;
     }
 
-    if (current >= duration) {
+    if (currentRef.current >= duration) {
       setCurrent(0);
+      currentRef.current = 0;
       accumulatedRef.current = 0;
     }
     startedAtRef.current = performance.now();
@@ -126,7 +172,10 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
 
   function seek(ratio: number) {
     const next = Math.min(duration, Math.max(0, ratio * duration));
+    currentRef.current = next;
     setCurrent(next);
+    if (fillRef.current) fillRef.current.style.transform = `scaleX(${duration > 0 ? next / duration : 0})`;
+    if (timeRef.current) timeRef.current.textContent = formatTime(next);
     if (hasAudio && audioRef.current) {
       audioRef.current.currentTime = next;
       return;
@@ -184,6 +233,7 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
               width={480}
               height={480}
               draggable={false}
+              decoding="async"
             />
             <div className="cdp__jacket-glare" aria-hidden="true" />
           </div>
@@ -199,7 +249,7 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
               <div className="cdp__grooves" />
               <div className="cdp__iridescence" />
               <div className="cdp__label">
-                <img src={track.cover} alt="" className="cdp__label-art" draggable={false} />
+                <img src={track.cover} alt="" className="cdp__label-art" draggable={false} decoding="async" />
                 <span className="cdp__mono">{monogram}</span>
               </div>
               <div className="cdp__hub" />
@@ -248,7 +298,7 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
                 onClick={() => selectDisc(i)}
                 title={t.title}
               >
-                <img src={t.cover} alt="" width={72} height={72} draggable={false} />
+                <img src={t.cover} alt="" width={72} height={72} draggable={false} loading="lazy" decoding="async" />
                 <span className="cdp__thumb-meta">
                   <strong>{t.title}</strong>
                   <em>{t.artist}</em>
@@ -292,12 +342,16 @@ export default function CdPlayer({ tracks, variant = 'full', initialId }: Props)
 
           <div className="cdp__scrub">
             <div className="cdp__times">
-              <span>{formatTime(current)}</span>
+              <span ref={timeRef}>{formatTime(current)}</span>
               <span>{formatTime(duration)}</span>
             </div>
             <div className="cdp__track-wrap">
               <div className="cdp__track" aria-hidden="true">
-                <span className="cdp__fill" style={{ transform: `scaleX(${progress})` }} />
+                <span
+                  ref={fillRef}
+                  className="cdp__fill"
+                  style={{ transform: `scaleX(${progress})` }}
+                />
               </div>
               <input
                 className="cdp__range"

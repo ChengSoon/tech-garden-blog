@@ -50,7 +50,7 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
       rel="stylesheet"
     />
     <title>{fullTitle}</title>
-    <ClientRouter />
+    <ClientRouter fallback="swap" />
     <script is:inline>
       (function () {
         const key = 'theme';
@@ -68,7 +68,7 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
   <body class={bodyClass || undefined}>
     <a class="skip-link" href="#main">跳到正文</a>
     <Header searchItems={searchItems} />
-    <main id="main" transition:name="page-main" transition:animate="none">
+    <main id="main">
       <slot />
     </main>
     <Footer />

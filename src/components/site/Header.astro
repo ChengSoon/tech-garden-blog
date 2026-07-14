@@ -18,7 +18,7 @@ const links = [
 ---
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="brand" href="/" transition:name="brand">
+    <a class="brand" href="/">
       <span class="brand__mark" aria-hidden="true"></span>
       <span class="brand__text">
         <span class="brand__name">Cheng</span>
@@ -52,9 +52,14 @@ const links = [
     top: 0;
     z-index: 40;
     height: var(--header-height);
-    backdrop-filter: blur(16px) saturate(1.15);
-    background: color-mix(in oklab, var(--bg) 78%, var(--bg-elevated));
+    /* solid-ish glass: avoids continuous backdrop sampling under spinning deck */
+    backdrop-filter: blur(8px) saturate(1.05);
+    background: color-mix(in oklab, var(--bg) 88%, var(--bg-elevated));
     border-bottom: 0;
+  }
+  :global(body.has-bg-deck) .site-header {
+    backdrop-filter: none;
+    background: color-mix(in oklab, var(--bg) 94%, var(--bg-elevated));
   }
   .site-header__inner {
     height: 100%;

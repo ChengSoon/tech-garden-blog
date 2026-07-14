@@ -3,8 +3,8 @@
 :root {
   --motion-fast: 140ms;
   --motion-base: 220ms;
-  --motion-slow: 360ms;
-  --motion-enter: 480ms;
+  --motion-slow: 240ms;
+  --motion-enter: 260ms;
   --motion-theme: 280ms;
   --motion-stagger: 42ms;
   --motion-stagger-max: 8;
@@ -118,7 +118,9 @@ body {
   transform: translate3d(0, 1px, 0) scale(0.985);
 }
 
-/* View Transitions — opacity only on root; no blur (GPU/paint jank) */
+/* View Transitions — avoid mid-route “blank pause”
+   Full-page fade-out→fade-in creates an empty middle frame while DOM swaps.
+   Use an instant swap for root; optional micro-fade only if browser insists. */
 @keyframes vt-fade-out {
   from { opacity: 1; }
   to { opacity: 0; }
@@ -132,7 +134,7 @@ body {
 @keyframes vt-rise-in {
   from {
     opacity: 0;
-    transform: translate3d(0, 10px, 0);
+    transform: translate3d(0, 6px, 0);
   }
   to {
     opacity: 1;
@@ -140,34 +142,32 @@ body {
   }
 }
 
-::view-transition-old(root) {
-  animation: vt-fade-out var(--motion-fast) var(--ease-in) both;
-}
-
+/* Root: no animation = no blackout between pages */
+::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: vt-fade-in var(--motion-base) var(--ease-out) both;
-}
-
-/* Named main content: light rise on enter only */
-::view-transition-old(page-main) {
-  animation: vt-fade-out 160ms var(--ease-in) both;
-}
-
-::view-transition-new(page-main) {
-  animation: vt-rise-in var(--motion-slow) var(--ease-out) both;
-}
-
-::view-transition-old(page-main),
-::view-transition-new(page-main) {
-  height: auto;
+  animation: none !important;
   mix-blend-mode: normal;
-  overflow: clip;
 }
 
-/* Shared element morphs stay crisp and short */
+/* Named regions: no morph (morph calc is a common source of mid-click hitch) */
+::view-transition-old(page-main),
+::view-transition-new(page-main),
+::view-transition-old(brand),
+::view-transition-new(brand) {
+  animation: none !important;
+}
+
 ::view-transition-group(*) {
-  animation-duration: var(--motion-base);
-  animation-timing-function: var(--ease-out);
+  animation-duration: 0.001ms !important;
+  animation-timing-function: linear;
+}
+
+
+
+
+/* Kill Astro default fade scopes if any leftover animation attributes exist */
+[data-astro-transition-scope] {
+  animation: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

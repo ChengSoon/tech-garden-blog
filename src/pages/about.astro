@@ -11,7 +11,7 @@ const featured = site.featuredSlugs.map((s) => bySlug.get(s)).filter(Boolean);
 <PageLayout title="关于" lede={site.bio}>
   <div class="about">
     <section class="profile card">
-      <img class="profile__avatar" src={site.avatar} alt={site.fullName} width="96" height="96" transition:name="author-avatar" />
+      <img class="profile__avatar" src={site.avatar} alt={site.fullName} width="96" height="96" />
       <div>
         <p class="eyebrow">{site.role}</p>
         <h2 class="display profile__name">{site.fullName}</h2>
@@ -47,11 +47,10 @@ const featured = site.featuredSlugs.map((s) => bySlug.get(s)).filter(Boolean);
               tags={p!.data.tags}
               type={p!.data.type}
               variant="thumb"
-              transition:name={`cover-${postSlug(p!)}`}
             />
             <div class="work__body">
               <span class="n">{String(i + 1).padStart(2, '0')}</span>
-              <a class="display" href={`/posts/${postSlug(p!)}/`} transition:name={`title-${postSlug(p!)}`}>
+              <a class="display" href={`/posts/${postSlug(p!)}/`}>
                 {p!.data.title}
               </a>
               <p class="muted">{p!.data.summary}</p>

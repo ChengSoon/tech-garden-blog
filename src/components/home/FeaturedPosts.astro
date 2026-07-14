@@ -26,14 +26,13 @@ const [main, ...rest] = featured;
           tags={main.data.tags}
           type={main.data.type}
           variant="card"
-          transition:name={`cover-${postSlug(main)}`}
         />
         <div class="main__index" aria-hidden="true">01</div>
         <div class="meta">
           <span class="badge">{main.data.type === 'essay' ? '长文' : '笔记'}</span>
           <span class="badge"><span class="dot" data-status={main.data.status}></span>{statusLabel(main.data.status)}</span>
         </div>
-        <h3 class="display" transition:name={`title-${postSlug(main)}`}>{main.data.title}</h3>
+        <h3 class="display">{main.data.title}</h3>
         <p class="muted">{main.data.summary}</p>
         <span class="more">开始阅读</span>
       </a>
@@ -48,7 +47,6 @@ const [main, ...rest] = featured;
                 tags={p.data.tags}
                 type={p.data.type}
                 variant="thumb"
-                transition:name={`cover-${postSlug(p)}`}
               />
             </div>
             <div class="side-card__body">
@@ -56,7 +54,7 @@ const [main, ...rest] = featured;
               <div class="meta">
                 <span class="badge">{p.data.type === 'essay' ? '长文' : '笔记'}</span>
               </div>
-              <strong class="display" transition:name={`title-${postSlug(p)}`}>{p.data.title}</strong>
+              <strong class="display">{p.data.title}</strong>
               <span class="muted">{p.data.summary}</span>
             </div>
           </a>
