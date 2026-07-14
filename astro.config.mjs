@@ -5,7 +5,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'http://localhost:4321',
+  site: 'https://tech-garden-blog.pages.dev',
   integrations: [mdx(), react()],
   markdown: {
     shikiConfig: {
