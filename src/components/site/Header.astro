@@ -91,16 +91,35 @@ const links = [
   }
 
   .brand__mark {
-    width: 0.65rem;
-    height: 0.65rem;
+    position: relative;
+    width: 0.72rem;
+    height: 0.72rem;
     border-radius: 50%;
-    background: var(--signal);
-    box-shadow: 0 0 0 3px var(--signal-soft);
-    animation: motion-mark-pulse 3.2s var(--ease-inout) infinite;
+    background:
+      radial-gradient(circle at 35% 30%, color-mix(in oklab, white 55%, var(--signal)), var(--signal) 55%);
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--signal) 22%, transparent),
+      0 0 0 4px color-mix(in oklab, var(--signal) 8%, transparent);
+    animation: motion-mark-pulse 3.6s var(--ease-inout) infinite;
+  }
+
+  .brand__mark::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in oklab, var(--signal) 28%, transparent);
+    opacity: 0.7;
+    pointer-events: none;
   }
 
   .brand:hover .brand__mark {
-    animation-duration: 1.4s;
+    animation-duration: 1.5s;
+    background:
+      radial-gradient(circle at 35% 30%, color-mix(in oklab, white 62%, var(--accent)), var(--accent) 58%);
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--accent) 24%, transparent),
+      0 0 0 5px color-mix(in oklab, var(--accent) 10%, transparent);
   }
 
   .brand:hover .brand__name {

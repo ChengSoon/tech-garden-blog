@@ -1,8 +1,9 @@
-name: Deploy Cloudflare Pages
+# Cloudflare Pages 部署已停用自动推送。
+# 线上站点改为 VPS + 域名 lzch.eu.org（见 scripts/deploy-vps.sh）。
+# 如需偶尔发布到 CF Pages，可手动 Run workflow。
+name: Deploy Cloudflare Pages (manual)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:

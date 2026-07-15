@@ -1,14 +1,9 @@
 ---
-import { site } from '../../data/site';
-import { getPublishedPosts, postSlug, statusLabel } from '../../lib/posts';
+import { getPublishedPosts, pickFeaturedPosts, postSlug, statusLabel } from '../../lib/posts';
 import CoverArt from '../post/CoverArt.astro';
 
 const posts = await getPublishedPosts();
-const bySlug = new Map(posts.map((p) => [postSlug(p), p]));
-let featured = site.featuredSlugs.map((s) => bySlug.get(s)).filter(Boolean) as typeof posts;
-if (featured.length === 0) {
-  featured = posts.filter((p) => p.data.type === 'essay').slice(0, 3);
-}
+const featured = pickFeaturedPosts(posts, 3);
 const [main, ...rest] = featured;
 ---
 <section id="featured" class="featured">

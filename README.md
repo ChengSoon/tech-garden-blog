@@ -22,7 +22,7 @@ npm run preview
 
 ## 日常发布文章（一行流程）
 
-线上地址：**https://tech-garden-blog.pages.dev/**  
+线上地址：**https://blog.lzch.eu.org/**  
 已接通 **GitHub Actions → Cloudflare Pages**：推 `main` 即自动构建上线。
 
 ```text
@@ -40,14 +40,30 @@ summary: 一句话摘要
 date: 2026-07-14
 type: essay          # essay | note
 status: seedling     # seedling | growing | evergreen
-tags: [astro, garden]
-links: []            # 出链 slug，如 [welcome-essay]
+tags: [ai, guide]
+links: []            # 出链 slug 列表
 # hero: /covers/my.jpg
 # draft: true        # 草稿不发布
+# featured: true     # 精选 / 关于页代表作
+# featuredOrder: 1
+# lead: true         # 首页 Hero 主打
+# series: ai-primer  # 对应 content/series/{id}.json
+# order: 1
 ---
 
 正文……
 ```
+
+文章展示（精选、主打、阅读路径）**不要**写死在代码里：
+
+| 想控制 | 改哪里 |
+|--------|--------|
+| 精选 / 代表作 | 文章 `featured` / `featuredOrder` |
+| 首页主打 | 文章 `lead: true` |
+| 阅读路径 | `src/content/paths/*.yaml` 的 `posts` 列表 |
+| 系列 | `src/content/series/` + 文章 `series`/`order` |
+
+更完整说明见 [`src/content/README.md`](src/content/README.md)。
 
 ### 2. 本地预览（可选）
 
@@ -82,7 +98,7 @@ git push origin main
 | 项 | 值 |
 | --- | --- |
 | 项目 | `tech-garden-blog` |
-| 线上 | https://tech-garden-blog.pages.dev/ |
+| 线上 | https://blog.lzch.eu.org/ |
 | 触发 | `push` → `main`，或手动 `workflow_dispatch` |
 | 工作流 | `.github/workflows/deploy-cloudflare-pages.yml` |
 | Secrets | `CLOUDFLARE_API_TOKEN` · `CLOUDFLARE_ACCOUNT_ID` |
@@ -96,7 +112,23 @@ git push origin main
 3. 在仓库 **Settings → Secrets → Actions** 更新 `CLOUDFLARE_API_TOKEN`
 4. Account ID 固定为：`4555fd402f493f78358d5f5d98abcdca`
 
-### 本地手动部署（可选）
+### 部署到 VPS（当前主路径）
+
+```bash
+export DEPLOY_SSH_PASS='你的SSH密码'
+npm run deploy:vps
+
+# Cloudflare DNS + Origin 证书（需要 API Token）
+export CF_API_TOKEN='你的CF_API_Token'
+npm run cf:dns-ssl
+```
+
+- 脚本：`scripts/deploy-vps.sh`
+- 默认主机：`149.88.74.70`，目录：`/var/www/blog.lzch.eu.org`
+- 域名：`blog.lzch.eu.org`（Cloudflare 代理指向该服务器）
+- Cloudflare SSL 建议选 **Full**（源站已自签证书）
+
+### 本地手动部署到 Cloudflare Pages（可选）
 
 ```bash
 npx wrangler login   # 仅首次或登录过期时
@@ -116,4 +148,4 @@ npm run cf:deploy
 
 ## 旁注（MDX）
 
-见 `src/content/posts/welcome-essay.mdx`。
+见 `src/content/posts/ai-practical-guide.mdx` 或 `src/components/mdx/`。

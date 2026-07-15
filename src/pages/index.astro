@@ -9,41 +9,25 @@ import ClosingStrip from '../components/home/ClosingStrip.astro';
 import ContinueReading from '../components/reader/ContinueReading.astro';
 import ImmersiveDeck from '../components/media/ImmersiveDeck';
 import { catalog } from '../data/listening';
-import { readingPaths } from '../data/reading-paths';
-import { getPublishedPosts, postSlug } from '../lib/posts';
+import {
+  getPublishedPosts,
+  pickLeadPost,
+  toPostCard,
+} from '../lib/posts';
+import { loadReadingPathDefinitions } from '../lib/load-reading-paths';
 import { resolveReadingPaths } from '../lib/reading-paths';
-import { getCollection } from 'astro:content';
+import { getSeriesCards } from '../lib/series';
 import '../styles/home.css';
 import '../styles/reader.css';
 
 const posts = await getPublishedPosts();
-const cards = posts.map((post) => ({
-  slug: postSlug(post),
-  title: post.data.title,
-  summary: post.data.summary,
-  date: post.data.date,
-  type: post.data.type,
-  status: post.data.status,
-  tags: post.data.tags,
-}));
+const cards = posts.map(toPostCard);
 const bySlug = new Map(cards.map((card) => [card.slug, card]));
-const paths = resolveReadingPaths(readingPaths, bySlug);
-const lead = cards.find((card) => card.type === 'essay') ?? cards[0];
-const seriesEntries = await getCollection('series');
-const seriesCards = seriesEntries.map((s) => {
-  const chapters = posts
-    .filter((p) => p.data.series === s.id)
-    .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
-    .map((post) => postSlug(post));
-  return {
-    id: s.id,
-    title: s.data.title,
-    summary: s.data.summary,
-    count: chapters.length,
-    chapters,
-    href: chapters[0] ? `/posts/${chapters[0]}/` : `/series/${s.id}/`,
-  };
-});
+const pathDefs = await loadReadingPathDefinitions(posts);
+const paths = resolveReadingPaths(pathDefs, bySlug);
+const leadPost = pickLeadPost(posts);
+const lead = leadPost ? toPostCard(leadPost) : undefined;
+const seriesCards = await getSeriesCards(posts);
 ---
 <BaseLayout title="Home" bodyClass="has-bg-deck">
   <div class="home-shell">
@@ -51,10 +35,10 @@ const seriesCards = seriesEntries.map((s) => {
     <div class="container home-shell__content">
       <Hero lead={lead} />
       <ContinueReading posts={cards} />
-      <ReadingPaths paths={paths} />
+      {paths.length > 0 ? <ReadingPaths paths={paths} /> : null}
       <LatestGrowth posts={cards.slice(0, 6)} />
       <GardenGlimpse />
-      <SeriesShelf series={seriesCards} />
+      {seriesCards.length > 0 ? <SeriesShelf series={seriesCards} /> : null}
       <ClosingStrip track={catalog[0]} />
     </div>
   </div>
