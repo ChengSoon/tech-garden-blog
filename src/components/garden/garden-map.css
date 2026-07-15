@@ -1,14 +1,334 @@
-.garden-map { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-elevated); }
-.garden-map__intro { display: flex; justify-content: space-between; gap: 1rem; padding: .85rem 1rem; border-bottom: 1px solid var(--border); }
-.garden-map__intro p { margin: 0; color: var(--text-muted); font-size: .85rem; }
-.garden-map svg { display: block; width: 100%; min-height: 420px; }
-.garden-map__edges line { stroke: var(--border-strong); stroke-width: 1.5; }
-.garden-map__clusters text { fill: var(--text-muted); font: 500 13px var(--font-ui); text-anchor: middle; letter-spacing: .06em; }
-.garden-node { cursor: pointer; outline: none; }
-.garden-node circle { fill: var(--bg); stroke: var(--accent); stroke-width: 3; transition: fill var(--motion-fast), transform var(--motion-fast); }
-.garden-node--note circle { stroke: var(--brass); }
-.garden-node text { fill: var(--text); font: 600 13px var(--font-ui); text-anchor: middle; pointer-events: none; }
-.garden-node:hover circle, .garden-node:focus-visible circle { fill: var(--accent-soft); transform: scale(1.1); }
-.garden-node:focus-visible circle { stroke-width: 6; }
-@media (max-width: 760px) { .garden-map svg { min-height: 340px; } .garden-map__intro { display: block; } }
-@media (prefers-reduced-motion: reduce) { .garden-node circle { transition: none; } }
+/* Constellation map — night sky canvas with living stars */
+
+.garden-map {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #0a0f0d;
+  color: #c5d4cb;
+}
+
+.garden-map__intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid color-mix(in oklab, #e8f0ea 10%, transparent);
+  background: color-mix(in oklab, #101814 92%, black);
+}
+
+.garden-map__intro .eyebrow {
+  margin: 0 0 0.2rem;
+  color: color-mix(in oklab, var(--accent) 80%, #d7ebe2);
+  letter-spacing: 0.12em;
+}
+
+.garden-map__intro p {
+  margin: 0;
+  color: color-mix(in oklab, #d7e4dc 72%, transparent);
+  font-size: 0.85rem;
+}
+
+.garden-map__hint {
+  flex-shrink: 0;
+  font: 500 0.78rem/1.2 var(--font-ui);
+  letter-spacing: 0.08em;
+  color: color-mix(in oklab, #d7e4dc 48%, transparent);
+  text-transform: uppercase;
+}
+
+.garden-map__stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.garden-map__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 40%, transparent 40%, color-mix(in oklab, black 35%, transparent) 100%);
+  z-index: 1;
+}
+
+.garden-map svg {
+  display: block;
+  width: 100%;
+  min-height: 440px;
+  color: #d7e4dc;
+}
+
+.garden-map__sky {
+  pointer-events: none;
+}
+
+.garden-map__guides {
+  pointer-events: none;
+  stroke: currentColor;
+  stroke-opacity: 0.045;
+}
+
+.garden-map__orbit--outer {
+  stroke-opacity: 0.05;
+  animation: constellation-orbit-breathe 10s ease-in-out infinite;
+}
+
+.garden-map__orbit--inner {
+  stroke-opacity: 0.035;
+  animation: constellation-orbit-breathe 10s ease-in-out infinite reverse;
+}
+
+/* Background dust twinkles */
+.garden-map__dust {
+  fill: #e8f0ea;
+  opacity: var(--dust-o, 0.4);
+  animation: constellation-twinkle ease-in-out infinite;
+}
+
+/* Whole graph slowly sways — edges stay attached to stars */
+.garden-map__living {
+  transform-origin: 500px 328px;
+  animation: constellation-sway 16s ease-in-out infinite;
+}
+
+.garden-map__edges .garden-map__edge {
+  stroke: color-mix(in oklab, var(--accent) 70%, #e8f0ea);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-opacity: 0.55;
+  animation: constellation-edge-pulse 4.8s ease-in-out infinite;
+  transition:
+    stroke-opacity 180ms var(--ease-out),
+    stroke-width 180ms var(--ease-out),
+    stroke 180ms var(--ease-out);
+}
+
+.garden-map__edges .garden-map__edge.is-hot {
+  stroke: color-mix(in oklab, var(--accent) 35%, #f2faf6);
+  stroke-width: 1.9;
+  stroke-opacity: 0.95;
+  animation: none;
+}
+
+.garden-map__edges .garden-map__edge.is-dim {
+  stroke-opacity: 0.08;
+  stroke-width: 1;
+  animation: none;
+}
+
+.garden-map__clusters text {
+  fill: color-mix(in oklab, #d7e4dc 55%, transparent);
+  font: 500 12px var(--font-ui);
+  text-anchor: middle;
+  letter-spacing: 0.14em;
+  text-transform: lowercase;
+  pointer-events: none;
+  transition: opacity 180ms var(--ease-out);
+}
+
+.garden-map__clusters text.is-soft {
+  opacity: 0.35;
+}
+
+.garden-node {
+  cursor: pointer;
+  outline: none;
+  /* opacity only — avoid CSS transform clobbering SVG translate */
+  animation: constellation-enter 0.7s var(--ease-out) backwards;
+  animation-delay: var(--enter-delay, 0s);
+  transition: opacity 180ms var(--ease-out);
+}
+
+.garden-node.is-dim {
+  opacity: 0.28;
+}
+
+.garden-node__float {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: constellation-star-float var(--float-dur, 9s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+.garden-node__core {
+  fill: #f4faf6;
+  animation: constellation-star-twinkle var(--star-dur, 3.2s) ease-in-out infinite;
+  animation-delay: var(--star-delay, 0s);
+}
+
+.garden-node--essay .garden-node__core {
+  fill: color-mix(in oklab, var(--accent) 35%, #f7fffb);
+}
+
+.garden-node--note .garden-node__core {
+  fill: color-mix(in oklab, var(--signal) 40%, #fff6f2);
+}
+
+.garden-node__ring {
+  stroke: color-mix(in oklab, var(--accent) 55%, #e8f0ea);
+  stroke-width: 1.1;
+  stroke-opacity: 0.45;
+  transition: stroke-opacity 180ms var(--ease-out), stroke-width 180ms var(--ease-out);
+}
+
+.garden-node--note .garden-node__ring {
+  stroke: color-mix(in oklab, var(--signal) 60%, #ffe8e0);
+}
+
+.garden-node__spike {
+  fill: color-mix(in oklab, #f4faf6 70%, transparent);
+  pointer-events: none;
+  animation: constellation-star-twinkle var(--star-dur, 3.2s) ease-in-out infinite;
+  animation-delay: var(--star-delay, 0s);
+}
+
+.garden-node--note .garden-node__spike {
+  fill: color-mix(in oklab, var(--signal) 45%, #fff0ea);
+}
+
+.garden-node__halo {
+  pointer-events: none;
+  animation: constellation-halo-breathe var(--star-dur, 3.2s) ease-in-out infinite;
+  animation-delay: var(--star-delay, 0s);
+}
+
+.garden-node__label {
+  fill: color-mix(in oklab, #edf4ef 88%, transparent);
+  font: 600 12.5px var(--font-ui);
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: color-mix(in oklab, #080c0a 75%, transparent);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.garden-node:hover .garden-node__ring,
+.garden-node:focus-visible .garden-node__ring,
+.garden-node.is-focus .garden-node__ring {
+  stroke-opacity: 1;
+}
+
+.garden-node:focus-visible .garden-node__ring {
+  stroke-width: 2;
+  stroke: #f4faf6;
+}
+
+.garden-node:hover .garden-node__label,
+.garden-node:focus-visible .garden-node__label,
+.garden-node.is-focus .garden-node__label {
+  fill: #ffffff;
+}
+
+.garden-node:hover .garden-node__float,
+.garden-node:focus-visible .garden-node__float,
+.garden-node.is-focus .garden-node__float {
+  animation-play-state: paused;
+  transform: scale(1.12);
+}
+
+/* Keyframes */
+@keyframes constellation-sway {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  25% { transform: translate3d(4px, -3px, 0) rotate(0.35deg); }
+  50% { transform: translate3d(-3px, 2px, 0) rotate(-0.2deg); }
+  75% { transform: translate3d(2px, 3px, 0) rotate(0.25deg); }
+}
+
+@keyframes constellation-star-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33% { transform: translate3d(2.5px, -3px, 0); }
+  66% { transform: translate3d(-2px, 2px, 0); }
+}
+
+@keyframes constellation-star-twinkle {
+  0%, 100% { opacity: 0.78; }
+  50% { opacity: 1; }
+}
+
+@keyframes constellation-halo-breathe {
+  0%, 100% { opacity: 0.72; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes constellation-twinkle {
+  0%, 100% { opacity: calc(var(--dust-o, 0.4) * 0.45); }
+  50% { opacity: var(--dust-o, 0.4); }
+}
+
+@keyframes constellation-edge-pulse {
+  0%, 100% { stroke-opacity: 0.38; }
+  50% { stroke-opacity: 0.72; }
+}
+
+@keyframes constellation-orbit-breathe {
+  0%, 100% { stroke-opacity: 0.03; }
+  50% { stroke-opacity: 0.07; }
+}
+
+@keyframes constellation-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 760px) {
+  .garden-map svg {
+    min-height: 360px;
+  }
+
+  .garden-map__intro {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .garden-node__label {
+    font-size: 11px;
+  }
+}
+
+/* Reduced motion / static mode */
+.garden-map--static .garden-map__living,
+.garden-map--static .garden-map__dust,
+.garden-map--static .garden-map__edge,
+.garden-map--static .garden-node__float,
+.garden-map--static .garden-node__core,
+.garden-map--static .garden-node__spike,
+.garden-map--static .garden-node__halo,
+.garden-map--static .garden-map__orbit {
+  animation: none !important;
+}
+
+.garden-map--static .garden-node {
+  opacity: 1;
+  animation: none;
+}
+
+.garden-map--static .garden-map__edge {
+  stroke-opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-map__living,
+  .garden-map__dust,
+  .garden-map__edge,
+  .garden-node,
+  .garden-node__float,
+  .garden-node__core,
+  .garden-node__spike,
+  .garden-node__halo,
+  .garden-map__orbit {
+    animation: none !important;
+  }
+
+  .garden-node {
+    opacity: 1;
+  }
+
+  .garden-map__edges .garden-map__edge,
+  .garden-node,
+  .garden-map__clusters text {
+    transition: none;
+  }
+}

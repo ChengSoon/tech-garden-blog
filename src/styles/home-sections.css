@@ -92,9 +92,11 @@
 .garden-glimpse__map {
   display: block;
   min-height: 300px;
+  overflow: hidden;
   border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  color: var(--accent);
+  border-radius: var(--radius-lg);
+  background: #0a0f0d;
+  color: #c5d4cb;
 }
 
 .garden-glimpse__map svg {

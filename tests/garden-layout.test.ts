@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { layoutNodes, shortLabel } from '../src/lib/garden-layout';
+import { hash01, layoutNodes, makeStarfield, shortLabel } from '../src/lib/garden-layout';
 import type { GraphNode } from '../src/lib/types';
 
 const nodes: GraphNode[] = [
@@ -41,5 +41,46 @@ describe('layoutNodes', () => {
       }
     }
     expect(Math.min(...pairs)).toBeGreaterThan(120);
+  });
+});
+
+describe('hash01 / starfield', () => {
+  it('is stable and bounded', () => {
+    expect(hash01('alpha')).toBe(hash01('alpha'));
+    expect(hash01('alpha')).not.toBe(hash01('beta'));
+    expect(hash01('alpha')).toBeGreaterThanOrEqual(0);
+    expect(hash01('alpha')).toBeLessThan(1);
+  });
+
+  it('builds a deterministic starfield', () => {
+    const a = makeStarfield(12, 'sky');
+    const b = makeStarfield(12, 'sky');
+    expect(a).toEqual(b);
+    expect(a).toHaveLength(12);
+    expect(a[0].x).toBeGreaterThanOrEqual(0);
+    expect(a[0].x).toBeLessThanOrEqual(1000);
+  });
+});
+
+describe('clustered constellation layout', () => {
+  it('keeps multi-tag nodes near the canvas center', () => {
+    const many: GraphNode[] = Array.from({ length: 8 }, (_, i) => ({
+      slug: `n${i}`,
+      title: `节点 ${i}`,
+      type: i % 3 === 0 ? 'essay' : 'note',
+      status: 'growing',
+      tags: [i % 2 === 0 ? 'alpha' : 'beta'],
+      summary: '',
+      date: '2026-07-01T00:00:00.000Z',
+    }));
+    const pos = layoutNodes(many);
+    const xs = Object.values(pos).map((p) => p.x);
+    const ys = Object.values(pos).map((p) => p.y);
+    const midX = (Math.min(...xs) + Math.max(...xs)) / 2;
+    const midY = (Math.min(...ys) + Math.max(...ys)) / 2;
+    expect(midX).toBeGreaterThan(350);
+    expect(midX).toBeLessThan(650);
+    expect(midY).toBeGreaterThan(180);
+    expect(midY).toBeLessThan(480);
   });
 });

@@ -32,7 +32,7 @@ export default function GardenToolbar(props: Props) {
     <div className="garden-toolbar card">
       <div className="garden-toolbar__row">
         <div className="garden-segmented" role="group" aria-label="视图切换">
-          {([['map', '主题地图'], ['timeline', '时间线']] as const).map(([id, label]) => (
+          {([['map', '星座图'], ['timeline', '时间线']] as const).map(([id, label]) => (
             <button key={id} type="button" className={props.view === id ? 'active' : ''}
               onClick={() => props.onView(id)}>{label}</button>
           ))}

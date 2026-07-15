@@ -1,6 +1,6 @@
 ---
 import { getGraph } from '../../lib/build-graph';
-import { clusterCenters, layoutNodes } from '../../lib/garden-layout';
+import { clusterCenters, layoutNodes, makeStarfield, shortLabel } from '../../lib/garden-layout';
 
 const graph = await getGraph();
 const nodes = graph.nodes.slice(0, 12);
@@ -12,21 +12,22 @@ const visibleSlugs = new Set(nodes.map((node) => node.slug));
 const edges = graph.edges.filter(
   (edge) => visibleSlugs.has(edge.source) && visibleSlugs.has(edge.target),
 );
+const starfield = makeStarfield(48, 'home-glimpse');
 ---
 <section class="home-section garden-glimpse">
   <div class="section-head">
-    <h2>知识地图</h2>
+    <h2>知识星座</h2>
     <a href="/garden">进入花园 →</a>
   </div>
   <div class="garden-glimpse__grid">
     <div class="garden-glimpse__topics">
-      <p class="muted">从主题进入，也可以沿显式链接继续漫游。</p>
+      <p class="muted">从主题进入，也可以沿星轨继续漫游。</p>
       <ol>
         {clusters.map((cluster, index) => (
           <li>
             <span>{String(index + 1).padStart(2, '0')}</span>
             <a href={`/tags/${cluster.key}/`}>#{cluster.key}</a>
-            <em>{cluster.count} 个节点</em>
+            <em>{cluster.count} 颗星</em>
           </li>
         ))}
       </ol>
@@ -36,8 +37,25 @@ const edges = graph.edges.filter(
         ))}
       </ul>
     </div>
-    <a class="garden-glimpse__map" href="/garden" aria-label="打开完整知识花园">
-      <svg viewBox="0 0 1000 640" role="img" aria-label={`${nodes.length} 个节点的关系预览`}>
+    <a class="garden-glimpse__map" href="/garden" aria-label="打开完整知识花园星座图">
+      <svg viewBox="0 0 1000 640" role="img" aria-label={`${nodes.length} 个节点的星座预览`}>
+        <defs>
+          <radialGradient id="glimpse-sky" cx="50%" cy="42%" r="68%">
+            <stop offset="0%" stop-color="#1a2822" />
+            <stop offset="55%" stop-color="#0f1613" />
+            <stop offset="100%" stop-color="#080c0a" />
+          </radialGradient>
+        </defs>
+        <rect width="1000" height="640" fill="url(#glimpse-sky)" />
+        {starfield.map((star) => (
+          <circle
+            cx={star.x}
+            cy={star.y}
+            r={star.r}
+            fill="#e8f0ea"
+            opacity={star.o * 0.7}
+          />
+        ))}
         {edges.map((edge) => {
           const source = positions[edge.source];
           const target = positions[edge.target];
@@ -48,24 +66,36 @@ const edges = graph.edges.filter(
               y1={source.y}
               x2={target.x}
               y2={target.y}
-              stroke="currentColor"
-              stroke-opacity="0.28"
-              stroke-width="2"
+              stroke="color-mix(in oklab, var(--accent) 70%, #e8f0ea)"
+              stroke-opacity="0.5"
+              stroke-width="1.5"
+              stroke-linecap="round"
             />
           );
         })}
         {nodes.map((node) => {
           const point = positions[node.slug];
           if (!point) return null;
+          const essay = node.type === 'essay';
           return (
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r={node.type === 'essay' ? 13 : 9}
-              fill={node.type === 'essay' ? 'var(--accent)' : 'var(--bg-elevated)'}
-              stroke="var(--accent)"
-              stroke-width="3"
-            />
+            <g transform={`translate(${point.x} ${point.y})`}>
+              <circle
+                r={essay ? 16 : 12}
+                fill={essay ? 'color-mix(in oklab, var(--accent) 28%, transparent)' : 'color-mix(in oklab, var(--signal) 24%, transparent)'}
+              />
+              <circle
+                r={essay ? 4.5 : 3.2}
+                fill={essay ? 'color-mix(in oklab, var(--accent) 40%, #f7fffb)' : 'color-mix(in oklab, var(--signal) 45%, #fff6f2)'}
+              />
+              <text
+                y={essay ? 28 : 24}
+                fill="#edf4ef"
+                font-size="12"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="var(--font-ui)"
+              >{shortLabel(node.title, 10)}</text>
+            </g>
           );
         })}
       </svg>
