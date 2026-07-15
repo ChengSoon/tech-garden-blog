@@ -194,3 +194,183 @@
     border-bottom: 0;
   }
 }
+
+
+/* ── Growth rows ── */
+.growth-row {
+  position: relative;
+  transition:
+    background-color var(--motion-base) var(--ease-out),
+    transform var(--motion-base) var(--ease-out);
+}
+
+.growth-row::before {
+  content: "";
+  position: absolute;
+  left: -0.35rem;
+  top: 0.85rem;
+  bottom: 0.85rem;
+  width: 2px;
+  background: var(--signal);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 0.35s var(--ease-out);
+}
+
+.growth-row:hover {
+  background: color-mix(in oklab, var(--bg-elevated) 70%, transparent);
+  transform: translate3d(3px, 0, 0);
+}
+
+.growth-row:hover::before {
+  transform: scaleY(1);
+}
+
+.growth-row__main strong {
+  transition: color var(--motion-base) var(--ease-inout);
+}
+
+.growth-row:hover .growth-row__main strong {
+  color: var(--accent);
+}
+
+.growth-row__number {
+  transition: transform var(--motion-base) var(--ease-spring);
+}
+
+.growth-row:hover .growth-row__number {
+  transform: translate3d(0, -2px, 0);
+}
+
+/* ── Garden glimpse ── */
+.garden-glimpse__map {
+  transition:
+    transform var(--motion-slow) var(--ease-out),
+    box-shadow var(--motion-slow) var(--ease-out),
+    border-color var(--motion-base) var(--ease-inout);
+}
+
+.garden-glimpse__map:hover {
+  transform: translate3d(0, -3px, 0);
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+  box-shadow: 0 18px 40px color-mix(in oklab, black 18%, transparent);
+}
+
+.garden-glimpse__map svg {
+  transition: transform 0.7s var(--ease-out);
+}
+
+.garden-glimpse__map:hover svg {
+  transform: scale(1.025);
+}
+
+.garden-glimpse__topics ol li {
+  transition:
+    background-color var(--motion-base) var(--ease-out),
+    padding-left var(--motion-base) var(--ease-out);
+}
+
+.garden-glimpse__topics ol li:hover {
+  background: color-mix(in oklab, var(--bg-elevated) 80%, transparent);
+  padding-left: 0.35rem;
+}
+
+/* ── Series shelf ── */
+.series-shelf__list a {
+  position: relative;
+  transition:
+    transform var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) var(--ease-inout),
+    background-color var(--motion-base) var(--ease-out);
+}
+
+.series-shelf__list a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--signal), var(--accent));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.series-shelf__list a:hover {
+  transform: translate3d(0, -4px, 0);
+  border-top-color: transparent;
+  background: color-mix(in oklab, var(--bg-elevated) 65%, transparent);
+  text-decoration: none;
+}
+
+.series-shelf__list a:hover::after {
+  transform: scaleX(1);
+}
+
+/* ── Closing strip ── */
+.closing-strip__item {
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color var(--motion-base) var(--ease-out),
+    transform var(--motion-base) var(--ease-out),
+    color var(--motion-base) var(--ease-inout);
+}
+
+.closing-strip__item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 0% 100%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+  pointer-events: none;
+}
+
+.closing-strip__item:hover {
+  transform: translate3d(0, -2px, 0);
+  text-decoration: none;
+}
+
+.closing-strip__item:hover::before {
+  opacity: 1;
+}
+
+.closing-strip__item em {
+  display: inline-block;
+  transition: transform var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-inout);
+}
+
+.closing-strip__item:hover em {
+  color: var(--accent);
+  transform: translate3d(4px, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .growth-row,
+  .growth-row::before,
+  .growth-row__main strong,
+  .growth-row__number,
+  .garden-glimpse__map,
+  .garden-glimpse__map svg,
+  .garden-glimpse__topics ol li,
+  .series-shelf__list a,
+  .series-shelf__list a::after,
+  .closing-strip__item,
+  .closing-strip__item::before,
+  .closing-strip__item em {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .growth-row:hover,
+  .garden-glimpse__map:hover,
+  .garden-glimpse__map:hover svg,
+  .series-shelf__list a:hover,
+  .closing-strip__item:hover,
+  .closing-strip__item:hover em {
+    transform: none !important;
+  }
+}

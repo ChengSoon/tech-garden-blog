@@ -11,6 +11,7 @@
   grid-column: 1 / -1;
 }
 
+/* ── Hero ── */
 .home-hero {
   display: grid;
   min-height: min(76svh, 760px);
@@ -24,15 +25,49 @@
   animation: motion-rise var(--motion-enter) var(--ease-out) both;
 }
 
-.home-hero h1 {
-  margin: 0.5rem 0 1rem;
+.home-hero > *:nth-child(1) { animation-delay: 40ms; }
+.home-hero > *:nth-child(2) { animation-delay: 90ms; }
+.home-hero > *:nth-child(3) { animation-delay: 140ms; }
+.home-hero > *:nth-child(4) { animation-delay: 190ms; }
+.home-hero > *:nth-child(5) { animation-delay: 250ms; }
+.home-hero > *:nth-child(6) { animation-delay: 310ms; }
+
+.home-hero__title {
+  margin: 0.5rem 0 0.35rem;
+  padding-block: 0.06em 0.1em;
   font-size: clamp(3rem, 8vw, 6.5rem);
+  /* 大号衬线字需要足够行高，否则 g / 中文会被裁切 */
+  line-height: 1.12;
+  overflow: visible;
 }
 
-.home-hero h1 span {
+.home-hero__line {
   display: block;
+  overflow: visible;
+  /* 不用 clip-path：会按行盒裁切衬线字脚与中文 */
+  animation: motion-rise 0.7s var(--ease-out) both;
+}
+
+.home-hero__line:nth-child(1) { animation-delay: 120ms; }
+.home-hero__line:nth-child(2) { animation-delay: 220ms; }
+
+.home-hero__line--accent {
+  display: block;
+  margin-top: 0.08em;
   color: var(--accent);
   font-size: 0.58em;
+  line-height: 1.15;
+}
+
+.home-hero__rule {
+  display: block;
+  width: min(12rem, 40vw);
+  height: 2px;
+  margin: 0.85rem 0 1.1rem;
+  background: linear-gradient(90deg, var(--signal), var(--accent), transparent);
+  transform-origin: left center;
+  animation: motion-rule-grow 0.75s var(--ease-out) both;
+  animation-delay: 280ms;
 }
 
 .home-hero__lede {
@@ -44,17 +79,33 @@
 }
 
 .home-hero__lead {
+  position: relative;
   display: grid;
   max-width: 34rem;
   gap: 0.28rem;
-  padding: 0.9rem 0;
+  padding: 1rem 0 1rem 1rem;
   border-top: 1px solid var(--border-strong);
   border-bottom: 1px solid var(--border-strong);
+  border-left: 2px solid transparent;
   color: var(--text);
+  text-decoration: none;
+  transition:
+    border-color var(--motion-base) var(--ease-out),
+    background-color var(--motion-base) var(--ease-out),
+    transform var(--motion-base) var(--ease-out),
+    padding-left var(--motion-base) var(--ease-out);
+}
+
+.home-hero__lead:hover,
+.home-hero__lead:focus-visible {
+  border-left-color: var(--signal);
+  background: color-mix(in oklab, var(--bg-elevated) 70%, transparent);
+  transform: translate3d(4px, 0, 0);
+  padding-left: 1.15rem;
   text-decoration: none;
 }
 
-.home-hero__lead > span {
+.home-hero__lead-kicker {
   color: var(--signal);
   font: 500 0.7rem/1.4 var(--font-ui);
   letter-spacing: 0.13em;
@@ -71,17 +122,79 @@
   font-style: normal;
 }
 
+.home-hero__lead-arrow {
+  margin-top: 0.35rem;
+  color: var(--accent);
+  font: 500 0.78rem/1 var(--font-ui);
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: translate3d(-6px, 0, 0);
+  transition:
+    opacity var(--motion-base) var(--ease-out),
+    transform var(--motion-base) var(--ease-out);
+}
+
+.home-hero__lead:hover .home-hero__lead-arrow,
+.home-hero__lead:focus-visible .home-hero__lead-arrow {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
 .home-hero__next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   margin-top: 1.5rem;
   font: 500 0.82rem/1 var(--font-ui);
   letter-spacing: 0.08em;
   text-decoration: none;
   text-transform: uppercase;
+  transition: color var(--motion-base) var(--ease-inout);
 }
 
+.home-hero__next:hover {
+  color: var(--accent);
+}
+
+.home-hero__chev {
+  display: inline-block;
+  animation: motion-arrow-bob 1.6s var(--ease-inout) infinite;
+}
+
+/* ── Sections ── */
 .home-section {
   padding-block: clamp(2.5rem, 6vw, 5rem);
   border-top: 1px solid var(--border-strong);
+}
+
+.home-section .section-head {
+  position: relative;
+}
+
+.home-section .section-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 4.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--signal), var(--accent));
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.55s var(--ease-out);
+}
+
+/* grow when section or any nested motion item is revealed */
+.home-section.is-inview .section-head::after,
+.home-section:has(.is-inview) .section-head::after {
+  transform: scaleX(1);
+}
+
+/* fallback if IO disabled / reduced motion already revealed */
+@media (prefers-reduced-motion: reduce) {
+  .home-section .section-head::after {
+    transform: scaleX(1);
+  }
 }
 
 .reading-paths__list,
@@ -97,15 +210,28 @@
   gap: 1.25rem;
   padding-block: 1.25rem;
   border-top: 1px solid var(--border);
+  transition:
+    background-color var(--motion-base) var(--ease-out),
+    transform var(--motion-base) var(--ease-out);
 }
 
 .reading-paths__list > li:first-child .reading-path {
   border-top: 0;
 }
 
+.reading-path:hover {
+  background: color-mix(in oklab, var(--bg-elevated) 75%, transparent);
+  transform: translate3d(4px, 0, 0);
+}
+
 .reading-path__number {
   color: var(--signal);
   font: 600 1.2rem/1 var(--font-display);
+  transition: transform var(--motion-base) var(--ease-spring);
+}
+
+.reading-path:hover .reading-path__number {
+  transform: scale(1.12);
 }
 
 .reading-path__copy h3,
@@ -115,6 +241,11 @@
 
 .reading-path__copy h3 {
   font-size: 1.55rem;
+  transition: color var(--motion-base) var(--ease-inout);
+}
+
+.reading-path:hover .reading-path__copy h3 {
+  color: var(--accent);
 }
 
 .reading-path__copy p {
@@ -130,8 +261,19 @@
 }
 
 .reading-path__articles a {
+  position: relative;
   color: var(--text);
-  text-decoration-color: var(--border-strong);
+  text-decoration-color: transparent;
+  transition:
+    color var(--motion-base) var(--ease-inout),
+    text-decoration-color var(--motion-base) var(--ease-inout),
+    padding-left var(--motion-base) var(--ease-out);
+}
+
+.reading-path__articles a:hover {
+  color: var(--accent);
+  text-decoration-color: color-mix(in oklab, var(--accent) 50%, transparent);
+  padding-left: 0.35rem;
 }
 
 @media (max-width: 760px) {
@@ -150,11 +292,25 @@
   .reading-path__articles {
     grid-column: 2;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-hero > * {
-    animation: none;
+  .home-hero > *,
+  .home-hero__line,
+  .home-hero__rule,
+  .home-hero__chev {
+    animation: none !important;
+  }
+
+  .home-hero__lead,
+  .reading-path,
+  .reading-path__number,
+  .reading-path__articles a {
+    transition: none !important;
+  }
+
+  .home-hero__lead:hover,
+  .reading-path:hover {
+    transform: none !important;
   }
 }

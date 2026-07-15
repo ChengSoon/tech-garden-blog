@@ -20,7 +20,7 @@ const { posts } = Astro.props as { posts: PostCard[] };
   </div>
   <ol class="latest-growth__list">
     {posts.map((post, index) => (
-      <li class="growth-row">
+      <li class="growth-row" data-motion style={`--motion-i: ${index}`}>
         <span class="growth-row__number">{String(index + 1).padStart(2, '0')}</span>
         <div class="growth-row__meta">
           <time datetime={post.date.toISOString()}>

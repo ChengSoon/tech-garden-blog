@@ -96,6 +96,15 @@ const links = [
     border-radius: 50%;
     background: var(--signal);
     box-shadow: 0 0 0 3px var(--signal-soft);
+    animation: motion-mark-pulse 3.2s var(--ease-inout) infinite;
+  }
+
+  .brand:hover .brand__mark {
+    animation-duration: 1.4s;
+  }
+
+  .brand:hover .brand__name {
+    color: var(--accent);
   }
 
   .brand__text {
@@ -108,6 +117,7 @@ const links = [
     font-size: 1.35rem;
     font-weight: 600;
     letter-spacing: -0.02em;
+    transition: color var(--motion-base) var(--ease-inout);
   }
 
   .brand__sub {
@@ -125,6 +135,7 @@ const links = [
   }
 
   .nav a {
+    position: relative;
     display: inline-flex;
     min-height: 44px;
     align-items: center;
@@ -136,19 +147,38 @@ const links = [
     font-weight: 500;
     letter-spacing: 0.04em;
     text-decoration: none;
-    transition:
-      border-color var(--motion-base) var(--ease-inout),
-      color var(--motion-base) var(--ease-inout);
+    transition: color var(--motion-base) var(--ease-inout);
+  }
+
+  .nav a::after {
+    content: "";
+    position: absolute;
+    left: 0.55rem;
+    right: 0.55rem;
+    bottom: 0;
+    height: 2px;
+    background: var(--signal);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.28s var(--ease-out);
   }
 
   .nav a:hover {
-    border-bottom-color: var(--border-strong);
     color: var(--text);
   }
 
+  .nav a:hover::after {
+    transform: scaleX(0.55);
+    background: var(--border-strong);
+  }
+
   .nav a[aria-current='page'] {
-    border-bottom-color: var(--signal);
     color: var(--accent);
+  }
+
+  .nav a[aria-current='page']::after {
+    transform: scaleX(1);
+    background: var(--signal);
   }
 
   .site-header__actions {
@@ -241,6 +271,12 @@ const links = [
   @media (prefers-reduced-motion: reduce) {
     .mobile-nav__panel {
       animation: none;
+    }
+
+    .brand__mark,
+    .nav a::after {
+      animation: none !important;
+      transition: none !important;
     }
   }
 </style>

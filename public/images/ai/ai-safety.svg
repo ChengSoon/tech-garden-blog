@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="t d">
+  <title id="t">AI 使用红线与原则</title>
+  <desc id="d">隐私、事实、责任三条底线</desc>
+  <rect width="960" height="420" fill="#101412"/>
+  <text x="48" y="52" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13" letter-spacing="3">GUARDRAILS</text>
+  <text x="48" y="92" fill="#edf1ed" font-family="Georgia, serif" font-size="32" font-weight="600">用得爽之前，先守住三条线</text>
+
+  <g font-family="Sora, sans-serif">
+    <rect x="48" y="140" width="280" height="200" rx="10" fill="#1a221e" stroke="#303a34"/>
+    <circle cx="96" cy="188" r="22" fill="#3a2420" stroke="#ef8066"/>
+    <text x="96" y="194" text-anchor="middle" fill="#ef8066" font-size="16" font-weight="700">1</text>
+    <text x="136" y="194" fill="#edf1ed" font-size="18" font-weight="600">隐私线</text>
+    <text x="72" y="240" fill="#9ca8a1" font-size="14">不粘贴密钥、密码、</text>
+    <text x="72" y="264" fill="#9ca8a1" font-size="14">未公开的客户数据与</text>
+    <text x="72" y="288" fill="#9ca8a1" font-size="14">敏感身份信息。</text>
+
+    <rect x="348" y="140" width="280" height="200" rx="10" fill="#1a221e" stroke="#303a34"/>
+    <circle cx="396" cy="188" r="22" fill="#3a2420" stroke="#ef8066"/>
+    <text x="396" y="194" text-anchor="middle" fill="#ef8066" font-size="16" font-weight="700">2</text>
+    <text x="436" y="194" fill="#edf1ed" font-size="18" font-weight="600">事实线</text>
+    <text x="372" y="240" fill="#9ca8a1" font-size="14">数字、引用、法律与</text>
+    <text x="372" y="264" fill="#9ca8a1" font-size="14">医疗建议必须二次核</text>
+    <text x="372" y="288" fill="#9ca8a1" font-size="14">查，默认它可能编造。</text>
+
+    <rect x="648" y="140" width="264" height="200" rx="10" fill="#1a221e" stroke="#303a34"/>
+    <circle cx="696" cy="188" r="22" fill="#3a2420" stroke="#ef8066"/>
+    <text x="696" y="194" text-anchor="middle" fill="#ef8066" font-size="16" font-weight="700">3</text>
+    <text x="736" y="194" fill="#edf1ed" font-size="18" font-weight="600">责任线</text>
+    <text x="672" y="240" fill="#9ca8a1" font-size="14">发出去的内容，署名</text>
+    <text x="672" y="264" fill="#9ca8a1" font-size="14">的是你。AI 是工具，</text>
+    <text x="672" y="288" fill="#9ca8a1" font-size="14">不是背锅侠。</text>
+  </g>
+</svg>

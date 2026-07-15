@@ -20,7 +20,7 @@ const { paths } = Astro.props as { paths: Path[] };
   </div>
   <ol class="reading-paths__list">
     {paths.map((path, index) => (
-      <li>
+      <li data-motion style={`--motion-i: ${index}`}>
         <article class="reading-path">
           <span class="reading-path__number">{String(index + 1).padStart(2, '0')}</span>
           <div class="reading-path__copy">

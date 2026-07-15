@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="t d">
+  <title id="t">AI 使用场景地图</title>
+  <desc id="d">写作、编程、学习、决策、创作五类高频用法</desc>
+  <rect width="960" height="560" fill="#0c1210"/>
+  <text x="48" y="52" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13" letter-spacing="3">USE CASES</text>
+  <text x="48" y="92" fill="#edf1ed" font-family="Georgia, serif" font-size="32" font-weight="600">普通人最值得先用的五类场景</text>
+
+  <g font-family="Sora, sans-serif">
+    <!-- row 1 -->
+    <rect x="48" y="140" width="280" height="160" rx="10" fill="#171c19" stroke="#303a34"/>
+    <text x="72" y="180" fill="#ef8066" font-size="28" font-weight="600">文</text>
+    <text x="118" y="178" fill="#edf1ed" font-size="18" font-weight="600">写作与改写</text>
+    <text x="72" y="216" fill="#9ca8a1" font-size="14">提纲 · 润色 · 翻译</text>
+    <text x="72" y="242" fill="#9ca8a1" font-size="14">会议纪要 · 邮件草稿</text>
+    <text x="72" y="274" fill="#84b9a8" font-size="12">先出 80% 草稿，再人工定稿</text>
+
+    <rect x="348" y="140" width="280" height="160" rx="10" fill="#171c19" stroke="#303a34"/>
+    <text x="372" y="180" fill="#ef8066" font-size="28" font-weight="600">码</text>
+    <text x="418" y="178" fill="#edf1ed" font-size="18" font-weight="600">编程与排错</text>
+    <text x="372" y="216" fill="#9ca8a1" font-size="14">解释代码 · 生成测试</text>
+    <text x="372" y="242" fill="#9ca8a1" font-size="14">重构建议 · 报错定位</text>
+    <text x="372" y="274" fill="#84b9a8" font-size="12">小步提交，始终自己跑通</text>
+
+    <rect x="648" y="140" width="264" height="160" rx="10" fill="#171c19" stroke="#303a34"/>
+    <text x="672" y="180" fill="#ef8066" font-size="28" font-weight="600">学</text>
+    <text x="718" y="178" fill="#edf1ed" font-size="18" font-weight="600">学习与研究</text>
+    <text x="672" y="216" fill="#9ca8a1" font-size="14">概念拆解 · 对比方案</text>
+    <text x="672" y="242" fill="#9ca8a1" font-size="14">读书笔记 · 模拟面试</text>
+    <text x="672" y="274" fill="#84b9a8" font-size="12">把 AI 当家教，不当答案机</text>
+
+    <!-- row 2 -->
+    <rect x="48" y="330" width="430" height="160" rx="10" fill="#171c19" stroke="#303a34"/>
+    <text x="72" y="370" fill="#ef8066" font-size="28" font-weight="600">策</text>
+    <text x="118" y="368" fill="#edf1ed" font-size="18" font-weight="600">决策辅助</text>
+    <text x="72" y="406" fill="#9ca8a1" font-size="14">利弊分析 · 风险评估 · 检查清单</text>
+    <text x="72" y="432" fill="#9ca8a1" font-size="14">帮你「想全」，不替你「拍板」</text>
+    <text x="72" y="464" fill="#84b9a8" font-size="12">关键决策仍需你的判断与责任</text>
+
+    <rect x="498" y="330" width="414" height="160" rx="10" fill="#171c19" stroke="#ef8066"/>
+    <text x="522" y="370" fill="#ef8066" font-size="28" font-weight="600">创</text>
+    <text x="568" y="368" fill="#edf1ed" font-size="18" font-weight="600">创作与表达</text>
+    <text x="522" y="406" fill="#9ca8a1" font-size="14">头脑风暴 · 角色扮演 · 视觉草稿</text>
+    <text x="522" y="432" fill="#9ca8a1" font-size="14">多版本并行，再挑最好的方向</text>
+    <text x="522" y="464" fill="#84b9a8" font-size="12">创意加速器，不是替代作者</text>
+  </g>
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="t d">
+  <title id="t">有效提示词循环</title>
+  <desc id="d">目标、上下文、约束、格式、校验五步循环</desc>
+  <rect width="960" height="520" fill="#101412"/>
+  <text x="48" y="52" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13" letter-spacing="3">PROMPT LOOP</text>
+  <text x="48" y="92" fill="#edf1ed" font-family="Georgia, serif" font-size="32" font-weight="600">会用 AI，本质是会提问</text>
+  <text x="48" y="124" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="15">把一次「碰运气」变成可重复的小流程</text>
+
+  <!-- center -->
+  <circle cx="480" cy="320" r="58" fill="#1a2822" stroke="#84b9a8" stroke-width="2"/>
+  <text x="480" y="316" text-anchor="middle" fill="#edf1ed" font-family="Georgia, serif" font-size="18">你</text>
+  <text x="480" y="340" text-anchor="middle" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="12">决策中枢</text>
+
+  <!-- five nodes around -->
+  <g font-family="Sora, sans-serif">
+    <rect x="400" y="160" width="160" height="72" rx="8" fill="#1a221e" stroke="#ef8066"/>
+    <text x="480" y="192" text-anchor="middle" fill="#ef8066" font-size="12">01 目标</text>
+    <text x="480" y="214" text-anchor="middle" fill="#edf1ed" font-size="14">你要完成什么</text>
+
+    <rect x="680" y="230" width="160" height="72" rx="8" fill="#1a221e" stroke="#303a34"/>
+    <text x="760" y="262" text-anchor="middle" fill="#84b9a8" font-size="12">02 上下文</text>
+    <text x="760" y="284" text-anchor="middle" fill="#edf1ed" font-size="14">背景与材料</text>
+
+    <rect x="640" y="380" width="160" height="72" rx="8" fill="#1a221e" stroke="#303a34"/>
+    <text x="720" y="412" text-anchor="middle" fill="#84b9a8" font-size="12">03 约束</text>
+    <text x="720" y="434" text-anchor="middle" fill="#edf1ed" font-size="14">边界与禁忌</text>
+
+    <rect x="160" y="380" width="160" height="72" rx="8" fill="#1a221e" stroke="#303a34"/>
+    <text x="240" y="412" text-anchor="middle" fill="#84b9a8" font-size="12">04 格式</text>
+    <text x="240" y="434" text-anchor="middle" fill="#edf1ed" font-size="14">输出长什么样</text>
+
+    <rect x="120" y="230" width="160" height="72" rx="8" fill="#1a221e" stroke="#303a34"/>
+    <text x="200" y="262" text-anchor="middle" fill="#84b9a8" font-size="12">05 校验</text>
+    <text x="200" y="284" text-anchor="middle" fill="#edf1ed" font-size="14">事实与可用性</text>
+  </g>
+
+  <g stroke="#46534b" stroke-width="1.5" fill="none" opacity="0.8">
+    <path d="M480 232 V278"/>
+    <path d="M560 300 L680 266"/>
+    <path d="M530 360 L640 400"/>
+    <path d="M430 360 L320 400"/>
+    <path d="M400 300 L280 266"/>
+  </g>
+</svg>

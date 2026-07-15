@@ -171,3 +171,129 @@ a.badge:hover {
   border: 0;
   border-top: 1px solid var(--border-strong);
 }
+
+
+/* motion flourishes */
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    border-color var(--motion-base) var(--ease-inout),
+    background-color var(--motion-base) var(--ease-inout),
+    color var(--motion-base) var(--ease-inout),
+    transform var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s var(--ease-out);
+  z-index: -1;
+}
+
+.btn:hover::before {
+  transform: scaleX(1);
+}
+
+.btn:hover {
+  transform: translate3d(0, -1px, 0);
+}
+
+.btn:active {
+  transform: translate3d(0, 1px, 0) scale(0.985);
+}
+
+.btn-primary::before {
+  background: color-mix(in oklab, white 14%, transparent);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 8px 22px color-mix(in oklab, var(--accent) 28%, transparent);
+}
+
+.card {
+  transition:
+    border-color var(--motion-base) var(--ease-inout),
+    background-color var(--motion-theme) var(--ease-inout),
+    transform var(--motion-base) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out);
+}
+
+a.card:hover,
+button.card:hover,
+a.card:focus-visible,
+button.card:focus-visible {
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--shadow);
+}
+
+.dot {
+  transition: transform var(--motion-base) var(--ease-out);
+}
+
+.dot[data-status="growing"] {
+  animation: motion-dot-breathe 2.2s var(--ease-inout) infinite;
+}
+
+.dot[data-status="seedling"] {
+  animation: motion-dot-breathe 2.8s var(--ease-inout) infinite;
+  animation-delay: 0.4s;
+}
+
+.section-head a {
+  position: relative;
+  transition: color var(--motion-base) var(--ease-inout);
+}
+
+.section-head a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.15em;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.section-head a:hover::after {
+  transform: scaleX(1);
+}
+
+.badge {
+  transition:
+    border-color var(--motion-base) var(--ease-inout),
+    color var(--motion-base) var(--ease-inout),
+    transform var(--motion-fast) var(--ease-out);
+}
+
+a.badge:hover {
+  transform: translate3d(0, -1px, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn::before,
+  .card,
+  .dot,
+  .section-head a,
+  .section-head a::after,
+  .badge {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .btn:hover,
+  a.card:hover,
+  a.badge:hover {
+    transform: none !important;
+  }
+}

@@ -60,6 +60,8 @@ const year = new Date().getFullYear();
   }
 
   .site-footer__links a {
+    position: relative;
+    transition: color var(--motion-base) var(--ease-inout), transform var(--motion-base) var(--ease-out);
     display: inline-flex;
     min-height: 44px;
     align-items: center;
@@ -72,6 +74,7 @@ const year = new Date().getFullYear();
   }
 
   .site-footer__links a:hover {
+    transform: translate3d(0, -1px, 0);
     color: var(--accent);
   }
 

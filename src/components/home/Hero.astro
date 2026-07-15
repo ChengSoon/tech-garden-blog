@@ -13,20 +13,24 @@ interface Props {
 const { lead } = Astro.props;
 ---
 <section class="home-hero" aria-labelledby="home-title">
-  <p class="eyebrow">Independent Technical Journal · Vol. 01</p>
-  <h1 id="home-title" class="display">
-    Cheng
-    <span>· 技术刊</span>
+  <p class="eyebrow home-hero__eyebrow">
+    <span class="home-hero__vol">Independent Technical Journal · Vol. 01</span>
+  </p>
+  <h1 id="home-title" class="display home-hero__title">
+    <span class="home-hero__line">Cheng</span>
+    <span class="home-hero__line home-hero__line--accent">· 技术刊</span>
   </h1>
+  <span class="home-hero__rule" aria-hidden="true"></span>
   <p class="home-hero__lede">一本可漫游的技术刊，一座仍在生长的知识花园。</p>
   {lead ? (
-    <a class="home-hero__lead" href={`/posts/${lead.slug}/`}>
-      <span>{lead.type === 'essay' ? '本期主打' : '最新笔记'}</span>
+    <a class="home-hero__lead motion-sheen" href={`/posts/${lead.slug}/`}>
+      <span class="home-hero__lead-kicker">{lead.type === 'essay' ? '本期主打' : '最新笔记'}</span>
       <strong class="display">{lead.title}</strong>
       <em>{lead.summary}</em>
+      <span class="home-hero__lead-arrow" aria-hidden="true">阅读 →</span>
     </a>
   ) : null}
   <a class="home-hero__next" href="#start">
-    开始阅读 <span aria-hidden="true">↓</span>
+    开始阅读 <span class="home-hero__chev" aria-hidden="true">↓</span>
   </a>
 </section>

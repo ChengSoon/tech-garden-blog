@@ -159,8 +159,29 @@
 
 .prose img {
   max-width: 100%;
+  height: auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
+  background: var(--bg-soft);
+}
+
+.prose figure {
+  margin: 2rem 0;
+}
+
+.prose figure img {
+  display: block;
+  width: 100%;
+}
+
+.prose figcaption {
+  margin-top: 0.65rem;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .prose hr {

@@ -11,7 +11,7 @@ interface SeriesCard {
 const { series } = Astro.props as { series: SeriesCard[] };
 ---
 {series.length > 0 ? (
-  <section class="home-section series-shelf">
+  <section class="home-section series-shelf" data-motion>
     <div class="section-head">
       <h2>系列书架</h2>
       <a href="/series">全部系列 →</a>

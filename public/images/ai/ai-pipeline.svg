@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="t d">
+  <title id="t">现代 AI 工作流水线</title>
+  <desc id="d">输入、模型推理、输出与人类反馈构成闭环</desc>
+  <rect width="960" height="480" fill="#0f1613"/>
+  <text x="48" y="52" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13" letter-spacing="3">HOW IT WORKS</text>
+  <text x="48" y="92" fill="#edf1ed" font-family="Georgia, serif" font-size="32" font-weight="600">一次 AI 调用，其实发生了什么</text>
+
+  <!-- pipeline boxes -->
+  <g font-family="Sora, sans-serif">
+    <rect x="48" y="160" width="170" height="140" rx="10" fill="#1a221e" stroke="#303a34"/>
+    <text x="68" y="200" fill="#ef8066" font-size="12" letter-spacing="2">01  INPUT</text>
+    <text x="68" y="232" fill="#edf1ed" font-size="18" font-weight="600">你的问题</text>
+    <text x="68" y="262" fill="#9ca8a1" font-size="13">提示词 / 文件</text>
+    <text x="68" y="284" fill="#9ca8a1" font-size="13">上下文与约束</text>
+
+    <path d="M230 230 H270" stroke="#84b9a8" stroke-width="2" marker-end="url(#a)"/>
+    
+    <rect x="280" y="160" width="170" height="140" rx="10" fill="#1a221e" stroke="#303a34"/>
+    <text x="300" y="200" fill="#ef8066" font-size="12" letter-spacing="2">02  MODEL</text>
+    <text x="300" y="232" fill="#edf1ed" font-size="18" font-weight="600">模型推理</text>
+    <text x="300" y="262" fill="#9ca8a1" font-size="13">理解意图</text>
+    <text x="300" y="284" fill="#9ca8a1" font-size="13">预测下一个 token</text>
+
+    <path d="M462 230 H502" stroke="#84b9a8" stroke-width="2"/>
+
+    <rect x="512" y="160" width="170" height="140" rx="10" fill="#1a221e" stroke="#303a34"/>
+    <text x="532" y="200" fill="#ef8066" font-size="12" letter-spacing="2">03  OUTPUT</text>
+    <text x="532" y="232" fill="#edf1ed" font-size="18" font-weight="600">生成结果</text>
+    <text x="532" y="262" fill="#9ca8a1" font-size="13">文本 / 代码 / 图</text>
+    <text x="532" y="284" fill="#9ca8a1" font-size="13">结构化草稿</text>
+
+    <path d="M694 230 H734" stroke="#84b9a8" stroke-width="2"/>
+
+    <rect x="744" y="160" width="170" height="140" rx="10" fill="#1a221e" stroke="#ef8066"/>
+    <text x="764" y="200" fill="#ef8066" font-size="12" letter-spacing="2">04  HUMAN</text>
+    <text x="764" y="232" fill="#edf1ed" font-size="18" font-weight="600">你来决策</text>
+    <text x="764" y="262" fill="#9ca8a1" font-size="13">校验 · 改写</text>
+    <text x="764" y="284" fill="#9ca8a1" font-size="13">采纳或重问</text>
+  </g>
+
+  <!-- feedback loop -->
+  <path d="M829 310 C829 370, 133 370, 133 310" fill="none" stroke="#46534b" stroke-width="2" stroke-dasharray="6 6"/>
+  <text x="360" y="400" fill="#84b9a8" font-family="Sora, sans-serif" font-size="14">反馈闭环：更好的问题 → 更好的答案 → 更清楚的下一步</text>
+  <text x="360" y="428" fill="#6b7670" font-family="Sora, sans-serif" font-size="13">AI 负责加速草稿，人负责把关与负责</text>
+</svg>

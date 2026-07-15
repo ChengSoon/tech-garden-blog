@@ -4,7 +4,7 @@ import type { ListeningTrack } from '../../data/listening';
 
 const { track } = Astro.props as { track: ListeningTrack };
 ---
-<section class="home-section closing-strip" aria-label="近况与订阅">
+<section class="home-section closing-strip" aria-label="近况与订阅" data-motion>
   <a class="closing-strip__item" href="/now">
     <span class="eyebrow">Now</span>
     <strong>{site.now}</strong>

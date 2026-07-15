@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="t d">
+  <title id="t">AI 版图：从规则系统到生成模型</title>
+  <desc id="d">四层结构展示 AI 常见形态：规则、机器学习、深度学习与生成式 AI</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#101412"/>
+      <stop offset="100%" stop-color="#1a2822"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#24302b"/>
+      <stop offset="100%" stop-color="#1a221e"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#bg)"/>
+  <text x="48" y="56" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13" letter-spacing="3">AI LANDSCAPE</text>
+  <text x="48" y="96" fill="#edf1ed" font-family="Georgia, serif" font-size="34" font-weight="600">AI 不是一种产品，而是一层层能力</text>
+  <text x="48" y="128" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="15">从「写死规则」到「从数据学习」，再到「生成新内容」</text>
+
+  <!-- 4 cards -->
+  <g font-family="Sora, sans-serif">
+    <rect x="48" y="180" width="200" height="260" rx="8" fill="url(#card)" stroke="#303a34"/>
+    <circle cx="84" cy="220" r="10" fill="#638064"/>
+    <text x="108" y="226" fill="#edf1ed" font-size="16" font-weight="600">规则系统</text>
+    <text x="68" y="268" fill="#9ca8a1" font-size="13">if / else</text>
+    <text x="68" y="294" fill="#9ca8a1" font-size="13">专家系统</text>
+    <text x="68" y="320" fill="#9ca8a1" font-size="13">流程自动化</text>
+    <text x="68" y="380" fill="#84b9a8" font-size="12">可解释 · 边界清晰</text>
+    <text x="68" y="404" fill="#6b7670" font-size="12">难覆盖长尾场景</text>
+
+    <rect x="268" y="180" width="200" height="260" rx="8" fill="url(#card)" stroke="#303a34"/>
+    <circle cx="304" cy="220" r="10" fill="#c94f38"/>
+    <text x="328" y="226" fill="#edf1ed" font-size="16" font-weight="600">机器学习</text>
+    <text x="288" y="268" fill="#9ca8a1" font-size="13">分类 / 回归</text>
+    <text x="288" y="294" fill="#9ca8a1" font-size="13">推荐系统</text>
+    <text x="288" y="320" fill="#9ca8a1" font-size="13">异常检测</text>
+    <text x="288" y="380" fill="#84b9a8" font-size="12">从样本找规律</text>
+    <text x="288" y="404" fill="#6b7670" font-size="12">依赖特征工程</text>
+
+    <rect x="488" y="180" width="200" height="260" rx="8" fill="url(#card)" stroke="#303a34"/>
+    <circle cx="524" cy="220" r="10" fill="#84b9a8"/>
+    <text x="548" y="226" fill="#edf1ed" font-size="16" font-weight="600">深度学习</text>
+    <text x="508" y="268" fill="#9ca8a1" font-size="13">视觉识别</text>
+    <text x="508" y="294" fill="#9ca8a1" font-size="13">语音转写</text>
+    <text x="508" y="320" fill="#9ca8a1" font-size="13">表示学习</text>
+    <text x="508" y="380" fill="#84b9a8" font-size="12">自动提取特征</text>
+    <text x="508" y="404" fill="#6b7670" font-size="12">需要更多数据算力</text>
+
+    <rect x="708" y="180" width="200" height="260" rx="8" fill="url(#card)" stroke="#ef8066"/>
+    <circle cx="744" cy="220" r="10" fill="#ef8066"/>
+    <text x="768" y="226" fill="#edf1ed" font-size="16" font-weight="600">生成式 AI</text>
+    <text x="728" y="268" fill="#9ca8a1" font-size="13">大语言模型</text>
+    <text x="728" y="294" fill="#9ca8a1" font-size="13">文生图 / 视频</text>
+    <text x="728" y="320" fill="#9ca8a1" font-size="13">代码助手</text>
+    <text x="728" y="380" fill="#84b9a8" font-size="12">对话 · 创作 · 推理</text>
+    <text x="728" y="404" fill="#6b7670" font-size="12">会「编」，需校验</text>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#46534b" stroke-width="2" fill="none">
+    <path d="M248 310 H268"/>
+    <path d="M468 310 H488"/>
+    <path d="M688 310 H708"/>
+  </g>
+</svg>
