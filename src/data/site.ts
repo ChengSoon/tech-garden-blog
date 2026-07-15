@@ -8,12 +8,12 @@ export const site = {
   now: '本季在打磨 Astro 数字花园与长文排版。',
   nowUpdated: '2026-07-13',
   email: '',
-  github: 'https://github.com/',
+  github: 'https://github.com/ChengSoon',
   avatar: '/avatar.svg',
   interests: ['系统设计', '前端工程', '知识管理', '开发者体验'],
   featuredSlugs: ['welcome-essay', 'note-graph-basics', 'note-reading-layout'],
   socials: [
-    { label: 'GitHub', href: 'https://github.com/' },
+    { label: 'GitHub', href: 'https://github.com/ChengSoon' },
     { label: 'RSS', href: '/rss.xml' },
   ],
 };
