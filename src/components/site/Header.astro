@@ -203,31 +203,55 @@ const links = [
 
   .site-header__actions {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     gap: 0.45rem;
+  }
+
+  /* 统一顶栏图标按钮盒模型，避免 React island / details 行盒把高度撑歪 */
+  .site-header__actions :global(.search-trigger),
+  .site-header__actions :global(.theme-toggle),
+  .site-header__actions .mobile-nav,
+  .site-header__actions .mobile-nav summary {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    box-sizing: border-box;
   }
 
   .mobile-nav {
     position: relative;
     display: none;
+    line-height: 0;
   }
 
   .mobile-nav summary {
-    width: 44px;
-    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0;
     list-style: none;
+    cursor: pointer;
   }
 
   .mobile-nav summary::-webkit-details-marker {
     display: none;
   }
 
+  .mobile-nav summary::marker {
+    content: "";
+    display: none;
+  }
+
   .mobile-nav__open,
   .mobile-nav__close {
     position: absolute;
+    inset: 0;
     display: grid;
     place-items: center;
+    pointer-events: none;
   }
 
   .mobile-nav__close,
@@ -239,11 +263,13 @@ const links = [
     opacity: 1;
   }
 
+  /* 必须显式在 closed 时 display:none，否则会覆盖 UA 规则导致面板常显 */
   .mobile-nav__panel {
     position: absolute;
     top: calc(100% + 0.45rem);
     right: 0;
-    display: grid;
+    z-index: 50;
+    display: none;
     min-width: 10rem;
     padding: 0.4rem;
     border: 1px solid var(--border);
@@ -251,6 +277,10 @@ const links = [
     background: var(--bg-elevated);
     box-shadow: var(--shadow);
     transform-origin: top right;
+  }
+
+  .mobile-nav[open] > .mobile-nav__panel {
+    display: grid;
     animation: motion-scale-in var(--motion-base) var(--ease-out) both;
   }
 
@@ -280,7 +310,9 @@ const links = [
     }
 
     .mobile-nav {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .brand__sub {
