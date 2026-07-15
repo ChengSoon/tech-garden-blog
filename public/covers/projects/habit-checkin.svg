@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="每日打卡封面">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f1c1a"/>
+      <stop offset="48%" stop-color="#163530"/>
+      <stop offset="100%" stop-color="#1f2a24"/>
+    </linearGradient>
+    <linearGradient id="phone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dff5ef"/>
+      <stop offset="100%" stop-color="#c5e8df"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1f8f7a"/>
+      <stop offset="100%" stop-color="#146b5c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="980" cy="120" r="190" fill="#6ec4ad" opacity="0.12"/>
+  <circle cx="160" cy="520" r="210" fill="#ef9b73" opacity="0.1"/>
+  <text x="72" y="108" fill="#7dc9b4" font-family="Sora, sans-serif" font-size="20" letter-spacing="5">PROJECT · MOBILE</text>
+  <text x="72" y="250" fill="#f4faf7" font-family="Georgia, serif" font-size="68" font-weight="600">每日打卡</text>
+  <text x="72" y="322" fill="#d4e7df" font-family="Georgia, serif" font-size="34">给两个人的习惯系统</text>
+  <text x="72" y="400" fill="#9db5ab" font-family="Sora, sans-serif" font-size="20">Expo · Express · XP · 双人同步 · AI 计划</text>
+  <text x="72" y="540" fill="#7f9189" font-family="Sora, sans-serif" font-size="18">技术刊 · 产品手记</text>
+
+  <!-- phone mock -->
+  <g transform="translate(760,70)">
+    <rect x="0" y="0" width="300" height="500" rx="42" fill="#101614" stroke="#2f423c" stroke-width="3"/>
+    <rect x="14" y="14" width="272" height="472" rx="32" fill="url(#phone)"/>
+    <rect x="110" y="28" width="80" height="18" rx="9" fill="#0f1c1a" opacity="0.75"/>
+    <text x="36" y="88" fill="#12352d" font-family="Georgia, serif" font-size="28" font-weight="600">今日</text>
+    <text x="36" y="118" fill="#3d6a5e" font-family="Sora, sans-serif" font-size="13">已完成 3/7</text>
+    <rect x="36" y="140" width="228" height="10" rx="5" fill="#b7ddd2"/>
+    <rect x="36" y="140" width="96" height="10" rx="5" fill="#1f8f7a"/>
+    <rect x="36" y="172" width="228" height="54" rx="14" fill="url(#card)"/>
+    <text x="54" y="205" fill="#eefaf6" font-family="Sora, sans-serif" font-size="16">290 积分</text>
+    <rect x="36" y="244" width="228" height="48" rx="12" fill="#ffffff" opacity="0.9"/>
+    <circle cx="60" cy="268" r="10" fill="none" stroke="#1f8f7a" stroke-width="2.5"/>
+    <rect x="80" y="258" width="120" height="10" rx="4" fill="#1f4f45" opacity="0.55"/>
+    <rect x="80" y="274" width="86" height="8" rx="4" fill="#6a9085" opacity="0.45"/>
+    <rect x="36" y="304" width="228" height="48" rx="12" fill="#ffffff" opacity="0.9"/>
+    <circle cx="60" cy="328" r="10" fill="#1f8f7a"/>
+    <path d="M54 328 L58 332 L67 323" fill="none" stroke="#eefaf6" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="80" y="318" width="110" height="10" rx="4" fill="#1f4f45" opacity="0.55"/>
+    <rect x="80" y="334" width="72" height="8" rx="4" fill="#6a9085" opacity="0.45"/>
+    <rect x="36" y="364" width="228" height="48" rx="12" fill="#ffffff" opacity="0.9"/>
+    <circle cx="60" cy="388" r="10" fill="none" stroke="#1f8f7a" stroke-width="2.5"/>
+    <rect x="80" y="378" width="100" height="10" rx="4" fill="#1f4f45" opacity="0.55"/>
+    <rect x="80" y="394" width="78" height="8" rx="4" fill="#6a9085" opacity="0.45"/>
+    <rect x="48" y="438" width="204" height="28" rx="14" fill="#ffffff" opacity="0.75"/>
+  </g>
+</svg>

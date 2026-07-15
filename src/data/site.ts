@@ -13,7 +13,8 @@ export const site = {
   nowUpdated: '2026-07-15',
   email: '',
   github: 'https://github.com/ChengSoon',
-  avatar: '/avatar.svg',
+  githubRepo: 'https://github.com/ChengSoon/tech-garden-blog',
+  avatar: '/avatar.webp',
   /** 可留空：为空时 About 页会从文章 tags 自动推导 */
   interests: ['人工智能', '系统设计', '知识管理', '开发者体验'] as string[],
   socials: [

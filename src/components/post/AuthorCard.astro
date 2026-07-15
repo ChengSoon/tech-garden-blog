@@ -2,7 +2,7 @@
 import { site } from '../../data/site';
 ---
 <section class="author-card card">
-  <img class="author-card__avatar" src={site.avatar} alt="" width="64" height="64" />
+  <img class="author-card__avatar" src={site.avatar} alt={site.fullName} width="64" height="64" decoding="async" loading="lazy" />
   <div class="author-card__body">
     <p class="eyebrow">Written by</p>
     <h2 class="display">{site.fullName}</h2>
@@ -29,6 +29,9 @@ import { site } from '../../data/site';
     align-items: start;
   }
   .author-card__avatar {
+    background: #0b1210;
+    object-fit: cover;
+    object-position: center;
     width: 64px;
     height: 64px;
     border-radius: var(--radius-lg);

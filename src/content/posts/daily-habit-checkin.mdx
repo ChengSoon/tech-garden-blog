@@ -1,0 +1,204 @@
+---
+title: 每日打卡：给两个人的习惯系统
+date: 2026-07-15
+type: essay
+status: growing
+tags: [mobile, expo, product, fullstack, habit]
+summary: 从一个给情侣用的轻量习惯 App 出发，拆开今日打卡、XP 奖励、闯关地图、双人同步与 AI 计划生成是怎么长成一体的。
+links: [ai-practical-guide]
+hero: /covers/projects/habit-checkin.svg
+featured: true
+featuredOrder: 2
+---
+
+import Sidenote from '../../components/mdx/Sidenote.astro';
+import PullQuote from '../../components/mdx/PullQuote.astro';
+
+市面上的习惯 App 很多，但大多默认你是一个人：一个人建目标、一个人挨提醒、一个人看统计。现实里，最想坚持的事，往往是**两个人一起**才会更久——早睡、运动、读书、少刷手机。
+
+**每日打卡**就是为这个场景做的。它不是通用 SaaS，而是一个把「计划 → 打卡 → 积分 → 闯关 → 真实奖励」串起来的双人空间：Expo 移动端 + Express 后端，本地反馈要快，云端负责共享。
+
+这篇文章记录产品形态、关键页面，以及几处我认为值得复用的工程取舍。
+
+## 它解决什么问题
+
+三件普通习惯工具经常做不到的事：
+
+1. **双人同一空间**：习惯、打卡、积分、奖励、章节进度按 space 隔离，两个人看到的是同一份世界。
+2. **正向激励闭环**：打卡不只写勾，还要立刻给 XP；XP 既能推进闯关，也能兑换虚拟奖励和现实奖励。
+3. **计划可执行**：新建习惯时，可以让 AI 根据目标、基础和频率生成分阶段计划，而不是只留一个空标题。
+
+它刻意不做的事也很清楚：没有社交广场、没有排行榜惩罚、没有支付与物流。亲密关系里的激励，靠「奶茶一杯 / 你洗碗一次」比靠排行榜更管用。
+
+<PullQuote cite="产品原则">
+  先让她每天愿意打开，再谈同步、权限和发布流水线。
+</PullQuote>
+
+## 产品导览：五个主 Tab
+
+底部五个入口把日常路径压得很短：**今日 · 习惯 · 闯关 · 商城 · 我的**。
+
+### 今日：打开就看见今天该做什么
+
+今日页是主战场。顶部是日期与完成进度，中间是积分入口，下面按「待完成 / 已完成」列出当天该执行的习惯。点一下完成，会有轻量庆祝和 XP 反馈；误点可以在短时间窗口内撤销。
+
+<figure style="max-width: 320px; margin-inline: auto;">
+  <img src="/images/habit-checkin/today.png" alt="今日页：完成进度、积分余额与待完成习惯列表" width="416" height="897" loading="lazy" />
+  <figcaption>图 1 · 今日：打开即见进度与待办，打卡反馈尽量不打断节奏</figcaption>
+</figure>
+
+设计上有两个细节：
+
+- **进度条 + 完成比**让「今天还差多少」一眼可见。
+- **积分胶囊**把长期激励从任务列表里拎出来，随时可跳到商城。
+
+### 习惯：管理频率、提醒与顺序
+
+习惯页负责配置层：新增、排序、查看频率与提醒时间。频率支持每天 / 工作日 / 自定义星期，提醒走系统通知。
+
+<figure style="max-width: 320px; margin-inline: auto;">
+  <img src="/images/habit-checkin/habits.png" alt="习惯管理页：新增习惯与列表排序" width="416" height="897" loading="lazy" />
+  <figcaption>图 2 · 习惯：配置与日常执行拆开，避免今日页被设置项淹没</figcaption>
+</figure>
+
+### 闯关：把累计 XP 变成共同旅程
+
+如果只有数字，坚持很容易变枯燥。闯关页把累计获得的 XP 映射成章节航线：当前章节、下一章门槛、已获徽章都摊开看。
+
+<figure style="max-width: 320px; margin-inline: auto;">
+  <img src="/images/habit-checkin/adventure.png" alt="闯关页：双人旅程进度、章节航线与徽章收藏" width="416" height="897" loading="lazy" />
+  <figcaption>图 3 · 闯关：累计 XP 推进章节，徽章给长期进度一个可收藏的形状</figcaption>
+</figure>
+
+截图里的旅程叫「云上桥梁」——已解锁 5/6 章，下一章「山顶邮局」还差 250 XP。叙事和门槛都可在管理端配置，所以它既是游戏化外壳，也是可运营的内容位。
+
+### 商城：虚拟奖励 + 现实奖励
+
+商城是 XP 的出口。虚拟奖励可以是主题、称号；现实奖励是两个人约定的真实兑现，例如「奶茶一杯」。积分不足时不灰掉按钮装死，而是显示「还差多少」的进度条，动机更明确。
+
+<figure style="max-width: 320px; margin-inline: auto;">
+  <img src="/images/habit-checkin/shop.png" alt="奖励商城：积分余额、虚拟奖励与现实奖励" width="416" height="897" loading="lazy" />
+  <figcaption>图 4 · 商城：虚拟物即时生效，现实奖励进入待兑现，由 owner 确认</figcaption>
+</figure>
+
+权限模型很克制：
+
+- 普通成员：浏览、兑换、查看记录
+- owner：配置奖励、确认/取消现实兑现、管理章节
+
+这比「所有人都能改商城」更符合双人场景：一个负责坚持，一个负责设置惊喜。
+
+### 我的：空间、版本与管理入口
+
+「我的」汇总双人头像、当前积分、兑换记录、章节管理，以及 Android 应用更新检查。账号页再展开密码、退出登录、退出空间等危险操作。
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0; max-width: 680px; margin-inline: auto;">
+  <figure style="margin: 0;">
+    <img src="/images/habit-checkin/profile.png" alt="我的页：共享空间、积分与管理入口" width="416" height="897" loading="lazy" />
+    <figcaption>图 5 · 我的：空间关系与管理能力入口</figcaption>
+  </figure>
+  <figure style="margin: 0;">
+    <img src="/images/habit-checkin/account.png" alt="账号与同步页：头像、共享空间与账号操作" width="416" height="897" loading="lazy" />
+    <figcaption>图 6 · 账号与同步：头像、共享状态与账号安全</figcaption>
+  </figure>
+</div>
+
+## AI 计划：把「我想变好」变成可执行阶段
+
+新建习惯时，用户填写目标、当前基础、周期、频率和提醒偏好，后端调用 OpenAI（或兼容接口）生成分阶段计划，再进入预览页确认。人仍然拍板，AI 只负责把模糊愿望拆成可坚持的台阶。
+
+<figure style="max-width: 280px; margin-inline: auto;">
+  <img src="/images/habit-checkin/ai-plan.png" alt="AI 习惯计划生成与预览界面" width="555" height="1175" loading="lazy" />
+  <figcaption>图 7 · AI 计划：生成后先预览，再落成习惯，避免黑盒直接写库</figcaption>
+</figure>
+
+<Sidenote title="和「会用 AI」同一条线">
+  这里的姿势和站内 AI 入门文一致：AI 出草稿，人做校验。计划写进系统前必须可预览、可改、可弃。
+</Sidenote>
+
+## 激励闭环长什么样
+
+产品内核可以压成一条回路：
+
+<figure>
+  <img src="/images/habit-checkin/loop.svg" alt="打卡、获得 XP、推进闯关、兑换奖励的产品闭环" width="960" height="420" loading="lazy" />
+  <figcaption>图 8 · 打卡 → XP → 闯关 / 商城 → 更想继续打卡</figcaption>
+</figure>
+
+XP 规则刻意偏正向：普通打卡、连续奖励、阶段完成、中断后回来，都有加分；**不扣分、不断签羞辱**。亲密产品里，惩罚系统几乎总是错的。
+
+## 技术架构
+
+移动端是 Expo 57 / React Native，路由用 Expo Router；本地用 SQLite 承载结构与离线可感知的数据；云端是 Express 5 + PostgreSQL + WebSocket；图片与 APK 走 Cloudflare R2；Android 通过 EAS 构建，tag 触发发布与 `latest.json` 更新清单。
+
+<figure>
+  <img src="/images/habit-checkin/architecture.svg" alt="Expo 客户端、Express API、PostgreSQL 与 Cloudflare R2 架构图" width="960" height="560" loading="lazy" />
+  <figcaption>图 9 · 客户端负责体验，服务端负责共享真相，对象存储负责媒体与安装包</figcaption>
+</figure>
+
+### 为什么是这套拆分
+
+| 层 | 选择 | 原因 |
+| --- | --- | --- |
+| 客户端 | Expo + TypeScript | 迭代快，一套代码覆盖 Android / iOS / Web 调试 |
+| 本地数据 | Expo SQLite | 结构清晰，方便单测与导出 |
+| 同步 | REST + WebSocket | 写走 API，变更推送减少傻轮询 |
+| 鉴权 | JWT + space | 双人共享以空间为单位，而不是全局一张表 |
+| 媒体 | R2 presigned upload | 服务端只存 key，上传不经应用机带宽 |
+| 发布 | EAS + Actions + R2 | APK 可装，App 内可检查更新 |
+
+### 同步体验的关键点
+
+双人场景最怕「我打了，她还看不到」。实现上大致是：
+
+1. 客户端变更先写本地，立刻更新 UI。
+2. 成功同步后，服务端广播 space 级失效事件。
+3. 对端收到推送后按域刷新（习惯、打卡、钱包、奖励等），而不是整 App 重载。
+
+这比「每次 onFocus 全量拉取」省，也比「强 CRDT 合并」简单。两个人、低冲突、以服务端为权威，足够。
+
+## 几个值得留下的工程决策
+
+### 1. 权限用角色，不用功能开关堆砌
+
+owner / member 覆盖奖励配置、兑现确认、章节管理。隐藏管理入口 + PIN 的早期形态，后面演进到账号角色后，边界更清晰，也更适合云同步。
+
+### 2. XP 与打卡幂等
+
+同一习惯同一天只拿一次普通打卡 XP；连续奖励按达成日发放一次。计算依赖流水与历史，避免重复进前台就重复加分。游戏经济一旦漂，信任比 bug 还难修。
+
+### 3. 现实奖励要有状态机
+
+`待兑现 → 已兑现 / 已取消`。取消退回 XP，确认不重复扣。App 只是账本，真正把奶茶递到手，仍然是人。
+
+### 4. 图片与安装包都走 R2
+
+头像、奖励图、Android APK、更新 manifest 同一对象存储体系。服务端少碰大文件，CDN 友好，回滚和清理旧版本也简单。
+
+### 5. 测试压在规则层
+
+XP 规则、撤销窗口、里程碑、同步失效、上传客户端等用 Vitest 锁住；UI 动效和主题不追求像素级单测。小团队最划算的测试预算，是**规则与边界**。
+
+## 技术栈速览
+
+**移动端**：Expo 57、React Native、Expo Router、Expo SQLite、Notifications、Reanimated、Vitest
+
+**后端**：Node.js、Express 5、PostgreSQL、`ws`、JWT、Zod、OpenAI SDK、Docker Compose
+
+**交付**：GitHub Actions、EAS Build、Cloudflare R2、GHCR
+
+## 我从这次产品里学到什么
+
+1. **亲密场景比通用场景好做，也更容易做对。** 用户只有两个人时，很多「平台功能」可以直接砍掉。
+2. **反馈必须比数据同步更近。** 动画、XP 飘字、进度条，是习惯能否留下的第一道门。
+3. **游戏化要接回现实。** 只有皮肤和徽章会腻；接上真实奖励，数字才有重量。
+4. **AI 适合当规划助手，不适合当黑盒管理员。** 预览页是人机之间必要的握手。
+5. **发布链路是产品的一部分。** 双人 App 如果不能顺畅更新，再好的今日页也会停在旧版本。
+
+## 写在最后
+
+每日打卡不是要做下一个超级习惯平台。它更像一份可运行的关系工具：把两个人想一起变好的事，收成同一条时间线、同一本积分账、同一张地图。
+
+如果你也在做「用户很少、关系很深」的产品，或许同样适用这条路径——**先做闭环，再做同步，最后才做平台感。**
+
+仓库在本机项目 `tool/打卡工具`；核心文档包括部署说明、MVP 验证清单，以及 XP / 商城 / 闯关 / 自动更新等设计稿。后面如果继续写，会单独拆一篇讲 Android 自动更新与 R2 manifest，或是岛屿地图的程序化布局。

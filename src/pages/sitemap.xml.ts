@@ -20,6 +20,7 @@ export const GET: APIRoute = async ({ site }) => {
     '/series/',
     '/about/',
     '/now/',
+    '/friends/',
     '/subscribe/',
     ...posts.map((p) => `/posts/${postSlug(p)}/`),
     ...series.map((s) => `/series/${s.id}/`),

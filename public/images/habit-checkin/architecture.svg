@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="t d">
+  <title id="t">每日打卡系统架构</title>
+  <desc id="d">移动端、API、数据库、对象存储与更新链路</desc>
+  <rect width="960" height="560" fill="#0f1613"/>
+  <text x="40" y="46" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13" letter-spacing="3">ARCHITECTURE</text>
+  <text x="40" y="84" fill="#edf1ed" font-family="Georgia, serif" font-size="30" font-weight="600">一套轻量双人同步架构</text>
+
+  <!-- client -->
+  <rect x="40" y="130" width="220" height="300" rx="14" fill="#1a221e" stroke="#303a34"/>
+  <text x="60" y="168" fill="#ef8066" font-family="Sora, sans-serif" font-size="12" letter-spacing="2">CLIENT</text>
+  <text x="60" y="200" fill="#edf1ed" font-family="Sora, sans-serif" font-size="20" font-weight="600">Expo App</text>
+  <text x="60" y="236" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">React Native + Router</text>
+  <text x="60" y="262" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">SQLite 本地结构</text>
+  <text x="60" y="288" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">提醒 / 主题 / 动画</text>
+  <text x="60" y="314" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">XP / 商城 / 闯关 UI</text>
+  <text x="60" y="354" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13">今日 · 习惯 · 闯关</text>
+  <text x="60" y="378" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13">商城 · 我的</text>
+
+  <!-- arrows -->
+  <path d="M270 240 H320" stroke="#84b9a8" stroke-width="2"/>
+  <path d="M320 300 H270" stroke="#84b9a8" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="276" y="228" fill="#6b7670" font-family="Sora, sans-serif" font-size="11">HTTPS / WS</text>
+
+  <!-- server -->
+  <rect x="330" y="130" width="280" height="300" rx="14" fill="#1a221e" stroke="#303a34"/>
+  <text x="350" y="168" fill="#ef8066" font-family="Sora, sans-serif" font-size="12" letter-spacing="2">SERVER</text>
+  <text x="350" y="200" fill="#edf1ed" font-family="Sora, sans-serif" font-size="20" font-weight="600">Express API</text>
+  <text x="350" y="236" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">JWT 登录 · space 隔离</text>
+  <text x="350" y="262" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">习惯 / 打卡 / XP / 奖励</text>
+  <text x="350" y="288" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">WebSocket 变更推送</text>
+  <text x="350" y="314" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">OpenAI 计划生成</text>
+  <text x="350" y="340" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">R2 预签名上传</text>
+  <text x="350" y="380" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13">Docker Compose 部署</text>
+
+  <!-- data layer -->
+  <rect x="660" y="130" width="260" height="140" rx="14" fill="#1a221e" stroke="#303a34"/>
+  <text x="680" y="168" fill="#ef8066" font-family="Sora, sans-serif" font-size="12" letter-spacing="2">DATA</text>
+  <text x="680" y="200" fill="#edf1ed" font-family="Sora, sans-serif" font-size="18" font-weight="600">PostgreSQL</text>
+  <text x="680" y="232" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">账号 / space / 流水</text>
+  <text x="680" y="256" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">章节进度与兑换记录</text>
+
+  <rect x="660" y="290" width="260" height="140" rx="14" fill="#1a221e" stroke="#303a34"/>
+  <text x="680" y="328" fill="#ef8066" font-family="Sora, sans-serif" font-size="12" letter-spacing="2">STORAGE / RELEASE</text>
+  <text x="680" y="360" fill="#edf1ed" font-family="Sora, sans-serif" font-size="18" font-weight="600">Cloudflare R2</text>
+  <text x="680" y="392" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">头像 · 奖励图 · APK</text>
+  <text x="680" y="416" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="14">latest.json 更新清单</text>
+
+  <path d="M620 210 H650" stroke="#84b9a8" stroke-width="2"/>
+  <path d="M620 340 H650" stroke="#84b9a8" stroke-width="2"/>
+
+  <text x="40" y="500" fill="#84b9a8" font-family="Sora, sans-serif" font-size="14">原则：本地可感知反馈优先，云端负责双人共享与长期状态</text>
+  <text x="40" y="528" fill="#6b7670" font-family="Sora, sans-serif" font-size="13">CI：GitHub Actions · EAS Android 构建 · 服务端 Docker 发布</text>
+</svg>

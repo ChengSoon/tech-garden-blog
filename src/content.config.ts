@@ -43,4 +43,22 @@ const paths = defineCollection({
   }),
 });
 
-export const collections = { posts, series, paths };
+/** 客串歌单（友链）— 每站一个 yaml/json，不写进业务代码 */
+const friends = defineCollection({
+  loader: glob({ pattern: '**/*.{json,yaml,yml}', base: './src/content/friends' }),
+  schema: z.object({
+    name: z.string(),
+    url: z.string().url(),
+    owner: z.string().optional(),
+    description: z.string(),
+    category: z.enum(['regular', 'affinity', 'tools']).default('affinity'),
+    tags: z.array(z.string()).default([]),
+    monogram: z.string().max(2).optional(),
+    accent: z.string().optional(),
+    /** 排序，越小越靠前 */
+    order: z.number().default(0),
+  }),
+});
+
+export const collections = { posts, series, paths, friends };
+

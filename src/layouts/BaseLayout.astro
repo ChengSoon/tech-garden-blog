@@ -16,7 +16,7 @@ interface Props {
 const {
   title,
   description = site.tagline,
-  ogImage = '/favicon.svg',
+  ogImage = '/avatar.webp',
   bodyClass = '',
 } = Astro.props;
 const fullTitle = title === 'Home' ? `${site.name} · 技术刊` : `${title} · ${site.name}`;
@@ -41,7 +41,10 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:type" content="website" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon-48.png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="alternate" type="application/rss+xml" title={`${site.name} RSS`} href="/rss.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

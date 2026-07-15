@@ -1,0 +1,888 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ImmersiveDeck from '../components/media/ImmersiveDeck';
+import { site } from '../data/site';
+import { catalog } from '../data/listening';
+import {
+  categoryLabel,
+  categorySide,
+  friendCategories,
+  friendExchange,
+  friendMonogram,
+  loadFriends,
+  type Friend,
+  type FriendCategory,
+} from '../lib/friends';
+
+const friends = await loadFriends();
+const siteUrl = (Astro.site?.toString() ?? 'https://blog.lzch.eu.org').replace(/\/$/, '') + '/';
+const selfCard = {
+  name: `${site.name} · 技术刊`,
+  url: siteUrl,
+  description: site.tagline,
+  owner: site.fullName,
+};
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url).host.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+}
+---
+<BaseLayout
+  title="客串"
+  description="客串歌单：邻站像一轨轨可回访的歌，点开去听，也欢迎投轨。"
+  bodyClass="has-bg-deck"
+>
+  <div class="friends-shell">
+    <ImmersiveDeck client:idle tracks={catalog} mode="bg" />
+
+    <div class="container friends-page-content">
+      <header class="friends-head">
+        <div class="friends-head__copy">
+          <p class="eyebrow">Guest Mix · Side B</p>
+          <h1 class="display">客串歌单</h1>
+          <p class="friends-head__lede muted">
+            和首页唱机同一套语汇：邻站不是链接墙，是一轨轨愿意被回访的
+            <span class="ink">客串曲目</span>。点碟心串门，或把自己的作品投进歌单。
+          </p>
+          <div class="friends-actions">
+            <button type="button" class="btn btn-primary" data-shuffle>
+              随机一轨
+            </button>
+            <a class="btn" href="#submit-track">投轨申请</a>
+          </div>
+        </div>
+
+        <dl class="friends-stats">
+          <div>
+            <dt>{friends.length}</dt>
+            <dd>Tracks</dd>
+          </div>
+          <div>
+            <dt>{friendCategories.filter((c) => c.id !== 'all').length}</dt>
+            <dd>Sides</dd>
+          </div>
+          <div>
+            <dt>Open</dt>
+            <dd>Submissions</dd>
+          </div>
+          <div>
+            <dt>♪</dt>
+            <dd>Guest Mix</dd>
+          </div>
+        </dl>
+      </header>
+
+
+      <section class="tracklist" aria-labelledby="tracklist-title">
+        <div class="tracklist__bar">
+          <div>
+            <h2 id="tracklist-title" class="display tracklist__title">Playlist</h2>
+            <p class="muted tracklist__hint" id="side-hint">歌单里的每一轨</p>
+          </div>
+          <div class="side-tabs" role="tablist" aria-label="碟面分轨">
+            {friendCategories.map((lane) => (
+              <button
+                type="button"
+                class:list={['side-tab', { 'is-active': lane.id === 'all' }]}
+                role="tab"
+                aria-selected={lane.id === 'all' ? 'true' : 'false'}
+                data-side={lane.id}
+                data-hint={lane.hint}
+              >
+                <span class="side-tab__side">{lane.side}</span>
+                <span class="side-tab__label">{lane.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <ol class="tracks motion-stagger" id="track-list">
+          {friends.map((friend: Friend, index: number) => {
+            const mono = friendMonogram(friend);
+            const accent = friend.accent ?? 'var(--signal)';
+            const n = String(index + 1).padStart(2, '0');
+            return (
+              <li
+                class="track"
+                style={`--i: ${Math.min(index, 8)}; --track-accent: ${accent}`}
+                data-track-id={friend.id}
+                data-category={friend.category}
+              >
+                <a
+                  class="track__link"
+                  href={friend.url}
+                  target="_blank"
+                  rel="noopener noreferrer friend"
+                  data-track-link
+                >
+                  <span class="track__index" aria-hidden="true">{n}</span>
+
+                  <span class="track__disc" aria-hidden="true">
+                    <span class="track__platter">
+                      <span class="track__grooves"></span>
+                      <span class="track__label">
+                        <em>{mono}</em>
+                      </span>
+                      <span class="track__hub"></span>
+                    </span>
+                  </span>
+
+                  <span class="track__body">
+                    <span class="track__meta-row">
+                      <span class="badge track__side">{categorySide(friend.category as FriendCategory)}</span>
+                      <span class="badge">{categoryLabel(friend.category as FriendCategory)}</span>
+                    </span>
+                    <strong class="display track__title">{friend.name}</strong>
+                    <span class="track__artist muted">
+                      {friend.owner ? `${friend.owner} · ` : ''}{hostOf(friend.url)}
+                    </span>
+                    <span class="track__notes">{friend.description}</span>
+                    {friend.tags?.length ? (
+                      <span class="track__tags">
+                        {friend.tags.map((t) => (
+                          <span class="badge">{t}</span>
+                        ))}
+                      </span>
+                    ) : null}
+                  </span>
+
+                  <span class="track__play">
+                    <span class="track__play-icon" aria-hidden="true">▶</span>
+                    <span class="track__play-text">播放</span>
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+
+        <p class="tracks-empty muted" id="tracks-empty" hidden={friends.length > 0}>
+          {friends.length === 0
+            ? '歌单还是空的。欢迎成为第一轨——往下投轨，或在 src/content/friends/ 新增一个 yaml。'
+            : '这一面还没有曲目。换一面，或往下投轨。'}
+        </p>
+      </section>
+
+      <section class="submit-track" id="submit-track" aria-labelledby="submit-title">
+        <div class="submit-track__copy">
+          <p class="eyebrow">Submit a Track</p>
+          <h2 id="submit-title" class="display submit-track__title">{friendExchange.title}</h2>
+          <p class="muted submit-track__lede">{friendExchange.lede}</p>
+          <ol class="submit-track__list">
+            {friendExchange.requirements.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ol>
+          <p class="submit-track__hint">{friendExchange.requestHint}</p>
+          <div class="submit-track__actions">
+            <a
+              class="btn btn-primary"
+              href={friendExchange.issuesUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              开 Issue 投轨
+            </a>
+            {site.email ? (
+              <a class="btn" href={`mailto:${site.email}?subject=${encodeURIComponent('客串歌单 · 投轨申请')}`}>
+                发邮件
+              </a>
+            ) : null}
+            <a class="btn" href="/about">先听本站</a>
+          </div>
+        </div>
+
+        <aside class="station-card" aria-label="本站电台信息">
+          <p class="eyebrow">This Station</p>
+          <div class="station-card__disc" aria-hidden="true">
+            <span class="station-card__platter">
+              <span class="station-card__grooves"></span>
+              <span class="station-card__label"><em>{site.name.slice(0, 2)}</em></span>
+              <span class="station-card__hub"></span>
+            </span>
+          </div>
+          <h3 class="display station-card__name">{selfCard.name}</h3>
+          <p class="station-card__desc muted">{selfCard.description}</p>
+          <dl class="station-card__fields">
+            <div>
+              <dt>URL</dt>
+              <dd><a href={selfCard.url} id="self-url">{selfCard.url}</a></dd>
+            </div>
+            <div>
+              <dt>Host</dt>
+              <dd>{selfCard.owner}</dd>
+            </div>
+            <div>
+              <dt>Liner</dt>
+              <dd>{site.bio}</dd>
+            </div>
+          </dl>
+          <button type="button" class="btn" data-copy-self>复制本站信息</button>
+          <p class="station-card__status muted" id="copy-status" aria-live="polite"></p>
+        </aside>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  function setupSides() {
+    const buttons = document.querySelectorAll('[data-side]');
+    const tracks = document.querySelectorAll('[data-track-id]');
+    const empty = document.getElementById('tracks-empty');
+    const hint = document.getElementById('side-hint');
+
+    function apply(side: string) {
+      let visible = 0;
+      tracks.forEach((track) => {
+        const cat = track.getAttribute('data-category');
+        const show = side === 'all' || cat === side;
+        track.toggleAttribute('hidden', !show);
+        if (show) visible += 1;
+      });
+      buttons.forEach((btn) => {
+        const active = btn.getAttribute('data-side') === side;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        if (active && hint) hint.textContent = btn.getAttribute('data-hint') || '';
+      });
+      if (empty) empty.hidden = visible > 0;
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => apply(btn.getAttribute('data-side') || 'all'));
+    });
+  }
+
+  function setupShuffle() {
+    const btn = document.querySelector('[data-shuffle]');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+      const tracks = [...document.querySelectorAll('[data-track-id]:not([hidden])')];
+      if (!tracks.length) return;
+      const pick = tracks[Math.floor(Math.random() * tracks.length)];
+      tracks.forEach((t) => t.classList.remove('is-now-playing'));
+      pick.classList.add('is-now-playing');
+      pick.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const link = pick.querySelector('[data-track-link]');
+      if (link instanceof HTMLElement) link.focus({ preventScroll: true });
+      window.setTimeout(() => pick.classList.remove('is-now-playing'), 2400);
+    });
+  }
+
+  function setupCopySelf() {
+    const btn = document.querySelector('[data-copy-self]');
+    const status = document.getElementById('copy-status');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+      const name = document.querySelector('.station-card__name')?.textContent?.trim() || '';
+      const fields = [...document.querySelectorAll('.station-card__fields > div')].map((row) => {
+        const k = row.querySelector('dt')?.textContent?.trim() || '';
+        const v = row.querySelector('dd')?.textContent?.trim() || '';
+        return `${k}：${v}`;
+      });
+      const payload = [`站点：${name}`, ...fields].join('\n');
+      try {
+        await navigator.clipboard.writeText(payload);
+        if (status) status.textContent = '已复制，可直接粘贴到投轨申请里。';
+      } catch {
+        if (status) status.textContent = '复制失败，请手动选择文本。';
+      }
+    });
+  }
+
+  function boot() {
+    setupSides();
+    setupShuffle();
+    setupCopySelf();
+  }
+
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>
+
+<style>
+  .friends-page-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1.8rem;
+    padding: 2.4rem 0 3.5rem;
+  }
+
+  .friends-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(220px, 0.8fr);
+    gap: 1.5rem 2rem;
+    align-items: end;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .friends-head h1 {
+    margin: 0.35rem 0 0.75rem;
+    font-size: clamp(2.4rem, 5vw, 3.5rem);
+    line-height: 1.05;
+  }
+
+  .friends-head__lede {
+    max-width: 38rem;
+    margin: 0 0 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .friends-head__lede .ink {
+    color: var(--text);
+    box-shadow: inset 0 -0.35em 0 color-mix(in oklab, var(--signal) 22%, transparent);
+  }
+
+  .friends-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .friends-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin: 0;
+  }
+
+  .friends-stats div {
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--bg-elevated) 88%, transparent);
+  }
+
+  .friends-stats dt {
+    margin: 0;
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .friends-stats dd {
+    margin: 0.35rem 0 0;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+
+  .tracklist__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    align-items: end;
+    margin-bottom: 0.4rem;
+  }
+
+  .tracklist__title {
+    margin: 0 0 0.3rem;
+    font-size: 1.7rem;
+  }
+
+  .tracklist__hint {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .side-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .side-tab {
+    display: inline-grid;
+    gap: 0.12rem;
+    min-height: 44px;
+    padding: 0.4rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in oklab, var(--bg-elevated) 90%, transparent);
+    color: var(--text-muted);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      color var(--motion-base) var(--ease-inout),
+      border-color var(--motion-base) var(--ease-inout),
+      background-color var(--motion-base) var(--ease-inout),
+      transform var(--motion-base) var(--ease-out);
+  }
+
+  .side-tab__side {
+    font-family: var(--font-ui);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--signal);
+  }
+
+  .side-tab__label {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .side-tab:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    transform: translate3d(0, -1px, 0);
+  }
+
+  .side-tab.is-active {
+    border-color: color-mix(in oklab, var(--accent) 50%, var(--border));
+    background: color-mix(in oklab, var(--accent-soft) 70%, var(--bg-elevated));
+    color: var(--accent);
+  }
+
+  .tracks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .track {
+    --track-accent: var(--signal);
+  }
+
+  .track[hidden] {
+    display: none;
+  }
+
+  .track__link {
+    display: grid;
+    grid-template-columns: 2.4rem 4.4rem minmax(0, 1fr) auto;
+    gap: 0.9rem 1rem;
+    align-items: center;
+    padding: 1rem 0.15rem;
+    border-top: 1px solid var(--border);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      background-color var(--motion-base) var(--ease-inout),
+      padding-left var(--motion-base) var(--ease-out);
+  }
+
+  .track:last-child .track__link {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .track__link:hover,
+  .track__link:focus-visible {
+    background: color-mix(in oklab, var(--bg-elevated) 72%, transparent);
+    padding-left: 0.45rem;
+    outline: none;
+  }
+
+  .track.is-now-playing .track__link {
+    background: color-mix(in oklab, var(--signal-soft) 55%, transparent);
+    box-shadow: inset 2px 0 0 var(--signal);
+  }
+
+  .track__index {
+    color: var(--signal);
+    font: 600 1.15rem/1 var(--font-display);
+  }
+
+  .track__disc {
+    width: 4.4rem;
+    height: 4.4rem;
+    display: grid;
+    place-items: center;
+    transition: transform var(--motion-base) var(--ease-spring);
+  }
+
+  .track__platter {
+    position: relative;
+    width: 4.1rem;
+    height: 4.1rem;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 42%, #2a2622, #0e0c0a 72%);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, white 10%, transparent),
+      0 8px 18px color-mix(in oklab, var(--text) 12%, transparent);
+    will-change: transform;
+  }
+
+  .track__link:hover .track__disc,
+  .track.is-now-playing .track__disc {
+    transform: scale(1.06);
+  }
+
+  .track__link:hover .track__platter,
+  .track.is-now-playing .track__platter {
+    animation: track-spin 6s linear infinite;
+  }
+
+  .track__grooves {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: repeating-radial-gradient(
+      circle at center,
+      color-mix(in oklab, white 12%, transparent) 0 0.6px,
+      transparent 0.6px 3.4px
+    );
+    opacity: 0.35;
+  }
+
+  .track__label {
+    position: absolute;
+    inset: 27%;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 35% 30%, color-mix(in oklab, white 28%, var(--track-accent)), var(--track-accent));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, white 18%, transparent);
+  }
+
+  .track__label em {
+    color: color-mix(in oklab, white 88%, var(--track-accent));
+    font: 600 0.95rem/1 var(--font-display);
+    font-style: normal;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 0 color-mix(in oklab, black 25%, transparent);
+  }
+
+  .track__hub {
+    position: absolute;
+    inset: 46%;
+    border-radius: 50%;
+    background: #0c0b09;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, white 16%, transparent);
+  }
+
+  .track__body {
+    display: grid;
+    gap: 0.22rem;
+    min-width: 0;
+  }
+
+  .track__meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .track__side {
+    color: var(--signal);
+    border-color: color-mix(in oklab, var(--signal) 35%, var(--border));
+  }
+
+
+  .track__title {
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    line-height: 1.15;
+    color: var(--text);
+  }
+
+  .track__artist {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+  }
+
+  .track__notes {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .track__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.2rem;
+  }
+
+  .track__play {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0 0.2rem;
+    color: var(--accent);
+    font-family: var(--font-ui);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .track__play-icon {
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border: 1px solid color-mix(in oklab, var(--accent) 40%, var(--border));
+    border-radius: 50%;
+    font-size: 0.62rem;
+    transition:
+      background-color var(--motion-base) var(--ease-out),
+      transform var(--motion-base) var(--ease-out);
+  }
+
+  .track__link:hover .track__play-icon,
+  .track.is-now-playing .track__play-icon {
+    background: color-mix(in oklab, var(--accent-soft) 80%, transparent);
+    transform: scale(1.06);
+  }
+
+  .tracks-empty {
+    margin: 1rem 0 0;
+    padding: 1.1rem;
+    border: 1px dashed var(--border-strong);
+    text-align: center;
+  }
+
+  .submit-track {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(250px, 0.85fr);
+    gap: 1.2rem 1.5rem;
+    margin-top: 0.4rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .submit-track__title {
+    margin: 0.3rem 0 0.7rem;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+  }
+
+  .submit-track__lede {
+    margin: 0 0 1rem;
+    max-width: 40rem;
+    line-height: 1.7;
+  }
+
+  .submit-track__list {
+    margin: 0 0 1rem;
+    padding-left: 1.15rem;
+    display: grid;
+    gap: 0.55rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .submit-track__list li::marker {
+    color: var(--signal);
+    font-family: var(--font-display);
+  }
+
+  .submit-track__hint {
+    margin: 0 0 1rem;
+    max-width: 40rem;
+    padding: 0.85rem 1rem;
+    border-left: 2px solid var(--signal);
+    background: color-mix(in oklab, var(--bg-soft) 70%, transparent);
+    color: var(--text-muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+  }
+
+  .submit-track__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .station-card {
+    display: grid;
+    gap: 0.55rem;
+    align-content: start;
+    padding: 1.15rem 1.15rem 1.25rem;
+    border: 1px solid var(--border-strong);
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--accent-soft) 30%, var(--bg-elevated)), var(--bg-elevated));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .station-card__disc {
+    width: 4.6rem;
+    height: 4.6rem;
+    margin: 0.15rem 0 0.2rem;
+  }
+
+  .station-card__platter {
+    position: relative;
+    display: block;
+    width: 4.6rem;
+    height: 4.6rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, #2a2622, #0e0c0a 72%);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, white 10%, transparent),
+      0 10px 22px color-mix(in oklab, var(--text) 12%, transparent);
+    animation: track-spin 22s linear infinite;
+  }
+
+  .station-card__grooves {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: repeating-radial-gradient(
+      circle at center,
+      color-mix(in oklab, white 12%, transparent) 0 0.6px,
+      transparent 0.6px 3.4px
+    );
+    opacity: 0.35;
+  }
+
+  .station-card__label {
+    position: absolute;
+    inset: 27%;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, color-mix(in oklab, white 28%, var(--signal)), var(--signal));
+  }
+
+  .station-card__label em {
+    color: #fff8f4;
+    font: 600 0.95rem/1 var(--font-display);
+    font-style: normal;
+  }
+
+  .station-card__hub {
+    position: absolute;
+    inset: 46%;
+    border-radius: 50%;
+    background: #0c0b09;
+  }
+
+  .station-card__name {
+    margin: 0;
+    font-size: 1.55rem;
+    line-height: 1.15;
+  }
+
+  .station-card__desc {
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .station-card__fields {
+    margin: 0.35rem 0 0.5rem;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .station-card__fields div {
+    display: grid;
+    gap: 0.15rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .station-card__fields dt {
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .station-card__fields dd {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .station-card__fields a {
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .station-card__fields a:hover {
+    text-decoration: underline;
+  }
+
+  .station-card__status {
+    min-height: 1.2em;
+    margin: 0;
+    font-size: 0.82rem;
+  }
+
+  @keyframes track-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 860px) {
+    .friends-head,
+    .submit-track {
+      grid-template-columns: 1fr;
+    }
+
+    .friends-stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .track__link {
+      grid-template-columns: 2rem 3.6rem minmax(0, 1fr);
+      gap: 0.7rem;
+    }
+
+    .track__play {
+      grid-column: 2 / -1;
+      justify-self: start;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .track__disc,
+    .track__platter {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .friends-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track__disc,
+    .track__platter,
+    .track__play-icon,
+    .side-tab,
+    .track__link {
+      transition: none;
+    }
+
+    .track.is-now-playing .track__platter,
+    .track__link:hover .track__platter,
+    .station-card__platter {
+      animation: none;
+    }
+
+    .track__link:hover .track__disc,
+    .track.is-now-playing .track__disc {
+      transform: none;
+    }
+  }
+</style>

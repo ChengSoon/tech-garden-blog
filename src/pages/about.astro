@@ -28,6 +28,8 @@ const topics = deriveTopics(posts, site.interests);
             alt={site.fullName}
             width="96"
             height="96"
+            decoding="async"
+            fetchpriority="high"
           />
           <div>
             <p class="eyebrow">{site.role}</p>
@@ -129,6 +131,8 @@ const topics = deriveTopics(posts, site.interests);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     object-fit: cover;
+    object-position: center;
+    background: #0b1210;
   }
 
   .profile__name {

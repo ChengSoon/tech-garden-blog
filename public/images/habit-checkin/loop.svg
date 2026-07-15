@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="t d">
+  <title id="t">每日打卡激励闭环</title>
+  <desc id="d">打卡获得 XP，解锁章节与兑换奖励，形成正向循环</desc>
+  <rect width="960" height="420" fill="#0f1613"/>
+  <text x="40" y="46" fill="#84b9a8" font-family="Sora, sans-serif" font-size="13" letter-spacing="3">PRODUCT LOOP</text>
+  <text x="40" y="84" fill="#edf1ed" font-family="Georgia, serif" font-size="30" font-weight="600">坚持不只靠意志，还要有回路</text>
+
+  <g font-family="Sora, sans-serif">
+    <rect x="48" y="140" width="180" height="150" rx="12" fill="#1a221e" stroke="#303a34"/>
+    <text x="68" y="178" fill="#ef8066" font-size="12" letter-spacing="2">01</text>
+    <text x="68" y="214" fill="#edf1ed" font-size="20" font-weight="600">今日打卡</text>
+    <text x="68" y="246" fill="#9ca8a1" font-size="14">完成一项习惯</text>
+    <text x="68" y="270" fill="#9ca8a1" font-size="14">即时庆祝反馈</text>
+
+    <path d="M238 215 H278" stroke="#84b9a8" stroke-width="2"/>
+
+    <rect x="288" y="140" width="180" height="150" rx="12" fill="#1a221e" stroke="#303a34"/>
+    <text x="308" y="178" fill="#ef8066" font-size="12" letter-spacing="2">02</text>
+    <text x="308" y="214" fill="#edf1ed" font-size="20" font-weight="600">获得 XP</text>
+    <text x="308" y="246" fill="#9ca8a1" font-size="14">普通 / 连续奖励</text>
+    <text x="308" y="270" fill="#9ca8a1" font-size="14">余额实时更新</text>
+
+    <path d="M478 215 H518" stroke="#84b9a8" stroke-width="2"/>
+
+    <rect x="528" y="140" width="180" height="150" rx="12" fill="#1a221e" stroke="#303a34"/>
+    <text x="548" y="178" fill="#ef8066" font-size="12" letter-spacing="2">03</text>
+    <text x="548" y="214" fill="#edf1ed" font-size="20" font-weight="600">推进闯关</text>
+    <text x="548" y="246" fill="#9ca8a1" font-size="14">章节解锁</text>
+    <text x="548" y="270" fill="#9ca8a1" font-size="14">徽章收藏</text>
+
+    <path d="M718 215 H758" stroke="#84b9a8" stroke-width="2"/>
+
+    <rect x="768" y="140" width="150" height="150" rx="12" fill="#1a221e" stroke="#ef8066"/>
+    <text x="788" y="178" fill="#ef8066" font-size="12" letter-spacing="2">04</text>
+    <text x="788" y="214" fill="#edf1ed" font-size="20" font-weight="600">兑换奖励</text>
+    <text x="788" y="246" fill="#9ca8a1" font-size="14">虚拟 / 现实</text>
+    <text x="788" y="270" fill="#9ca8a1" font-size="14">双人兑现</text>
+  </g>
+
+  <path d="M843 300 C700 370, 260 370, 138 300" fill="none" stroke="#46534b" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="300" y="390" fill="#84b9a8" font-family="Sora, sans-serif" font-size="14">现实奖励（奶茶、洗碗、约会）把 App 内数字接回真实关系</text>
+</svg>

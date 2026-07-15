@@ -50,6 +50,22 @@ posts:
 1. `series/{id}.json` 写标题与摘要  
 2. 文章 frontmatter：`series: {id}` + `order`
 
+## 客串歌单（友链）
+
+编辑 `friends/*.yaml`，**每站一个文件**。不要把友链写进代码。
+
+```yaml
+name: 站点名称
+url: https://example.com/
+owner: 站长
+description: 一句话推荐
+category: affinity   # regular | affinity | tools
+tags: [写作]
+order: 10
+```
+
+详情见 [`friends/README.md`](./friends/README.md)。投轨入口：GitHub Issues。
+
 ## 站点身份
 
 作者名、简介、Now、社交链接等长期信息在 `src/data/site.ts`。  
