@@ -58,6 +58,19 @@
   stroke-linejoin: round;
 }
 
+.reading-tools__button[aria-pressed="true"],
+.reading-tools__button.is-saved {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.reading-tools__button[aria-pressed="true"] svg,
+.reading-tools__button.is-saved svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
 .reading-tools__button,
 .reading-tools summary {
   display: inline-grid;
@@ -123,6 +136,33 @@
   min-height: 1em;
   color: var(--text-muted);
   font-size: 0.75rem;
+}
+
+.reading-tools__toast {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 30;
+  max-width: min(14rem, 70vw);
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  box-shadow: var(--shadow-soft);
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition:
+    opacity var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
+}
+
+.reading-tools__toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .continue-reading__list {

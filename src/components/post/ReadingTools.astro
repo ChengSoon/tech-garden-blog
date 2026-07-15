@@ -31,9 +31,9 @@ const { slug, title } = Astro.props;
         <button type="button" data-reader-width="wide">宽</button>
       </div>
       <input class="reading-tools__fallback" data-share-fallback readonly hidden aria-label="文章链接" />
-      <span class="reading-tools__status" data-reader-status aria-live="polite"></span>
     </div>
   </details>
+  <span class="reading-tools__toast" data-reader-status aria-live="polite"></span>
 </div>
 
 <script>
@@ -64,15 +64,25 @@ const { slug, title } = Astro.props;
       const isSaved = state.savedSlugs.includes(slug);
       save?.setAttribute('aria-pressed', String(isSaved));
       save?.setAttribute('aria-label', isSaved ? '移出稍后读' : '加入稍后读');
+      save?.setAttribute('title', isSaved ? '移出稍后读' : '稍后读');
+      save?.classList.toggle('is-saved', isSaved);
       tools.querySelectorAll<HTMLButtonElement>('[data-reader-width]').forEach((button) => {
         button.setAttribute('aria-pressed', String(button.dataset.readerWidth === state.preferences.lineWidth));
       });
     });
   }
 
+  let toastTimer: number | null = null;
+
   function setStatus(tools: HTMLElement, message: string) {
     const status = tools.querySelector<HTMLElement>('[data-reader-status]');
-    if (status) status.textContent = message;
+    if (!status) return;
+    status.textContent = message;
+    status.classList.add('is-visible');
+    if (toastTimer !== null) window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => {
+      status.classList.remove('is-visible');
+    }, 1800);
   }
 
   async function shareArticle(tools: HTMLElement) {
@@ -111,7 +121,16 @@ const { slug, title } = Astro.props;
     if (!target || !tools) return;
     const action = target.dataset.readerAction;
     if (action === 'share') return shareArticle(tools);
-    if (action === 'save') saveState(tools, (state) => toggleSaved(state, tools.dataset.slug ?? ''));
+    if (action === 'save') {
+      const slug = tools.dataset.slug ?? '';
+      const storage = getReaderStorage();
+      const next = toggleSaved(loadReaderState(storage), slug);
+      if (!saveReaderState(storage, next)) {
+        setStatus(tools, '本地保存不可用');
+      } else {
+        setStatus(tools, next.savedSlugs.includes(slug) ? '已加入稍后读' : '已移出稍后读');
+      }
+    }
     if (action?.startsWith('font-')) {
       saveState(tools, (state) => {
         const delta = action === 'font-up' ? 0.05 : action === 'font-down' ? -0.05 : 1 - state.preferences.fontScale;
