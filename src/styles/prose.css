@@ -231,3 +231,15 @@ html.dark .prose pre.astro-code,
 html.dark .prose .astro-code {
   background: #17140f !important;
 }
+
+/* 亮色正文：衬线字脚略加重，避免发灰 */
+html:not(.dark) .prose {
+  font-weight: 500;
+}
+
+html:not(.dark) .prose blockquote,
+html:not(.dark) .prose figcaption,
+html:not(.dark) .prose .code-block__lang {
+  color: var(--text-muted);
+}
+

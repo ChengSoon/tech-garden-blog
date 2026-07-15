@@ -26,7 +26,7 @@
   transform: translate(-50%, -50%) scale(12);
   object-fit: cover;
   filter: blur(6px) saturate(1.15);
-  opacity: 0.32;
+  opacity: 0.14;
   pointer-events: none;
   will-change: auto;
   contain: strict;
@@ -40,14 +40,39 @@ html.dark .bgdeck__wash {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(900px 520px at 72% 42%, color-mix(in oklab, var(--deck-accent) 16%, transparent), transparent 60%),
+    radial-gradient(900px 520px at 72% 42%, color-mix(in oklab, var(--deck-accent) 10%, transparent), transparent 60%),
     linear-gradient(
       115deg,
-      color-mix(in oklab, var(--bg) 94%, transparent) 0%,
-      color-mix(in oklab, var(--bg) 72%, transparent) 38%,
-      color-mix(in oklab, var(--bg) 40%, transparent) 62%,
-      color-mix(in oklab, var(--bg) 55%, transparent) 100%
+      color-mix(in oklab, var(--bg) 96%, transparent) 0%,
+      color-mix(in oklab, var(--bg) 88%, transparent) 34%,
+      color-mix(in oklab, var(--bg) 70%, transparent) 58%,
+      color-mix(in oklab, var(--bg) 84%, transparent) 100%
     );
+}
+
+/* 亮色：遮罩更实，避免深色碟片把正文“压灰” */
+html:not(.dark) .bgdeck__veil {
+  background:
+    radial-gradient(820px 480px at 78% 48%, color-mix(in oklab, var(--deck-accent) 6%, transparent), transparent 62%),
+    linear-gradient(
+      115deg,
+      color-mix(in oklab, var(--bg) 98%, transparent) 0%,
+      color-mix(in oklab, var(--bg) 94%, transparent) 32%,
+      color-mix(in oklab, var(--bg) 86%, transparent) 56%,
+      color-mix(in oklab, var(--bg) 92%, transparent) 100%
+    );
+}
+
+html:not(.dark) .bgdeck__machine {
+  opacity: 0.26;
+}
+
+html:not(.dark) .bgdeck__chassis {
+  opacity: 0.28;
+}
+
+html:not(.dark) .bgdeck__caption {
+  opacity: 0.48;
 }
 
 /* THE machine — single big unit, right-biased background */
@@ -83,6 +108,10 @@ html.dark .bgdeck__wash {
 .bgdeck.is-bump .bgdeck__machine {
   transform: translateY(-50%) scale(0.985);
   opacity: 0.88;
+}
+
+html:not(.dark) .bgdeck.is-bump .bgdeck__machine {
+  opacity: 0.22;
 }
 
 /* chassis behind platter */
@@ -434,15 +463,15 @@ body.has-bg-deck .friends-page-content {
 
 @media (max-width: 860px) {
   .bgdeck {
-    --deck-size: min(92vw, 420px);
+    --deck-size: min(88vw, 360px);
   }
 
   .bgdeck__machine {
     right: 50%;
     top: auto;
-    bottom: -2rem;
+    bottom: -3.5rem;
     transform: translate(50%, 0);
-    opacity: 0.55;
+    opacity: 0.38;
   }
 
   .bgdeck__machine:hover {
@@ -454,7 +483,33 @@ body.has-bg-deck .friends-page-content {
   }
 
   .bgdeck__caption {
-    opacity: 0.85;
+    opacity: 0.55;
+  }
+
+  /* 亮色手机：碟机降为水印，并加强竖向遮罩保护列表正文 */
+  html:not(.dark) .bgdeck__machine {
+    opacity: 0.14;
+    filter: saturate(0.7) brightness(1.18);
+    bottom: -5rem;
+  }
+
+  html:not(.dark) .bgdeck__caption {
+    opacity: 0.32;
+  }
+
+  html:not(.dark) .bgdeck__wash {
+    opacity: 0.08;
+  }
+
+  html:not(.dark) .bgdeck__veil {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--bg) 98%, transparent) 0%,
+        color-mix(in oklab, var(--bg) 94%, transparent) 42%,
+        color-mix(in oklab, var(--bg) 86%, transparent) 68%,
+        color-mix(in oklab, var(--bg) 78%, transparent) 100%
+      );
   }
 
   body.has-bg-deck .home-shell__content,
@@ -463,6 +518,23 @@ body.has-bg-deck .friends-page-content {
   body.has-bg-deck .friends-page-content {
     /* 与全站 gutter 一致，仅给底部碟机留点击空间 */
     padding-bottom: 12rem;
+  }
+
+  /* 亮色：区块半透明底板，避免列表字直接叠在碟片上 */
+  html:not(.dark) body.has-bg-deck .home-section,
+  html:not(.dark) body.has-bg-deck .home-hero,
+  html:not(.dark) body.has-bg-deck .now-page-content > *,
+  html:not(.dark) body.has-bg-deck .about-page-content > *,
+  html:not(.dark) body.has-bg-deck .friends-page-content > * {
+    background: color-mix(in oklab, var(--bg) 90%, transparent);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--bg) 70%, transparent);
+  }
+
+  html:not(.dark) body.has-bg-deck .home-section,
+  html:not(.dark) body.has-bg-deck .home-hero {
+    padding-inline: 0.7rem;
+    margin-inline: -0.15rem;
   }
 }
 
