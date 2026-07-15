@@ -1,0 +1,42 @@
+---
+import { statusLabel } from '../../lib/posts';
+
+interface PostCard {
+  slug: string;
+  title: string;
+  summary: string;
+  date: Date;
+  type: 'essay' | 'note';
+  status: string;
+  tags: string[];
+}
+
+const { posts } = Astro.props as { posts: PostCard[] };
+---
+<section class="home-section latest-growth">
+  <div class="section-head">
+    <h2>最新生长</h2>
+    <a href="/articles">全部内容 →</a>
+  </div>
+  <ol class="latest-growth__list">
+    {posts.map((post, index) => (
+      <li class="growth-row">
+        <span class="growth-row__number">{String(index + 1).padStart(2, '0')}</span>
+        <div class="growth-row__meta">
+          <time datetime={post.date.toISOString()}>
+            {post.date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+          </time>
+          <span>{post.type === 'essay' ? 'Essay' : 'Note'}</span>
+          <span><i class="dot" data-status={post.status}></i>{statusLabel(post.status)}</span>
+        </div>
+        <a class="growth-row__main" href={`/posts/${post.slug}/`}>
+          <strong class="display">{post.title}</strong>
+          <span class="muted">{post.summary}</span>
+        </a>
+        <div class="growth-row__tags">
+          {post.tags.slice(0, 2).map((tag) => <span>#{tag}</span>)}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

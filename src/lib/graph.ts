@@ -1,4 +1,10 @@
-import type { GraphData, GraphEdge, GraphNode } from './types';
+import type {
+  GraphData,
+  GraphEdge,
+  GraphNode,
+  RankedNeighbor,
+  RelationReason,
+} from './types';
 
 export function buildGraph(
   nodes: GraphNode[],
@@ -37,4 +43,50 @@ export function neighborsOf(slug: string, graph: GraphData, limit = 6): string[]
   }
   for (const b of graph.backlinks[slug] ?? []) set.add(b);
   return [...set].filter((s) => s !== slug).slice(0, limit);
+}
+
+function nodeDate(slug: string, graph: GraphData): number {
+  const date = graph.nodes.find((node) => node.slug === slug)?.date;
+  return date ? Date.parse(date) : 0;
+}
+
+function scoreNeighbor(origin: GraphNode, node: GraphNode, linked: Set<string>) {
+  const reasons: RelationReason[] = [];
+  let score = 0;
+
+  if (linked.has(node.slug)) {
+    reasons.push('link');
+    score += 100;
+  }
+  if (origin.series && node.series === origin.series) {
+    reasons.push('series');
+    score += 50;
+  }
+  const sharedTagCount = node.tags.filter((tag) => origin.tags.includes(tag)).length;
+  if (sharedTagCount) {
+    reasons.push('tag');
+    score += sharedTagCount * 10;
+  }
+  return { slug: node.slug, score, reasons };
+}
+
+export function rankNeighbors(
+  slug: string,
+  graph: GraphData,
+  limit = 6,
+): RankedNeighbor[] {
+  const origin = graph.nodes.find((node) => node.slug === slug);
+  if (!origin) return [];
+  const linked = new Set(neighborsOf(slug, graph, graph.nodes.length));
+
+  return graph.nodes
+    .filter((node) => node.slug !== slug)
+    .map((node) => scoreNeighbor(origin, node, linked))
+    .filter((neighbor) => neighbor.score > 0)
+    .sort(
+      (left, right) =>
+        right.score - left.score ||
+        nodeDate(right.slug, graph) - nodeDate(left.slug, graph),
+    )
+    .slice(0, limit);
 }

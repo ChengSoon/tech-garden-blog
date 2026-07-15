@@ -3,41 +3,146 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ImmersiveDeck from '../components/media/ImmersiveDeck';
 import { site } from '../data/site';
 import { catalog } from '../data/listening';
+import { getPublishedPosts, postSlug } from '../lib/posts';
+
+const posts = (await getPublishedPosts()).slice(0, 3);
+const themes = site.interests.slice(0, 3);
 ---
 <BaseLayout title="Now" description={site.now} bodyClass="has-bg-deck">
   <div class="now-shell">
     <ImmersiveDeck client:load tracks={catalog} mode="bg" />
     <div class="container now-page-content">
       <header class="now-head">
-        <p class="eyebrow">Now</p>
+        <p class="eyebrow">Now · {site.nowUpdated}</p>
         <h1 class="display">这季在做什么</h1>
-        <p class="muted">背景是一整台大碟机，点击碟片即可切换。</p>
+        <p class="now-head__lede">{site.now}</p>
       </header>
-      <article class="card now-note">
-        <p class="now-note__body">{site.now}</p>
-        <p class="muted">更新于 {site.nowUpdated}</p>
-      </article>
+
+      <section class="now-section" aria-labelledby="now-themes">
+        <h2 id="now-themes" class="display now-section__title">当前研究</h2>
+        <ol class="now-themes">
+          {themes.map((theme, index) => (
+            <li>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <strong>{theme}</strong>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="now-section" aria-labelledby="now-updates">
+        <div class="now-section__head">
+          <h2 id="now-updates" class="display now-section__title">近期更新</h2>
+          <a href="/articles">全部文章 →</a>
+        </div>
+        <ol class="now-updates">
+          {posts.map((post, index) => (
+            <li>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <a href={`/posts/${postSlug(post)}/`}>
+                <strong class="display">{post.data.title}</strong>
+                <small>{post.data.summary}</small>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
     </div>
   </div>
 </BaseLayout>
 
 <style>
   .now-page-content {
-    padding: 2.4rem 0 3rem;
     display: grid;
-    gap: 1.1rem;
+    gap: 2.4rem;
+    padding: 2.4rem 0 3.5rem;
   }
+
   .now-head h1 {
-    margin: 0.35rem 0 0.55rem;
-    font-size: clamp(2rem, 4vw, 2.6rem);
+    margin: 0.35rem 0 0.7rem;
+    font-size: clamp(2rem, 4vw, 3rem);
   }
-  .now-head p { margin: 0; max-width: 32rem; line-height: 1.65; }
-  .now-note { display: grid; gap: 0.5rem; }
-  .now-note__body {
+
+  .now-head__lede {
+    max-width: 40rem;
     margin: 0;
+    color: var(--text-muted);
     font-family: var(--font-display);
-    font-size: 1.35rem;
+    font-size: clamp(1.15rem, 2.4vw, 1.45rem);
     line-height: 1.45;
   }
-  .now-note p { margin: 0; }
+
+  .now-section {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .now-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+
+  .now-section__head a {
+    color: var(--text-muted);
+    font: 500 0.8rem/1 var(--font-ui);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .now-section__head a:hover {
+    color: var(--accent);
+  }
+
+  .now-section__title {
+    margin: 0;
+    font-size: 1.55rem;
+  }
+
+  .now-themes,
+  .now-updates {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .now-themes li,
+  .now-updates li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0.8rem;
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .now-themes li > span,
+  .now-updates li > span {
+    color: var(--brass);
+    font: 1rem var(--font-display);
+  }
+
+  .now-themes strong {
+    font: 600 1.1rem/1.35 var(--font-ui);
+  }
+
+  .now-updates a {
+    display: grid;
+    gap: 0.25rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .now-updates strong {
+    font-size: 1.25rem;
+  }
+
+  .now-updates small {
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
 </style>

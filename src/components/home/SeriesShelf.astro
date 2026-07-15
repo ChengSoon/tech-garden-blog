@@ -1,0 +1,53 @@
+---
+interface SeriesCard {
+  id: string;
+  title: string;
+  summary: string;
+  count: number;
+  chapters: string[];
+  href: string;
+}
+
+const { series } = Astro.props as { series: SeriesCard[] };
+---
+{series.length > 0 ? (
+  <section class="home-section series-shelf">
+    <div class="section-head">
+      <h2>系列书架</h2>
+      <a href="/series">全部系列 →</a>
+    </div>
+    <ol class="series-shelf__list">
+      {series.map((item, index) => (
+        <li>
+          <a href={item.href} data-series-card data-chapters={JSON.stringify(item.chapters)}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong class="display">{item.title}</strong>
+            <em class="muted">{item.summary}</em>
+            <small data-series-progress>0 / {item.count} 章</small>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+) : null}
+
+<script>
+  import { getReaderStorage, loadReaderState } from '../../lib/reader-state';
+
+  function syncSeriesProgress() {
+    const history = loadReaderState(getReaderStorage()).history;
+    const progress = new Map(history.map((item) => [item.slug, item.progress]));
+    document.querySelectorAll<HTMLAnchorElement>('[data-series-card]').forEach((card) => {
+      const chapters = JSON.parse(card.dataset.chapters ?? '[]') as string[];
+      const completed = chapters.filter((slug) => (progress.get(slug) ?? 0) >= 0.95);
+      const next = chapters.find((slug) => (progress.get(slug) ?? 0) < 0.95) ?? chapters[0];
+      if (next) card.href = `/posts/${next}/`;
+      const label = card.querySelector<HTMLElement>('[data-series-progress]');
+      if (label) label.textContent = `${completed.length} / ${chapters.length} 章`;
+    });
+  }
+
+  document.addEventListener('astro:page-load', syncSeriesProgress);
+  window.addEventListener('reader-state-change', syncSeriesProgress);
+  syncSeriesProgress();
+</script>

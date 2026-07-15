@@ -1,0 +1,98 @@
+---
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+<aside class="resume-bar" data-reading-session data-slug={slug} hidden>
+  <span>上次读到这里附近</span>
+  <button type="button" class="btn btn-primary" data-resume-action>继续</button>
+  <button type="button" class="resume-bar__close" data-resume-close aria-label="关闭继续阅读提示">×</button>
+</aside>
+
+<script>
+  import {
+    getReaderStorage,
+    loadReaderState,
+    recordProgress,
+    saveReaderState,
+  } from '../../lib/reader-state';
+
+  type SessionWindow = Window & { __readingSessionAbort?: AbortController };
+
+  function articleMetrics(article: HTMLElement) {
+    const top = window.scrollY + article.getBoundingClientRect().top;
+    const distance = Math.max(1, article.offsetHeight - window.innerHeight * 0.55);
+    return { top, distance };
+  }
+
+  function bindResume(
+    article: HTMLElement,
+    bar: HTMLElement,
+    progress: number | undefined,
+    controller: AbortController,
+  ) {
+    const resume = bar.querySelector<HTMLButtonElement>('[data-resume-action]');
+    const close = bar.querySelector<HTMLButtonElement>('[data-resume-close]');
+    if (progress && progress >= 0.05 && progress <= 0.95 && resume) {
+      bar.hidden = false;
+      resume.addEventListener('click', () => {
+        const { top, distance } = articleMetrics(article);
+        window.scrollTo({ top: top + progress * distance, behavior: 'smooth' });
+        bar.hidden = true;
+      }, { signal: controller.signal });
+    }
+    close?.addEventListener('click', () => { bar.hidden = true; }, { signal: controller.signal });
+  }
+
+  function bindProgress(
+    article: HTMLElement,
+    slug: string,
+    initialProgress: number,
+    controller: AbortController,
+  ) {
+    const storage = getReaderStorage();
+    let queued = false;
+    let lastWrittenAt = 0;
+    let lastProgress = initialProgress;
+    const save = (force = false) => {
+      const { top, distance } = articleMetrics(article);
+      const progress = Math.min(1, Math.max(0, (window.scrollY - top) / distance));
+      const now = Date.now();
+      if (!force && (now - lastWrittenAt < 500 || Math.abs(progress - lastProgress) < 0.01)) return;
+      const state = recordProgress(loadReaderState(storage), slug, progress, new Date().toISOString());
+      if (saveReaderState(storage, state)) {
+        lastWrittenAt = now;
+        lastProgress = progress;
+      }
+    };
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        save(false);
+      });
+    };
+    window.addEventListener('scroll', schedule, { passive: true, signal: controller.signal });
+    window.addEventListener('pagehide', () => save(true), { signal: controller.signal });
+  }
+
+  function startReadingSession() {
+    const sessionWindow = window as SessionWindow;
+    sessionWindow.__readingSessionAbort?.abort();
+    const controller = new AbortController();
+    sessionWindow.__readingSessionAbort = controller;
+    const article = document.querySelector<HTMLElement>('[data-article][data-slug]');
+    const bar = document.querySelector<HTMLElement>('[data-reading-session]');
+    const slug = article?.dataset.slug;
+    if (!article || !bar || !slug) return;
+    const prior = loadReaderState(getReaderStorage()).history.find((item) => item.slug === slug);
+    bindResume(article, bar, prior?.progress, controller);
+    bindProgress(article, slug, prior?.progress ?? 0, controller);
+  }
+
+  document.addEventListener('astro:page-load', startReadingSession);
+  startReadingSession();
+</script>

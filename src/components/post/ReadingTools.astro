@@ -1,41 +1,134 @@
-<div class="reading-tools" role="group" aria-label="阅读设置">
-  <button type="button" class="btn reading-tools__btn" data-font-size="down" aria-label="减小字号">A-</button>
-  <button type="button" class="btn reading-tools__btn" data-font-size="up" aria-label="增大字号">A+</button>
+---
+interface Props {
+  slug: string;
+  title: string;
+}
+
+const { slug, title } = Astro.props;
+---
+<div class="reading-tools" data-reader-tools data-slug={slug} data-title={title} role="group" aria-label="阅读工具">
+  <button type="button" class="btn reading-tools__button" data-reader-action="save" aria-label="加入稍后读" aria-pressed="false" title="稍后读">
+    <svg width="18" height="18" aria-hidden="true"><use href="/icons/ui.svg#bookmark"></use></svg>
+  </button>
+  <button type="button" class="btn reading-tools__button" data-reader-action="share" aria-label="分享文章" title="分享文章">
+    <svg width="18" height="18" aria-hidden="true"><use href="/icons/ui.svg#share-2"></use></svg>
+  </button>
+  <details>
+    <summary class="btn" aria-label="打开阅读设置" title="阅读设置">Aa</summary>
+    <div class="reading-tools__settings">
+      <div class="reading-tools__group">
+        <span>字号</span>
+        <button type="button" data-reader-action="font-down" aria-label="减小字号">A−</button>
+        <button type="button" data-reader-action="font-reset" aria-label="恢复默认字号">A</button>
+        <button type="button" data-reader-action="font-up" aria-label="增大字号">A+</button>
+      </div>
+      <div class="reading-tools__group">
+        <span>栏宽</span>
+        <button type="button" data-reader-width="narrow">窄</button>
+        <button type="button" data-reader-width="normal">标准</button>
+        <button type="button" data-reader-width="wide">宽</button>
+      </div>
+      <input class="reading-tools__fallback" data-share-fallback readonly hidden aria-label="文章链接" />
+      <span class="reading-tools__status" data-reader-status aria-live="polite"></span>
+    </div>
+  </details>
 </div>
 
-<style>
-  .reading-tools {
-    display: inline-flex;
-    gap: 0.35rem;
-    margin-bottom: 1rem;
-  }
-  .reading-tools__btn {
-    width: 2.2rem;
-    height: 2.2rem;
-    padding: 0;
-    font-size: 0.85rem;
-  }
-</style>
-
 <script>
-  const root = document.documentElement;
-  const key = 'reading-font-scale';
-  const saved = Number(localStorage.getItem(key) || '1');
-  if (saved && saved !== 1) {
-    root.style.setProperty('--content-font-scale', String(saved));
-  }
+  import {
+    getReaderStorage,
+    loadReaderState,
+    saveReaderState,
+    toggleSaved,
+    updatePreferences,
+  } from '../../lib/reader-state';
 
-  function apply(scale) {
-    const next = Math.min(1.25, Math.max(0.9, scale));
-    root.style.setProperty('--content-font-scale', String(next));
-    localStorage.setItem(key, String(next));
-  }
+  type ToolsWindow = Window & { __readingToolsBound?: boolean };
 
-  document.querySelectorAll('[data-font-size]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const current = Number(getComputedStyle(root).getPropertyValue('--content-font-scale') || '1') || 1;
-      const dir = btn.getAttribute('data-font-size');
-      apply(current + (dir === 'up' ? 0.05 : -0.05));
+  function applyPreferences() {
+    const state = loadReaderState(getReaderStorage());
+    document.documentElement.style.setProperty('--content-font-scale', String(state.preferences.fontScale));
+    document.querySelectorAll<HTMLElement>('[data-article]').forEach((article) => {
+      article.dataset.lineWidth = state.preferences.lineWidth;
     });
-  });
+    return state;
+  }
+
+  function syncTools() {
+    const state = applyPreferences();
+    document.querySelectorAll<HTMLElement>('[data-reader-tools]').forEach((tools) => {
+      const slug = tools.dataset.slug ?? '';
+      const save = tools.querySelector<HTMLButtonElement>('[data-reader-action="save"]');
+      const isSaved = state.savedSlugs.includes(slug);
+      save?.setAttribute('aria-pressed', String(isSaved));
+      save?.setAttribute('aria-label', isSaved ? '移出稍后读' : '加入稍后读');
+      tools.querySelectorAll<HTMLButtonElement>('[data-reader-width]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.readerWidth === state.preferences.lineWidth));
+      });
+    });
+  }
+
+  function setStatus(tools: HTMLElement, message: string) {
+    const status = tools.querySelector<HTMLElement>('[data-reader-status]');
+    if (status) status.textContent = message;
+  }
+
+  async function shareArticle(tools: HTMLElement) {
+    const title = tools.dataset.title ?? document.title;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, url: location.href });
+        setStatus(tools, '已打开分享');
+        return;
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+    }
+    try {
+      await navigator.clipboard.writeText(location.href);
+      setStatus(tools, '链接已复制');
+    } catch {
+      const fallback = tools.querySelector<HTMLInputElement>('[data-share-fallback]');
+      if (!fallback) return;
+      fallback.hidden = false;
+      fallback.value = location.href;
+      fallback.select();
+      setStatus(tools, '请手动复制链接');
+    }
+  }
+
+  function saveState(tools: HTMLElement, update: (state: ReturnType<typeof loadReaderState>) => ReturnType<typeof loadReaderState>) {
+    const storage = getReaderStorage();
+    const saved = saveReaderState(storage, update(loadReaderState(storage)));
+    if (!saved) setStatus(tools, '本地保存不可用');
+  }
+
+  async function onReaderAction(event: MouseEvent) {
+    const target = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-reader-action], [data-reader-width]') : null;
+    const tools = target?.closest<HTMLElement>('[data-reader-tools]');
+    if (!target || !tools) return;
+    const action = target.dataset.readerAction;
+    if (action === 'share') return shareArticle(tools);
+    if (action === 'save') saveState(tools, (state) => toggleSaved(state, tools.dataset.slug ?? ''));
+    if (action?.startsWith('font-')) {
+      saveState(tools, (state) => {
+        const delta = action === 'font-up' ? 0.05 : action === 'font-down' ? -0.05 : 1 - state.preferences.fontScale;
+        return updatePreferences(state, { fontScale: state.preferences.fontScale + delta });
+      });
+    }
+    if (target.dataset.readerWidth) {
+      const width = target.dataset.readerWidth as 'narrow' | 'normal' | 'wide';
+      saveState(tools, (state) => updatePreferences(state, { lineWidth: width }));
+    }
+    syncTools();
+  }
+
+  const toolsWindow = window as ToolsWindow;
+  if (!toolsWindow.__readingToolsBound) {
+    toolsWindow.__readingToolsBound = true;
+    document.addEventListener('click', onReaderAction);
+    document.addEventListener('astro:page-load', syncTools);
+    window.addEventListener('reader-state-change', syncTools);
+  }
+  syncTools();
 </script>

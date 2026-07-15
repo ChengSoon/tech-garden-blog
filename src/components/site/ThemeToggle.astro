@@ -1,67 +1,134 @@
-<button type="button" class="theme-toggle btn" data-theme-toggle aria-label="切换深浅色">
-  <span class="sun" aria-hidden="true">☀</span>
-  <span class="moon" aria-hidden="true">☾</span>
+---
+import Icon from './Icon.astro';
+---
+<button type="button" class="theme-toggle btn" data-theme-toggle aria-label="切换到深色模式">
+  <span class="sun" aria-hidden="true"><Icon name="sun" size={18} /></span>
+  <span class="moon" aria-hidden="true"><Icon name="moon" size={18} /></span>
 </button>
 
 <script>
-  const KEY = 'theme';
+  type Theme = 'light' | 'dark';
 
-  function apply(theme) {
-    const root = document.documentElement;
-    root.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem(KEY, theme);
-    // keep browser chrome in sync
-    const metaLight = document.querySelector('meta[name="theme-color"][media*="light"]');
-    const metaDark = document.querySelector('meta[name="theme-color"][media*="dark"]');
-    if (metaLight instanceof HTMLMetaElement) metaLight.content = theme === 'dark' ? '#0f0e0c' : '#f2ebe0';
-    if (metaDark instanceof HTMLMetaElement) metaDark.content = theme === 'dark' ? '#0f0e0c' : '#f2ebe0';
+  const KEY = 'theme';
+  const LIGHT_CHROME = '#f1f3ef';
+  const DARK_CHROME = '#101412';
+
+  function readStoredTheme(): Theme | null {
+    try {
+      const value = localStorage.getItem(KEY);
+      return value === 'light' || value === 'dark' ? value : null;
+    } catch {
+      return null;
+    }
   }
 
-  function current() {
+  function storeTheme(theme: Theme): boolean {
+    try {
+      localStorage.setItem(KEY, theme);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function systemTheme(): Theme {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function resolveTheme(): Theme {
+    return readStoredTheme() ?? systemTheme();
+  }
+
+  function syncControls(theme: Theme) {
+    document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+      button.setAttribute('aria-label', theme === 'dark' ? '切换到浅色模式' : '切换到深色模式');
+    });
+  }
+
+  function syncChrome(theme: Theme) {
+    const color = theme === 'dark' ? DARK_CHROME : LIGHT_CHROME;
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      if (meta instanceof HTMLMetaElement) meta.content = color;
+    });
+  }
+
+  function applyTheme(theme: Theme, options: { persist?: boolean; animate?: boolean } = {}) {
+    const { persist = false, animate = false } = options;
+    const resolvedTheme = persist && !storeTheme(theme) ? systemTheme() : theme;
+    const root = document.documentElement;
+
+    if (animate) {
+      root.classList.add('theme-animating');
+      window.setTimeout(() => root.classList.remove('theme-animating'), 320);
+    }
+
+    root.classList.toggle('dark', resolvedTheme === 'dark');
+    syncControls(resolvedTheme);
+    syncChrome(resolvedTheme);
+  }
+
+  function currentTheme(): Theme {
     return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
   }
 
-  function onToggle(e) {
-    const btn = e.target instanceof Element ? e.target.closest('[data-theme-toggle]') : null;
-    if (!btn) return;
-    e.preventDefault();
-    apply(current() === 'dark' ? 'light' : 'dark');
+  function onToggle(event: MouseEvent) {
+    const button =
+      event.target instanceof Element ? event.target.closest('[data-theme-toggle]') : null;
+    if (!button) return;
+    event.preventDefault();
+    applyTheme(currentTheme() === 'dark' ? 'light' : 'dark', { persist: true, animate: true });
   }
 
-  // Event delegation survives View Transitions page swaps
-  if (!window.__themeToggleBound) {
-    window.__themeToggleBound = true;
+  const themeWindow = window as Window & { __themeToggleBound?: boolean };
+  if (!themeWindow.__themeToggleBound) {
+    themeWindow.__themeToggleBound = true;
     document.addEventListener('click', onToggle);
     document.addEventListener('astro:after-swap', () => {
-      // html may be restored without dark class in rare cases — re-apply from storage
-      const saved = localStorage.getItem(KEY);
-      if (saved === 'dark' || saved === 'light') apply(saved);
+      applyTheme(resolveTheme(), { persist: false, animate: false });
     });
   }
+
+  applyTheme(resolveTheme(), { persist: false, animate: false });
 </script>
 
 <style>
   .theme-toggle {
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0;
     position: relative;
+    width: 44px;
+    height: 44px;
+    padding: 0;
   }
-  .sun, .moon {
+
+  .sun,
+  .moon {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
-    font-size: 0.95rem;
     transition:
       opacity var(--motion-base) var(--ease-out),
       transform var(--motion-base) var(--ease-spring);
   }
-  html:not(.dark) .moon { opacity: 0; transform: scale(0.55) rotate(-40deg); }
-  html.dark .sun { opacity: 0; transform: scale(0.55) rotate(40deg); }
-  html.dark .moon { transform: scale(1) rotate(0deg); }
-  html:not(.dark) .sun { transform: scale(1) rotate(0deg); }
+
+  :global(html:not(.dark)) .moon {
+    opacity: 0;
+    transform: scale(0.65) rotate(-30deg);
+  }
+
+  :global(html.dark) .sun {
+    opacity: 0;
+    transform: scale(0.65) rotate(30deg);
+  }
+
+  :global(html.dark) .moon,
+  :global(html:not(.dark)) .sun {
+    transform: scale(1) rotate(0deg);
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .sun, .moon { transition: none; }
+    .sun,
+    .moon {
+      transition: none;
+    }
   }
 </style>

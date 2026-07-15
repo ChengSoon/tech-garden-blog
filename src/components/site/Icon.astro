@@ -1,0 +1,40 @@
+---
+type IconName =
+  | 'search'
+  | 'sun'
+  | 'moon'
+  | 'menu'
+  | 'x'
+  | 'bookmark'
+  | 'share-2'
+  | 'copy'
+  | 'arrow-right';
+
+interface Props {
+  name: IconName;
+  size?: number | string;
+  class?: string;
+}
+
+const {
+  name,
+  size = 20,
+  class: className,
+} = Astro.props;
+const href = '/icons/ui.svg#' + name;
+---
+<svg
+  class:list={['ui-icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <use href={href}></use>
+</svg>

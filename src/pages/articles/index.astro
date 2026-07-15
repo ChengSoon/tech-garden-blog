@@ -1,121 +1,96 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import { getPublishedPosts, postSlug, statusLabel } from '../../lib/posts';
+import '../../styles/archive.css';
 
 const posts = await getPublishedPosts();
-const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
-const byYear = new Map<number, typeof posts>();
-for (const p of posts) {
-  const y = p.data.date.getFullYear();
-  byYear.set(y, [...(byYear.get(y) ?? []), p]);
-}
-const years = [...byYear.keys()].sort((a, b) => b - a);
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
+const years = [...new Set(posts.map((post) => post.data.date.getFullYear()))].sort((a, b) => b - a);
 ---
-<PageLayout title="文章" lede={`共 ${posts.length} 篇。按时间归档，也可从标签切入。`}>
-  <div class="tags">
-    {tags.map((t) => (
-      <a class="badge" href={`/tags/${t}/`}>#{t}</a>
-    ))}
+<PageLayout title="阅读" lede={`共 ${posts.length} 篇。按类型、主题与生长状态找到下一篇。`}>
+  <form class="archive-toolbar" data-archive-filters>
+    <label>
+      <span>类型</span>
+      <select name="type">
+        <option value="">全部</option>
+        <option value="essay">长文</option>
+        <option value="note">笔记</option>
+      </select>
+    </label>
+    <label>
+      <span>状态</span>
+      <select name="status">
+        <option value="">全部</option>
+        <option value="seedling">萌芽</option>
+        <option value="growing">生长中</option>
+        <option value="evergreen">常青</option>
+      </select>
+    </label>
+    <label>
+      <span>主题</span>
+      <select name="tag">
+        <option value="">全部</option>
+        {tags.map((tag) => <option value={tag}>#{tag}</option>)}
+      </select>
+    </label>
+    <label>
+      <span>年份</span>
+      <select name="year">
+        <option value="">全部</option>
+        {years.map((year) => <option value={year}>{year}</option>)}
+      </select>
+    </label>
+    <label class="archive-toolbar__saved">
+      <input type="checkbox" name="saved" value="1" />
+      <span>稍后读</span>
+    </label>
+    <button type="button" class="btn" data-archive-reset>清除</button>
+    <output data-archive-count>{posts.length} 篇</output>
+  </form>
+
+  <ol class="archive-list" data-archive-list>
+    {posts.map((post, index) => {
+      const slug = postSlug(post);
+      return (
+        <li
+          class="archive-row"
+          data-archive-item
+          data-slug={slug}
+          data-type={post.data.type}
+          data-status={post.data.status}
+          data-tags={JSON.stringify(post.data.tags)}
+          data-year={post.data.date.getFullYear()}
+        >
+          <span class="archive-row__number">{String(index + 1).padStart(2, '0')}</span>
+          <div class="archive-row__meta">
+            <time datetime={post.data.date.toISOString()}>
+              {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}
+            </time>
+            <span>{post.data.type === 'essay' ? 'Essay' : 'Note'}</span>
+            <span><i class="dot" data-status={post.data.status}></i>{statusLabel(post.data.status)}</span>
+          </div>
+          <a href={`/posts/${slug}/`}>
+            <strong class="display">{post.data.title}</strong>
+            <span class="muted">{post.data.summary}</span>
+          </a>
+          <div class="archive-row__side">
+            <span>{post.data.tags.slice(0, 2).map((tag) => `#${tag}`).join(' ')}</span>
+            <em data-archive-progress></em>
+          </div>
+        </li>
+      );
+    })}
+  </ol>
+
+  <div class="archive-empty" data-archive-empty hidden>
+    <p>没有匹配内容。</p>
+    <button type="button" class="btn btn-primary" data-archive-reset>清除筛选</button>
   </div>
-  {years.map((year) => (
-    <section class="year-block">
-      <h2>
-        <span>{year}</span>
-        <span class="year-count">{(byYear.get(year) ?? []).length}</span>
-      </h2>
-      <ul>
-        {(byYear.get(year) ?? []).map((p) => (
-          <li class="card entry">
-            <a href={`/posts/${postSlug(p)}/`}>
-              <div class="entry__top">
-                <time datetime={p.data.date.toISOString()}>
-                  {p.data.date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
-                </time>
-                <span class="badge">{p.data.type === 'essay' ? '长文' : '笔记'}</span>
-                <span class="badge">
-                  <span class="dot" data-status={p.data.status}></span>
-                  {statusLabel(p.data.status)}
-                </span>
-              </div>
-              <strong>{p.data.title}</strong>
-              <p class="muted">{p.data.summary}</p>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
 </PageLayout>
 
-<style>
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1.7rem;
-  }
-  .tags a {
-    text-decoration: none;
-    color: var(--text-muted);
-  }
-  .tags a:hover {
-    color: var(--accent);
-    border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
-  }
-  .year-block { margin-bottom: 2.1rem; }
-  .year-block h2 {
-    margin: 0 0 0.85rem;
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    font-family: var(--font-ui);
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    letter-spacing: 0.04em;
-  }
-  .year-count {
-    display: inline-flex;
-    min-width: 1.4rem;
-    justify-content: center;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    font-size: 0.75rem;
-    padding: 0.05rem 0.4rem;
-  }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.7rem;
-  }
-  .entry {
-    padding: 0;
-  }
-  .entry a {
-    display: grid;
-    gap: 0.4rem;
-    padding: 1rem 1.1rem;
-    text-decoration: none;
-    color: inherit;
-  }
-  .entry__top {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    align-items: center;
-  }
-  .entry time {
-    font-family: var(--font-ui);
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    min-width: 4rem;
-  }
-  .entry strong {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  .entry p { margin: 0; font-size: 0.95rem; }
-</style>
+<script>
+  import { startArchive } from '../../lib/archive-client';
+
+  document.addEventListener('astro:page-load', startArchive);
+  startArchive();
+</script>

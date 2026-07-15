@@ -412,14 +412,16 @@ body.has-bg-deck .site-footer {
 }
 
 body.has-bg-deck .home-shell,
-body.has-bg-deck .now-shell {
+body.has-bg-deck .now-shell,
+body.has-bg-deck .about-shell {
   position: relative;
   isolation: isolate;
   min-height: calc(100vh - var(--header-height));
 }
 
 body.has-bg-deck .home-shell__content,
-body.has-bg-deck .now-page-content {
+body.has-bg-deck .now-page-content,
+body.has-bg-deck .about-page-content {
   position: relative;
   z-index: 1;
 }
@@ -454,7 +456,8 @@ body.has-bg-deck .now-page-content {
   }
 
   body.has-bg-deck .home-shell__content,
-  body.has-bg-deck .now-page-content {
+  body.has-bg-deck .now-page-content,
+  body.has-bg-deck .about-page-content {
     /* 与全站 gutter 一致，仅给底部碟机留点击空间 */
     padding-bottom: 12rem;
   }

@@ -1,5 +1,12 @@
 export type PostType = 'essay' | 'note';
 export type GrowthStatus = 'seedling' | 'growing' | 'evergreen';
+export type RelationReason = 'link' | 'series' | 'tag';
+
+export interface RankedNeighbor {
+  slug: string;
+  score: number;
+  reasons: RelationReason[];
+}
 
 export interface GraphNode {
   slug: string;
@@ -8,9 +15,12 @@ export interface GraphNode {
   status: GrowthStatus;
   tags: string[];
   summary: string;
+  series?: string;
   /** ISO date string for timeline sorting/display */
   date: string;
 }
+
+export type NeighborNode = GraphNode & Pick<RankedNeighbor, 'score' | 'reasons'>;
 
 export interface GraphEdge {
   source: string;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildGraph, neighborsOf } from '../src/lib/graph';
+import { buildGraph, neighborsOf, rankNeighbors } from '../src/lib/graph';
 import type { GraphNode } from '../src/lib/types';
 
 const nodes: GraphNode[] = [
@@ -32,5 +32,31 @@ describe('neighborsOf', () => {
   it('returns unique neighbor slugs', () => {
     const g = buildGraph(nodes, { a: ['b'], b: ['c'], c: [] });
     expect(neighborsOf('b', g).sort()).toEqual(['a', 'c']);
+  });
+});
+
+describe('rankNeighbors', () => {
+  it('explains and ranks links before series and shared tags', () => {
+    const rankedNodes: GraphNode[] = [
+      { ...nodes[0], series: 'guide' },
+      { ...nodes[1], tags: ['other'] },
+      { ...nodes[2], series: 'guide' },
+      {
+        slug: 'd',
+        title: 'D',
+        type: 'note',
+        status: 'growing',
+        tags: ['t'],
+        summary: 'd',
+        date: '2026-07-02T00:00:00.000Z',
+      },
+    ];
+    const graph = buildGraph(rankedNodes, { a: ['b'] });
+
+    expect(rankNeighbors('a', graph)).toEqual([
+      { slug: 'b', score: 100, reasons: ['link'] },
+      { slug: 'c', score: 50, reasons: ['series'] },
+      { slug: 'd', score: 10, reasons: ['tag'] },
+    ]);
   });
 });

@@ -35,8 +35,8 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f2ebe0" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f0e0c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f1f3ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101412" media="(prefers-color-scheme: dark)" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
@@ -54,14 +54,35 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
     <script is:inline>
       (function () {
         const key = 'theme';
-        const apply = () => {
-          const saved = localStorage.getItem(key);
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const dark = saved === 'dark' || (!saved && prefersDark);
-          document.documentElement.classList.toggle('dark', dark);
+        const resolveDark = () => {
+          try {
+            const value = localStorage.getItem(key);
+            if (value === 'dark') return true;
+            if (value === 'light') return false;
+          } catch {}
+          return window.matchMedia('(prefers-color-scheme: dark)').matches;
         };
-        apply();
-        document.addEventListener('astro:after-swap', apply);
+        const applyTo = (root) => {
+          root.classList.toggle('dark', resolveDark());
+        };
+        applyTo(document.documentElement);
+
+        const boot = window;
+        if (boot.__themeBootstrapBound) return;
+        boot.__themeBootstrapBound = true;
+
+        // Copy theme onto the incoming document before paint to avoid light flash.
+        document.addEventListener('astro:before-swap', (event) => {
+          document.documentElement.classList.add('theme-no-transition');
+          applyTo(event.newDocument.documentElement);
+          event.newDocument.documentElement.classList.add('theme-no-transition');
+        });
+        document.addEventListener('astro:after-swap', () => {
+          applyTo(document.documentElement);
+          requestAnimationFrame(() => {
+            document.documentElement.classList.remove('theme-no-transition');
+          });
+        });
       })();
     </script>
   </head>

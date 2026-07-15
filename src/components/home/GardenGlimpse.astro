@@ -1,101 +1,74 @@
 ---
 import { getGraph } from '../../lib/build-graph';
-import { layoutNodes } from '../../lib/garden-layout';
+import { clusterCenters, layoutNodes } from '../../lib/garden-layout';
 
 const graph = await getGraph();
 const nodes = graph.nodes.slice(0, 12);
-const pos = layoutNodes(nodes);
-const xs = nodes.map((n) => pos[n.slug]?.x ?? 0);
-const ys = nodes.map((n) => pos[n.slug]?.y ?? 0);
-const minX = Math.min(...xs, 0) - 40;
-const maxX = Math.max(...xs, 300) + 40;
-const minY = Math.min(...ys, 0) - 40;
-const maxY = Math.max(...ys, 220) + 40;
+const positions = layoutNodes(nodes);
+const clusters = clusterCenters(nodes, positions)
+  .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key, 'zh-CN'))
+  .slice(0, 3);
+const visibleSlugs = new Set(nodes.map((node) => node.slug));
+const edges = graph.edges.filter(
+  (edge) => visibleSlugs.has(edge.source) && visibleSlugs.has(edge.target),
+);
 ---
-<section class="glimpse">
+<section class="home-section garden-glimpse">
   <div class="section-head">
-    <h2>花园一瞥</h2>
+    <h2>知识地图</h2>
     <a href="/garden">进入花园 →</a>
   </div>
-  <a class="card canvas" href="/garden" aria-label="打开花园">
-    <div class="canvas__label">
-      <div>
-        <strong class="display">{graph.nodes.length}</strong>
-        <span class="muted">nodes</span>
-      </div>
-      <div>
-        <strong class="display">{graph.edges.length}</strong>
-        <span class="muted">links</span>
-      </div>
+  <div class="garden-glimpse__grid">
+    <div class="garden-glimpse__topics">
+      <p class="muted">从主题进入，也可以沿显式链接继续漫游。</p>
+      <ol>
+        {clusters.map((cluster, index) => (
+          <li>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <a href={`/tags/${cluster.key}/`}>#{cluster.key}</a>
+            <em>{cluster.count} 个节点</em>
+          </li>
+        ))}
+      </ol>
+      <ul class="garden-glimpse__nodes">
+        {nodes.slice(0, 5).map((node) => (
+          <li><a href={`/posts/${node.slug}/`}>{node.title}</a></li>
+        ))}
+      </ul>
     </div>
-    <svg viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`}>
-      {graph.edges.map((e) => {
-        const a = pos[e.source];
-        const b = pos[e.target];
-        if (!a || !b) return null;
-        return (
-          <line
-            x1={a.x}
-            y1={a.y}
-            x2={b.x}
-            y2={b.y}
-            stroke="currentColor"
-            stroke-opacity="0.18"
-            stroke-width="1.2"
-          />
-        );
-      })}
-      {nodes.map((n) => {
-        const p = pos[n.slug];
-        if (!p) return null;
-        return (
-          <circle
-            cx={p.x}
-            cy={p.y}
-            r={n.type === 'essay' ? 9 : 7}
-            fill={n.type === 'essay' ? 'var(--accent)' : 'var(--bg-elevated)'}
-            stroke="var(--accent)"
-            stroke-width="1.75"
-          />
-        );
-      })}
-    </svg>
-  </a>
+    <a class="garden-glimpse__map" href="/garden" aria-label="打开完整知识花园">
+      <svg viewBox="0 0 1000 640" role="img" aria-label={`${nodes.length} 个节点的关系预览`}>
+        {edges.map((edge) => {
+          const source = positions[edge.source];
+          const target = positions[edge.target];
+          if (!source || !target) return null;
+          return (
+            <line
+              x1={source.x}
+              y1={source.y}
+              x2={target.x}
+              y2={target.y}
+              stroke="currentColor"
+              stroke-opacity="0.28"
+              stroke-width="2"
+            />
+          );
+        })}
+        {nodes.map((node) => {
+          const point = positions[node.slug];
+          if (!point) return null;
+          return (
+            <circle
+              cx={point.x}
+              cy={point.y}
+              r={node.type === 'essay' ? 13 : 9}
+              fill={node.type === 'essay' ? 'var(--accent)' : 'var(--bg-elevated)'}
+              stroke="var(--accent)"
+              stroke-width="3"
+            />
+          );
+        })}
+      </svg>
+    </a>
+  </div>
 </section>
-
-<style>
-  .glimpse { margin: 2.5rem 0; }
-  .canvas {
-    display: grid;
-    gap: 0.35rem;
-    text-decoration: none;
-    color: var(--text);
-    padding: 1rem 1rem 0.55rem;
-    overflow: hidden;
-    background:
-      radial-gradient(600px 220px at 50% 0%, color-mix(in oklab, var(--brass) 10%, transparent), transparent 65%),
-      var(--bg-elevated);
-  }
-  .canvas__label {
-    display: flex;
-    gap: 1.6rem;
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .canvas__label div {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-  }
-  .canvas__label strong {
-    font-size: 1.6rem;
-    letter-spacing: -0.02em;
-  }
-  .canvas svg {
-    width: 100%;
-    height: 210px;
-    display: block;
-  }
-</style>

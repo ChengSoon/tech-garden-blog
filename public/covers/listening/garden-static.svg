@@ -1,12 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Garden Static">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0%" stop-color="#e8dfd0"/>
-      <stop offset="45%" stop-color="#f2ebe0"/>
-      <stop offset="100%" stop-color="#d9cebc"/>
-    </linearGradient>
-  </defs>
-  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect width="800" height="800" fill="#e8dfd0"/>
+  <rect x="430" width="370" height="800" fill="#d9cebc"/>
   <circle cx="250" cy="320" r="90" fill="#5f7d3b" opacity="0.85"/>
   <circle cx="360" cy="280" r="70" fill="#2f6f66" opacity="0.75"/>
   <circle cx="300" cy="400" r="60" fill="#a67c2d" opacity="0.7"/>

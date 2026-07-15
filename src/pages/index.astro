@@ -1,86 +1,61 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/home/Hero.astro';
-import FeaturedPosts from '../components/home/FeaturedPosts.astro';
+import ReadingPaths from '../components/home/ReadingPaths.astro';
+import LatestGrowth from '../components/home/LatestGrowth.astro';
 import GardenGlimpse from '../components/home/GardenGlimpse.astro';
+import SeriesShelf from '../components/home/SeriesShelf.astro';
+import ClosingStrip from '../components/home/ClosingStrip.astro';
+import ContinueReading from '../components/reader/ContinueReading.astro';
 import ImmersiveDeck from '../components/media/ImmersiveDeck';
 import { catalog } from '../data/listening';
+import { readingPaths } from '../data/reading-paths';
 import { getPublishedPosts, postSlug } from '../lib/posts';
+import { resolveReadingPaths } from '../lib/reading-paths';
 import { getCollection } from 'astro:content';
+import '../styles/home.css';
+import '../styles/reader.css';
 
 const posts = await getPublishedPosts();
+const cards = posts.map((post) => ({
+  slug: postSlug(post),
+  title: post.data.title,
+  summary: post.data.summary,
+  date: post.data.date,
+  type: post.data.type,
+  status: post.data.status,
+  tags: post.data.tags,
+}));
+const bySlug = new Map(cards.map((card) => [card.slug, card]));
+const paths = resolveReadingPaths(readingPaths, bySlug);
+const lead = cards.find((card) => card.type === 'essay') ?? cards[0];
 const seriesEntries = await getCollection('series');
 const seriesCards = seriesEntries.map((s) => {
-  const count = posts.filter((p) => p.data.series === s.id).length;
-  const first = posts
+  const chapters = posts
     .filter((p) => p.data.series === s.id)
-    .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))[0];
+    .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
+    .map((post) => postSlug(post));
   return {
     id: s.id,
     title: s.data.title,
     summary: s.data.summary,
-    count,
-    href: first ? `/posts/${postSlug(first)}/` : `/series/${s.id}/`,
+    count: chapters.length,
+    chapters,
+    href: chapters[0] ? `/posts/${chapters[0]}/` : `/series/${s.id}/`,
   };
 });
 ---
 <BaseLayout title="Home" bodyClass="has-bg-deck">
   <div class="home-shell">
-    <ImmersiveDeck client:load tracks={catalog} mode="bg" />
-
+    <ImmersiveDeck client:idle tracks={catalog} mode="bg" />
     <div class="container home-shell__content">
-      <Hero />
-      <FeaturedPosts />
+      <Hero lead={lead} />
+      <ContinueReading posts={cards} />
+      <ReadingPaths paths={paths} />
+      <LatestGrowth posts={cards.slice(0, 6)} />
       <GardenGlimpse />
-
-      {seriesCards.length > 0 ? (
-        <section class="series-home">
-          <div class="section-head">
-            <h2>进行中的系列</h2>
-            <a href="/series">全部系列 →</a>
-          </div>
-          <div class="series-home__grid">
-            {seriesCards.map((s, i) => (
-              <a class="card series-card" href={`/series/${s.id}/`}>
-                <span class="series-card__n">{String(i + 1).padStart(2, '0')}</span>
-                <strong class="display">{s.title}</strong>
-                <span class="muted">{s.summary}</span>
-                <span class="badge">已发布 {s.count} 章</span>
-              </a>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <SeriesShelf series={seriesCards} />
+      <ClosingStrip track={catalog[0]} />
     </div>
   </div>
 </BaseLayout>
-
-<style>
-  .home-shell__content {
-    padding-top: 0.5rem;
-    padding-bottom: 3rem;
-  }
-  .series-home { margin: 2.5rem 0; }
-  .series-home__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 0.95rem;
-  }
-  .series-card {
-    text-decoration: none;
-    color: inherit;
-    display: grid;
-    gap: 0.5rem;
-    align-content: start;
-  }
-  .series-card__n {
-    font-family: var(--font-display);
-    color: var(--brass);
-    font-size: 1.3rem;
-    line-height: 1;
-  }
-  .series-card strong {
-    font-size: 1.4rem;
-    line-height: 1.15;
-  }
-</style>

@@ -8,10 +8,12 @@ import SeriesNav from '../components/post/SeriesNav.astro';
 import Backlinks from '../components/post/Backlinks.astro';
 import CodeEnhance from '../components/post/CodeEnhance.astro';
 import ReadingTools from '../components/post/ReadingTools.astro';
+import ReadingSession from '../components/reader/ReadingSession.astro';
 import MobileToc from '../components/post/MobileToc.astro';
 import CoverArt from '../components/post/CoverArt.astro';
 import AuthorCard from '../components/post/AuthorCard.astro';
-import type { GraphNode } from '../lib/types';
+import type { GraphNode, NeighborNode } from '../lib/types';
+import '../styles/reader.css';
 
 interface Heading {
   depth: number;
@@ -31,7 +33,7 @@ interface Props {
   tags: string[];
   readingMinutes: number;
   headings: Heading[];
-  neighbors: GraphNode[];
+  neighbors: NeighborNode[];
   backlinks: GraphNode[];
   seriesId?: string;
   prev?: SeriesItem | null;
@@ -45,7 +47,8 @@ const isEssay = props.type === 'essay';
 ---
 <BaseLayout title={props.title} description={props.description}>
   <ReadingProgress />
-  <article class="container post" data-article>
+  <ReadingSession slug={props.slug} />
+  <article class="container post" data-article data-slug={props.slug} data-line-width="normal">
     {isEssay ? (
       <CoverArt
         title={props.title}
@@ -61,9 +64,10 @@ const isEssay = props.type === 'essay';
         <header class="post__header">
           <div class="post__header-top">
             <p class="eyebrow">{isEssay ? 'Essay' : 'Note'}</p>
-            <ReadingTools />
+            <ReadingTools slug={props.slug} title={props.title} />
           </div>
           <h1 class="display">{props.title}</h1>
+          <p class="post__summary">{props.description}</p>
           <PostMeta
             date={props.date}
             readingMinutes={props.readingMinutes}

@@ -15,15 +15,20 @@
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Cheap theme cross-fade (color/background only) */
-html {
+/* Theme color fade only on explicit user toggle, never during route swaps. */
+html.theme-animating {
   transition:
     background-color var(--motion-theme) var(--ease-inout),
     color var(--motion-theme) var(--ease-inout);
 }
 
-body {
+html.theme-animating body {
   transition: background-color var(--motion-theme) var(--ease-inout);
+}
+
+html.theme-no-transition,
+html.theme-no-transition body {
+  transition: none !important;
 }
 
 /* Enter: subtle rise — opacity + transform only */

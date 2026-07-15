@@ -1,11 +1,16 @@
 ---
-import type { GraphNode } from '../../lib/types';
+import type { NeighborNode, RelationReason } from '../../lib/types';
 import { statusLabel } from '../../lib/posts';
 
 interface Props {
-  neighbors: GraphNode[];
+  neighbors: NeighborNode[];
 }
 const { neighbors } = Astro.props;
+const reasonLabels: Record<RelationReason, string> = {
+  link: '正文链接',
+  series: '同系列',
+  tag: '共同主题',
+};
 ---
 {neighbors.length > 0 ? (
   <section class="neighbors">
@@ -21,6 +26,9 @@ const { neighbors } = Astro.props;
             <span class="badge"><span class="dot" data-status={n.status}></span>{statusLabel(n.status)}</span>
           </div>
           <strong>{n.title}</strong>
+          <span class="neighbor__reasons">
+            {n.reasons.map((reason) => <span>{reasonLabels[reason]}</span>)}
+          </span>
           <p class="muted">{n.summary}</p>
         </a>
       ))}
@@ -56,6 +64,16 @@ const { neighbors } = Astro.props;
     display: flex;
     gap: 0.35rem;
     flex-wrap: wrap;
+  }
+  .neighbor__reasons {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .neighbor__reasons span {
+    color: var(--accent-strong);
+    font: 500 0.72rem var(--font-ui);
+    letter-spacing: 0.04em;
   }
   .neighbor p {
     margin: 0;

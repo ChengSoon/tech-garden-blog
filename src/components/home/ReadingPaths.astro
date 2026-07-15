@@ -1,0 +1,39 @@
+---
+interface Item {
+  slug: string;
+  title: string;
+}
+
+interface Path {
+  id: string;
+  title: string;
+  description: string;
+  items: Item[];
+}
+
+const { paths } = Astro.props as { paths: Path[] };
+---
+<section id="start" class="home-section reading-paths">
+  <div class="section-head">
+    <h2>从这里开始</h2>
+    <span class="muted">{paths.length} 条阅读路径</span>
+  </div>
+  <ol class="reading-paths__list">
+    {paths.map((path, index) => (
+      <li>
+        <article class="reading-path">
+          <span class="reading-path__number">{String(index + 1).padStart(2, '0')}</span>
+          <div class="reading-path__copy">
+            <h3 class="display">{path.title}</h3>
+            <p class="muted">{path.description}</p>
+          </div>
+          <ol class="reading-path__articles">
+            {path.items.slice(0, 3).map((item) => (
+              <li><a href={`/posts/${item.slug}/`}>{item.title}</a></li>
+            ))}
+          </ol>
+        </article>
+      </li>
+    ))}
+  </ol>
+</section>

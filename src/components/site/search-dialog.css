@@ -1,0 +1,119 @@
+.search-trigger svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: start center;
+  padding-top: 11vh;
+  background: color-mix(in oklab, #14110e 42%, transparent);
+  animation: motion-fade var(--motion-base) var(--ease-out) both;
+}
+
+.search-dialog {
+  width: min(620px, calc(100vw - 2rem));
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+  animation: motion-scale-in var(--motion-slow) var(--ease-spring) both;
+}
+
+.search-dialog__head,
+.search-result__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.search-dialog__head {
+  padding: 0.85rem 1rem 0.35rem;
+}
+
+.search-close {
+  min-height: 2rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: 500 0.72rem var(--font-ui);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.search-dialog input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  padding: 0.65rem 1rem 0.95rem;
+  font: 600 1.35rem/1.35 var(--font-display);
+}
+
+.search-dialog input:focus-visible {
+  box-shadow: inset 0 -2px var(--accent);
+}
+
+.search-dialog ul {
+  max-height: 360px;
+  overflow: auto;
+  margin: 0;
+  padding: 0.45rem;
+  list-style: none;
+}
+
+.search-dialog li button {
+  display: grid;
+  width: 100%;
+  gap: 0.2rem;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text);
+  padding: 0.75rem 0.8rem;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-inout);
+}
+
+.search-result__row strong {
+  font: 600 1.12rem/1.3 var(--font-display);
+}
+
+.search-result__row em {
+  color: var(--brass);
+  font: 500 0.7rem var(--font-ui);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.search-result__tags,
+.search-empty {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.search-dialog li button.active,
+.search-dialog li button:hover {
+  background: var(--accent-soft);
+}
+
+.search-empty {
+  padding: 1.2rem 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-overlay,
+  .search-dialog {
+    animation: none;
+  }
+}

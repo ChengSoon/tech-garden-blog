@@ -12,6 +12,7 @@ export async function getGraph(): Promise<GraphData> {
     status: p.data.status,
     tags: p.data.tags,
     summary: p.data.summary,
+    series: p.data.series,
     date: p.data.date.toISOString(),
   }));
 

@@ -1,0 +1,23 @@
+---
+import { site } from '../../data/site';
+import type { ListeningTrack } from '../../data/listening';
+
+const { track } = Astro.props as { track: ListeningTrack };
+---
+<section class="home-section closing-strip" aria-label="近况与订阅">
+  <a class="closing-strip__item" href="/now">
+    <span class="eyebrow">Now</span>
+    <strong>{site.now}</strong>
+    <em>查看近况 →</em>
+  </a>
+  <a class="closing-strip__item" href="/now">
+    <span class="eyebrow">Listening</span>
+    <strong>{track.title}</strong>
+    <em>{track.artist} →</em>
+  </a>
+  <a class="closing-strip__item" href="/subscribe">
+    <span class="eyebrow">RSS</span>
+    <strong>跟进下一次生长</strong>
+    <em>订阅更新 →</em>
+  </a>
+</section>

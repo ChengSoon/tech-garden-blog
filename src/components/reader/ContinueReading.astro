@@ -1,0 +1,56 @@
+---
+interface PostCard {
+  slug: string;
+  title: string;
+  summary: string;
+}
+
+const { posts } = Astro.props as { posts: PostCard[] };
+---
+<section class="home-section continue-reading" data-continue-reading hidden>
+  <div class="section-head">
+    <h2>继续阅读</h2>
+    <a href="/articles?saved=1">稍后读 →</a>
+  </div>
+  <div class="continue-reading__list" data-continue-list>
+    {posts.map((post) => (
+      <a href={`/posts/${post.slug}/`} data-continue-item data-slug={post.slug} hidden>
+        <strong class="display">{post.title}</strong>
+        <span class="muted">{post.summary}</span>
+        <em data-progress></em>
+      </a>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { getReaderStorage, loadReaderState } from '../../lib/reader-state';
+
+  function syncContinueReading() {
+    const section = document.querySelector<HTMLElement>('[data-continue-reading]');
+    const list = section?.querySelector<HTMLElement>('[data-continue-list]');
+    if (!section || !list) return;
+    const items = new Map(
+      [...list.querySelectorAll<HTMLElement>('[data-continue-item]')]
+        .map((item) => [item.dataset.slug ?? '', item]),
+    );
+    items.forEach((item) => { item.hidden = true; });
+    const history = loadReaderState(getReaderStorage()).history
+      .filter((item) => item.progress >= 0.02 && item.progress <= 0.98)
+      .slice(0, 3);
+    let shown = 0;
+    history.forEach((entry) => {
+      const item = items.get(entry.slug);
+      if (!item) return;
+      item.hidden = false;
+      item.querySelector<HTMLElement>('[data-progress]')!.textContent = `${Math.round(entry.progress * 100)}%`;
+      list.append(item);
+      shown += 1;
+    });
+    section.hidden = shown === 0;
+  }
+
+  document.addEventListener('astro:page-load', syncContinueReading);
+  window.addEventListener('reader-state-change', syncContinueReading);
+  syncContinueReading();
+</script>

@@ -1,79 +1,32 @@
 ---
-import { site } from '../../data/site';
-import { getPublishedPosts } from '../../lib/posts';
-const count = (await getPublishedPosts()).length;
----
-<section class="hero">
-  <div class="hero__meta" style="--i:0">
-    <p class="eyebrow">Vol. 01 · Technical Journal</p>
-    <span class="hero__issue">No. {String(count).padStart(2, '0')}</span>
-  </div>
-  <h1 class="display hero__title" style="--i:1">
-    <span class="hero__line">一本可漫游的</span>
-    <span class="hero__line hero__line--accent">技术刊</span>
-    <span class="hero__line hero__line--soft">与仍在生长的知识花园</span>
-  </h1>
-  <p class="hero__deck muted" style="--i:2">{site.tagline}</p>
-  <div class="hero__actions" style="--i:3">
-    <a class="btn btn-primary" href="#featured">阅读精选</a>
-    <a class="btn" href="/garden">进入花园</a>
-  </div>
-</section>
+interface LeadPost {
+  slug: string;
+  title: string;
+  summary: string;
+  type: 'essay' | 'note';
+}
 
-<style>
-  .hero {
-    padding: 3.2rem 0 1.2rem;
-    max-width: 48rem;
-  }
-  .hero > * {
-    animation: motion-rise var(--motion-enter) var(--ease-out) both;
-    animation-delay: calc(var(--i, 0) * var(--motion-stagger));
-  }
-  .hero__meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.35rem;
-    padding-bottom: 0.85rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .hero__issue {
-    font-family: var(--font-ui);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  .hero__title {
-    margin: 0;
-    font-size: clamp(2.6rem, 7vw, 4.4rem);
-  }
-  .hero__line { display: block; }
-  .hero__line--accent {
-    color: var(--accent);
-    font-style: italic;
-  }
-  .hero__line--soft {
-    color: color-mix(in oklab, var(--text) 72%, var(--text-muted));
-    font-size: 0.72em;
-    margin-top: 0.18em;
-  }
-  .hero__deck {
-    margin: 1.35rem 0 1.7rem;
-    max-width: 34rem;
-    font-size: 1.05rem;
-    line-height: 1.7;
-  }
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-  }
-  @media (max-width: 560px) {
-    .hero { padding-top: 2.2rem; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero > * { animation: none; }
-  }
-</style>
+interface Props {
+  lead?: LeadPost;
+}
+
+const { lead } = Astro.props;
+---
+<section class="home-hero" aria-labelledby="home-title">
+  <p class="eyebrow">Independent Technical Journal · Vol. 01</p>
+  <h1 id="home-title" class="display">
+    Cheng
+    <span>· 技术刊</span>
+  </h1>
+  <p class="home-hero__lede">一本可漫游的技术刊，一座仍在生长的知识花园。</p>
+  {lead ? (
+    <a class="home-hero__lead" href={`/posts/${lead.slug}/`}>
+      <span>{lead.type === 'essay' ? '本期主打' : '最新笔记'}</span>
+      <strong class="display">{lead.title}</strong>
+      <em>{lead.summary}</em>
+    </a>
+  ) : null}
+  <a class="home-hero__next" href="#start">
+    开始阅读 <span aria-hidden="true">↓</span>
+  </a>
+</section>

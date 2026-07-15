@@ -8,15 +8,15 @@ const essayCount = graph.nodes.filter((n) => n.type === 'essay').length;
 const noteCount = graph.nodes.filter((n) => n.type === 'note').length;
 const tagCount = new Set(graph.nodes.flatMap((n) => n.tags)).size;
 ---
-<BaseLayout title="花园" description="生长时间线与主题书架">
+<BaseLayout title="花园" description="主题地图与生长时间线">
   <div class="garden-page">
     <div class="container garden-page__intro motion-enter">
       <div class="garden-page__copy">
         <p class="eyebrow">Digital Garden</p>
         <h1 class="display">知识花园</h1>
         <p class="lede muted">
-          两条路径逛同一座园：<strong>时间线</strong>回看生长史，
-          <strong>主题书架</strong>按标签分架浏览。悬停与点击都能顺着链接继续走。
+          两条路径逛同一座园：<strong>主题地图</strong>看知识连接，
+          <strong>时间线</strong>回看生长史。每条推荐都说明它为何与你相邻。
         </p>
       </div>
       <dl class="garden-page__stats">
@@ -40,7 +40,7 @@ const tagCount = new Set(graph.nodes.flatMap((n) => n.tags)).size;
     </div>
 
     <div class="container">
-      <GardenView client:load graph={graph} />
+      <GardenView client:visible graph={graph} />
     </div>
   </div>
 </BaseLayout>

@@ -1,161 +1,50 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
-import { site } from '../data/site';
 import { getPublishedPosts, postSlug } from '../lib/posts';
-
 const posts = (await getPublishedPosts()).slice(0, 5);
-const origin = Astro.site?.toString().replace(/\/$/, '') ?? '';
-// In local dev Astro.site may be example.com; prefer current origin when available at request time
 const feedPath = '/rss.xml';
 ---
-<PageLayout
-  title="订阅"
-  description="通过 RSS 订阅本站更新"
-  lede="RSS 是给「阅读器」用的订阅源，不是普通网页。把地址加到阅读器里，有新文章会自动推送。"
->
+<PageLayout title="订阅" description="通过 RSS 订阅本站更新" lede="把技术刊交给你自己的阅读器，不受算法时间线打扰。">
   <div class="subscribe">
-    <section class="card subscribe__feed">
-      <p class="eyebrow">Feed URL</p>
-      <h2 class="display">RSS 源地址</h2>
-      <p class="muted">复制下面地址，粘贴到 Reeder、NetNewsWire、Feedly、Inoreader 等应用中。</p>
-      <div class="feed-box">
-        <code id="feed-url" data-path={feedPath}>{feedPath}</code>
-        <button type="button" class="btn btn-primary" id="copy-feed">复制</button>
-      </div>
-      <p class="fine muted">
-        原始 feed 文件：
-        <a href="/rss.xml"><code>/rss.xml</code></a>
-        （浏览器打开会显示 XML 源码，这是正常现象）
-      </p>
+    <section class="subscribe__primary">
+      <p class="eyebrow">RSS / Open feed</p><h2 class="display">跟进下一次生长</h2>
+      <div class="feed-box"><code id="feed-url" data-path={feedPath} tabindex="0">{feedPath}</code>
+        <button type="button" class="btn btn-primary" id="copy-feed">复制地址</button></div>
+      <p id="copy-status" class="muted" aria-live="polite"></p>
+      <div class="reader-links"><a class="btn" id="feedly-link" href="https://feedly.com/i/subscription/feed/">用 Feedly 订阅</a>
+        <a class="btn" id="inoreader-link" href="https://www.inoreader.com/search/feeds/">用 Inoreader 订阅</a>
+        <a class="btn" href="/rss.xml">查看 XML</a></div>
     </section>
-
-    <section class="card">
-      <p class="eyebrow">How to</p>
-      <h2 class="display">怎么用</h2>
-      <ol class="steps">
-        <li>安装任意 RSS 阅读器（桌面 / 手机均可）</li>
-        <li>选择「添加订阅 / Add feed」</li>
-        <li>粘贴本站 feed 地址并确认</li>
-        <li>之后更新会自动出现在阅读器里</li>
-      </ol>
+    <section><div class="section-head"><h2>最近文章</h2><a href="/articles">全部文章 →</a></div>
+      <ol class="recent">{posts.map((post, index) => <li><span>{String(index + 1).padStart(2,'0')}</span>
+        <a href={`/posts/${postSlug(post)}/`}><strong class="display">{post.data.title}</strong><small>{post.data.summary}</small></a></li>)}</ol>
     </section>
-
-    <section>
-      <div class="section-head">
-        <h2>最近文章</h2>
-        <a href="/articles">全部文章 →</a>
-      </div>
-      <ul class="recent">
-        {posts.map((p) => (
-          <li class="card">
-            <a href={`/posts/${postSlug(p)}/`}>
-              <strong class="display">{p.data.title}</strong>
-              <span class="muted">{p.data.summary}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <p class="muted note">
-      搜索引擎用地图文件在 <code>/sitemap.xml</code>，一般不必手动打开；站点页脚也不再放该入口。
-    </p>
   </div>
 </PageLayout>
-
 <script>
-  const code = document.getElementById('feed-url');
-  const btn = document.getElementById('copy-feed');
-  if (code) {
-    const path = code.dataset.path || '/rss.xml';
-    const absolute = `${window.location.origin}${path}`;
-    code.textContent = absolute;
-  }
-  btn?.addEventListener('click', async () => {
-    const text = code?.textContent ?? '';
-    try {
-      await navigator.clipboard.writeText(text);
-      btn.textContent = '已复制';
-      setTimeout(() => {
-        btn.textContent = '复制';
-      }, 1400);
-    } catch {
-      btn.textContent = '失败';
-      setTimeout(() => {
-        btn.textContent = '复制';
-      }, 1400);
-    }
+  const code = document.querySelector<HTMLElement>('#feed-url');
+  const button = document.querySelector<HTMLButtonElement>('#copy-feed');
+  const status = document.querySelector<HTMLElement>('#copy-status');
+  const feedUrl = `${window.location.origin}${code?.dataset.path || '/rss.xml'}`;
+  if (code) code.textContent = feedUrl;
+  document.querySelector<HTMLAnchorElement>('#feedly-link')?.setAttribute('href', `https://feedly.com/i/subscription/feed/${encodeURIComponent(feedUrl)}`);
+  document.querySelector<HTMLAnchorElement>('#inoreader-link')?.setAttribute('href', `https://www.inoreader.com/search/feeds/${encodeURIComponent(feedUrl)}`);
+  button?.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(feedUrl); if (status) status.textContent = '已复制到剪贴板'; }
+    catch { const selection = window.getSelection(); const range = document.createRange(); if (code) { range.selectNodeContents(code); selection?.removeAllRanges(); selection?.addRange(range); code.focus(); }
+      if (status) status.textContent = '请手动复制'; }
   });
 </script>
-
 <style>
-  .subscribe {
-    display: grid;
-    gap: 1.4rem;
-    max-width: 44rem;
-  }
-  .subscribe__feed h2,
-  .card h2 {
-    margin: 0.2rem 0 0.55rem;
-    font-size: 1.7rem;
-  }
-  .subscribe .muted {
-    margin: 0;
-    line-height: 1.65;
-  }
-  .feed-box {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    align-items: center;
-  }
-  .feed-box code {
-    flex: 1 1 16rem;
-    display: block;
-    padding: 0.75rem 0.9rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg);
-    font-family: var(--font-mono);
-    font-size: 0.86rem;
-    word-break: break-all;
-  }
-  .fine {
-    margin-top: 0.85rem !important;
-    font-size: 0.88rem;
-  }
-  .steps {
-    margin: 0.7rem 0 0;
-    padding-left: 1.15rem;
-    display: grid;
-    gap: 0.45rem;
-    color: var(--text-muted);
-    line-height: 1.55;
-  }
-  .recent {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.7rem;
-  }
-  .recent a {
-    display: grid;
-    gap: 0.3rem;
-    text-decoration: none;
-    color: inherit;
-  }
-  .recent strong {
-    font-size: 1.25rem;
-    line-height: 1.25;
-  }
-  .note {
-    font-size: 0.88rem;
-    line-height: 1.55;
-  }
-  .note code {
-    font-family: var(--font-mono);
-    font-size: 0.84em;
-  }
+  .subscribe { display: grid; gap: 2.4rem; max-width: 48rem; }
+  .subscribe__primary { padding: 1.4rem 0 1.8rem; border-block: 3px solid var(--accent); }
+  .subscribe__primary h2 { margin: .35rem 0 1rem; font-size: clamp(1.8rem,4vw,2.8rem); }
+  .feed-box, .reader-links { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+  .feed-box code { flex: 1 1 18rem; padding: .8rem .9rem; border: 1px solid var(--border); background: var(--bg); font: .84rem var(--font-mono); word-break: break-all; }
+  #copy-status { min-height: 1.4rem; margin: .55rem 0; }
+  .recent { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+  .recent li { display: grid; grid-template-columns: 2.5rem 1fr; gap: .8rem; padding: .9rem 0; border-top: 1px solid var(--border); }
+  .recent li > span { color: var(--brass); font: 1rem var(--font-display); }
+  .recent a { display: grid; gap: .2rem; color: inherit; text-decoration: none; } .recent strong { font-size: 1.2rem; }
+  .recent small { color: var(--text-muted); line-height: 1.5; }
 </style>

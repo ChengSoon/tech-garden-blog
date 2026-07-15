@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
 import { getGraph } from '../../lib/build-graph';
-import { neighborsOf } from '../../lib/graph';
+import { rankNeighbors } from '../../lib/graph';
 import { getPublishedPosts, postSlug } from '../../lib/posts';
 import { readingTimeMinutes } from '../../lib/reading-time';
 
@@ -18,8 +18,10 @@ const { post } = Astro.props;
 const slug = postSlug(post);
 const { Content, headings } = await render(post);
 const graph = await getGraph();
-const neighborSlugs = neighborsOf(slug, graph, 6);
-const neighborNodes = graph.nodes.filter((n) => neighborSlugs.includes(n.slug));
+const neighborNodes = rankNeighbors(slug, graph).flatMap((ranked) => {
+  const node = graph.nodes.find((candidate) => candidate.slug === ranked.slug);
+  return node ? [{ ...node, score: ranked.score, reasons: ranked.reasons }] : [];
+});
 const backlinkSlugs = graph.backlinks[slug] ?? [];
 const backlinks = backlinkSlugs
   .map((s) => graph.nodes.find((n) => n.slug === s))

@@ -1,0 +1,33 @@
+.garden-view { display: grid; gap: 1rem; }
+.garden-toolbar { display: grid; gap: .85rem; padding: .9rem 1rem; }
+.garden-toolbar__row { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; }
+.garden-toolbar__filters { padding-top: .75rem; border-top: 1px solid var(--border); }
+.garden-segmented, .garden-type-tabs { display: inline-flex; overflow: hidden; border: 1px solid var(--border); border-radius: 999px; background: var(--bg); }
+.garden-segmented button, .garden-type-tabs button { border: 0; background: transparent; color: var(--text-muted); padding: .48rem .9rem; font: .84rem var(--font-ui); cursor: pointer; }
+.garden-segmented button.active, .garden-type-tabs button.active { background: var(--accent-soft); color: var(--text); }
+.garden-search input { min-width: min(220px,48vw); border: 1px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--text); padding: .5rem .9rem; font: .86rem var(--font-ui); }
+.garden-search input:focus { outline: 2px solid var(--brass); outline-offset: 2px; }
+.garden-count { margin-left: auto; color: var(--text-muted); font: .84rem var(--font-ui); }
+.garden-count strong { color: var(--text); font: 600 1.1rem var(--font-display); }
+.garden-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.garden-chips .chip { display: inline-flex; align-items: center; gap: .35rem; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text-muted); padding: .32rem .7rem; font: .76rem var(--font-ui); cursor: pointer; }
+.garden-chips .chip.active { border-color: var(--brass); background: var(--brass-soft); color: var(--text); }
+.garden-chips .dot { width: .4rem; height: .4rem; border-radius: 50%; background: var(--growing); }
+.garden-chips .dot[data-status="seedling"] { background: var(--seedling); } .garden-chips .dot[data-status="evergreen"] { background: var(--evergreen); }
+.garden-reset { margin-left: auto; padding: .35rem .8rem; font-size: .8rem; }
+.garden-empty { display: grid; justify-items: start; gap: .55rem; padding: 1.5rem; }
+.garden-empty p { margin: 0; color: var(--text-muted); }
+.preview-overlay { position: fixed; inset: 0; z-index: 55; display: flex; justify-content: flex-end; background: color-mix(in oklab,#14110e 40%,transparent); animation: motion-fade var(--motion-base) var(--ease-out) both; }
+.preview-panel { display: grid; align-content: start; width: min(420px,100%); height: 100%; gap: .85rem; overflow: auto; border-left: 1px solid var(--border-strong); background: var(--bg-elevated); padding: 1.15rem 1.25rem 1.8rem; box-shadow: var(--shadow); animation: motion-slide-in-right var(--motion-slow) var(--ease-spring) both; }
+.preview-panel__head, .preview-panel__meta, .preview-tags, .preview-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; }
+.preview-panel__head { justify-content: space-between; } .preview-panel h2 { margin: 0; font-size: clamp(1.55rem,3vw,1.9rem); }
+.preview-summary { margin: 0; color: var(--text-muted); line-height: 1.7; }
+.preview-neighbors { margin-top: .2rem; padding-top: .9rem; border-top: 1px solid var(--border); }
+.preview-neighbors > p { margin: 0 0 .55rem; color: var(--brass); font: .72rem var(--font-ui); letter-spacing: .1em; text-transform: uppercase; }
+.preview-neighbors ul { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.preview-neighbors button { display: grid; width: 100%; gap: .15rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg); color: var(--text); padding: .6rem .7rem; text-align: left; cursor: pointer; }
+.preview-neighbors small { color: var(--text-muted); font: .68rem var(--font-ui); letter-spacing: .1em; text-transform: uppercase; }
+.preview-neighbors strong { font: 600 1.05rem var(--font-display); } .preview-neighbors button > span { color: var(--accent-strong); font: .72rem var(--font-ui); }
+.preview-actions { margin-top: .4rem; }
+@media (max-width: 760px) { .garden-count { margin-left: 0; } .preview-panel { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .preview-overlay, .preview-panel { animation: none; } }

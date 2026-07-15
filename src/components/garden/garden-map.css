@@ -1,0 +1,14 @@
+.garden-map { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-elevated); }
+.garden-map__intro { display: flex; justify-content: space-between; gap: 1rem; padding: .85rem 1rem; border-bottom: 1px solid var(--border); }
+.garden-map__intro p { margin: 0; color: var(--text-muted); font-size: .85rem; }
+.garden-map svg { display: block; width: 100%; min-height: 420px; }
+.garden-map__edges line { stroke: var(--border-strong); stroke-width: 1.5; }
+.garden-map__clusters text { fill: var(--text-muted); font: 500 13px var(--font-ui); text-anchor: middle; letter-spacing: .06em; }
+.garden-node { cursor: pointer; outline: none; }
+.garden-node circle { fill: var(--bg); stroke: var(--accent); stroke-width: 3; transition: fill var(--motion-fast), transform var(--motion-fast); }
+.garden-node--note circle { stroke: var(--brass); }
+.garden-node text { fill: var(--text); font: 600 13px var(--font-ui); text-anchor: middle; pointer-events: none; }
+.garden-node:hover circle, .garden-node:focus-visible circle { fill: var(--accent-soft); transform: scale(1.1); }
+.garden-node:focus-visible circle { stroke-width: 6; }
+@media (max-width: 760px) { .garden-map svg { min-height: 340px; } .garden-map__intro { display: block; } }
+@media (prefers-reduced-motion: reduce) { .garden-node circle { transition: none; } }

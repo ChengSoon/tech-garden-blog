@@ -112,7 +112,7 @@ export default function GardenBookshelf({ nodes, graph, onSelect }: Props) {
           padding: 0.95rem 1.05rem;
           border: 1px solid var(--border);
           border-radius: var(--radius-lg);
-          background: linear-gradient(120deg, color-mix(in oklab, var(--accent) 7%, var(--bg-elevated)), var(--bg-elevated));
+          background: var(--bg-elevated);
         }
         .shelf__intro .eyebrow { margin-bottom: 0.35rem; }
         .shelf__intro p:last-child {
@@ -167,9 +167,7 @@ export default function GardenBookshelf({ nodes, graph, onSelect }: Props) {
         .shelf__wood {
           height: 7px;
           border-radius: 999px;
-          background:
-            linear-gradient(90deg, transparent, color-mix(in oklab, var(--brass) 45%, var(--border-strong)) 12%, color-mix(in oklab, var(--brass) 45%, var(--border-strong)) 88%, transparent),
-            linear-gradient(180deg, color-mix(in oklab, white 20%, var(--bg-soft)), var(--bg-deep));
+          background: var(--border-strong);
           box-shadow: 0 1px 0 color-mix(in oklab, white 25%, transparent);
         }
 
@@ -210,14 +208,12 @@ export default function GardenBookshelf({ nodes, graph, onSelect }: Props) {
           display: block;
           width: 10px;
           min-height: 100%;
-          background:
-            linear-gradient(180deg, color-mix(in oklab, var(--brass) 70%, var(--accent)), var(--brass));
+          background: var(--brass);
           transition: transform var(--motion-base) var(--ease-out);
           transform-origin: center bottom;
         }
         .book--essay .book__spine {
-          background:
-            linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 60%, var(--brass)));
+          background: var(--accent);
         }
         .book__body {
           display: grid;
