@@ -58,18 +58,18 @@ html:not(.dark) .bgdeck__wash {
 
 html:not(.dark) .bgdeck__veil {
   background:
-    radial-gradient(700px 500px at 82% 48%, color-mix(in oklab, var(--deck-accent) 12%, transparent), transparent 68%),
+    radial-gradient(700px 500px at 84% 48%, color-mix(in oklab, var(--deck-accent) 10%, transparent), transparent 70%),
     linear-gradient(
       100deg,
-      color-mix(in oklab, var(--bg) 97%, transparent) 0%,
-      color-mix(in oklab, var(--bg) 93%, transparent) 46%,
-      color-mix(in oklab, var(--bg) 55%, transparent) 72%,
-      color-mix(in oklab, var(--bg) 22%, transparent) 100%
+      color-mix(in oklab, var(--bg) 98%, transparent) 0%,
+      color-mix(in oklab, var(--bg) 95%, transparent) 48%,
+      color-mix(in oklab, var(--bg) 70%, transparent) 74%,
+      color-mix(in oklab, var(--bg) 35%, transparent) 100%
     );
 }
 
 html:not(.dark) .bgdeck__machine {
-  opacity: 0.7;
+  opacity: 0.58;
 }
 
 html:not(.dark) .bgdeck__chassis {
@@ -112,37 +112,22 @@ html:not(.dark) .bgdeck.is-bump .bgdeck__machine {
   opacity: 0.62;
 }
 
-/* 亮色正文阅读面：子块实心底板，与背景碟机分层 */
-html:not(.dark) body.has-bg-deck .home-shell__content > *,
-html:not(.dark) body.has-bg-deck .now-page-content > *,
-html:not(.dark) body.has-bg-deck .about-page-content > *,
-html:not(.dark) body.has-bg-deck .friends-page-content > * {
-  position: relative;
-  z-index: 1;
-  background: color-mix(in oklab, var(--bg-elevated) 98%, white);
-  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 10px 28px color-mix(in oklab, var(--text) 5%, transparent);
-  padding-inline: clamp(0.75rem, 2.5vw, 1.25rem);
-  padding-block: clamp(0.85rem, 2vw, 1.35rem);
-}
-
+/* 亮色正文：保持全宽自然排版，只用轻量通栏底提升对比，不切卡片/不限宽 */
 html:not(.dark) body.has-bg-deck .home-shell__content,
 html:not(.dark) body.has-bg-deck .now-page-content,
 html:not(.dark) body.has-bg-deck .about-page-content,
 html:not(.dark) body.has-bg-deck .friends-page-content {
-  row-gap: 0.9rem;
-  padding-bottom: 4rem;
+  position: relative;
+  z-index: 1;
+  background: color-mix(in oklab, var(--bg) 92%, white);
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* 桌面亮色：右侧大碟保持可见，不被正文列完全盖住 */
-@media (min-width: 861px) {
-  html:not(.dark) body.has-bg-deck .home-shell__content > *,
-  html:not(.dark) body.has-bg-deck .now-page-content > *,
-  html:not(.dark) body.has-bg-deck .about-page-content > *,
-  html:not(.dark) body.has-bg-deck .friends-page-content > * {
-    max-width: min(44rem, 100%);
-  }
+html:not(.dark) body.has-bg-deck .home-section,
+html:not(.dark) body.has-bg-deck .home-hero {
+  /* 恢复原有区块间距，不额外塞 padding 压缩版心 */
+  background: transparent;
 }
 
 /* THE machine — single big unit, right-biased background */
@@ -634,16 +619,16 @@ body.has-bg-deck .friends-page-content {
   body.has-bg-deck .now-page-content,
   body.has-bg-deck .about-page-content,
   body.has-bg-deck .friends-page-content {
-    padding-bottom: 7.5rem;
+    padding-bottom: 12rem;
   }
 
-  html:not(.dark) body.has-bg-deck .home-shell__content > *,
-  html:not(.dark) body.has-bg-deck .now-page-content > *,
-  html:not(.dark) body.has-bg-deck .about-page-content > *,
-  html:not(.dark) body.has-bg-deck .friends-page-content > * {
-    background: var(--bg-elevated);
-    border-color: var(--border);
+  html:not(.dark) body.has-bg-deck .home-shell__content,
+  html:not(.dark) body.has-bg-deck .now-page-content,
+  html:not(.dark) body.has-bg-deck .about-page-content,
+  html:not(.dark) body.has-bg-deck .friends-page-content {
+    padding-bottom: 6.5rem;
   }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
