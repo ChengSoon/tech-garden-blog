@@ -5,7 +5,7 @@ status: shipped
 stack: [Astro, TypeScript, Tailwind]
 url: https://blog.lzch.eu.org/
 repo: https://github.com/ChengSoon/tech-garden-blog
-cover: /avatar.webp
+cover: /covers/projects/tech-garden-blog.svg
 featured: true
 order: 20
 year: 2026
