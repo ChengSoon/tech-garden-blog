@@ -1,0 +1,33 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import ProjectCard from '../../components/projects/ProjectCard.astro';
+import { loadProjects } from '../../lib/projects';
+
+const projects = await loadProjects();
+const ogImage = projects.find((p) => p.cover)?.cover ?? '/avatar.webp';
+---
+<PageLayout
+  title="作品"
+  description="公开可回访的工程与产品"
+  lede="做过、在做、愿意公开的工程。卡片链到线上地址、仓库或成文拆解。"
+  ogImage={ogImage}
+  canonicalPath="/projects/"
+>
+  {projects.length === 0 ? (
+    <p class="muted">暂无公开作品。</p>
+  ) : (
+    <div class="project-list">
+      {projects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+  )}
+</PageLayout>
+
+<style>
+  .project-list {
+    display: grid;
+    gap: 0;
+    max-width: 48rem;
+  }
+</style>

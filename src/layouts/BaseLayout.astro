@@ -6,20 +6,54 @@ import Header from '../components/site/Header.astro';
 import Footer from '../components/site/Footer.astro';
 import { getPublishedPosts, postSlug } from '../lib/posts';
 import { site } from '../data/site';
+import {
+  absoluteUrl,
+  jsonLdScriptContent,
+  websiteJsonLd,
+  type JsonLd,
+} from '../lib/seo';
 
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
   bodyClass?: string;
+  canonicalPath?: string;
+  ogType?: 'website' | 'article';
+  jsonLd?: JsonLd | JsonLd[];
 }
 const {
   title,
   description = site.tagline,
   ogImage = '/avatar.webp',
   bodyClass = '',
+  canonicalPath,
+  ogType = 'website',
+  jsonLd,
 } = Astro.props;
+
+const origin = Astro.site?.toString() ?? 'https://blog.lzch.eu.org';
 const fullTitle = title === 'Home' ? `${site.name} · 技术刊` : `${title} · ${site.name}`;
+const path = canonicalPath ?? Astro.url.pathname;
+const canonicalUrl = absoluteUrl(origin, path.endsWith('/') || path.includes('.') ? path : `${path}/`);
+const ogImageAbs = absoluteUrl(origin, ogImage);
+const siteName = `${site.name} · 技术刊`;
+
+const defaultJsonLd = websiteJsonLd({
+  origin,
+  name: siteName,
+  description: site.tagline,
+  authorName: site.fullName,
+  authorUrl: absoluteUrl(origin, '/about/'),
+});
+const jsonLdNodes: JsonLd[] = jsonLd
+  ? Array.isArray(jsonLd)
+    ? jsonLd
+    : [jsonLd]
+  : [defaultJsonLd];
+// Always include WebSite unless caller already provided one
+const hasWebsite = jsonLdNodes.some((node) => node['@type'] === 'WebSite');
+const finalJsonLd = hasWebsite ? jsonLdNodes : [defaultJsonLd, ...jsonLdNodes];
 
 const searchItems = (await getPublishedPosts()).map((p) => ({
   slug: postSlug(p),
@@ -37,10 +71,17 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f1f3ef" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#101412" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbs} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/favicon-48.png" sizes="48x48" />
@@ -53,6 +94,7 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
       rel="stylesheet"
     />
     <title>{fullTitle}</title>
+    <script type="application/ld+json" set:html={jsonLdScriptContent(finalJsonLd)} />
     <ClientRouter fallback="swap" />
     <script is:inline>
       (function () {

@@ -60,5 +60,30 @@ const friends = defineCollection({
   }),
 });
 
-export const collections = { posts, series, paths, friends };
+
+/** 作品名片 — 每项一个 yaml/json，不写进业务代码 */
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.{json,yaml,yml}', base: './src/content/projects' }),
+  schema: z
+    .object({
+      name: z.string(),
+      summary: z.string(),
+      role: z.string().optional(),
+      status: z.enum(['idea', 'wip', 'shipped', 'archived']).default('shipped'),
+      stack: z.array(z.string()).default([]),
+      url: z.string().url().optional(),
+      repo: z.string().url().optional(),
+      cover: z.string().optional(),
+      relatedPosts: z.array(z.string()).default([]),
+      featured: z.boolean().default(false),
+      order: z.number().default(0),
+      year: z.number().optional(),
+    })
+    .refine(
+      (data) => Boolean(data.url || data.repo || (data.relatedPosts?.length ?? 0) > 0),
+      { message: 'project needs url, repo, or relatedPosts' },
+    ),
+});
+
+export const collections = { posts, series, paths, friends, projects };
 

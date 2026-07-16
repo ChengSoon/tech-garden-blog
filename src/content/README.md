@@ -66,6 +66,28 @@ order: 10
 
 详情见 [`friends/README.md`](./friends/README.md)。投轨入口：GitHub Issues。
 
+
+## 作品
+
+编辑 `projects/*.yaml`，**每个项目一个文件**。不要把作品列表写进代码。
+
+```yaml
+name: 项目名称
+summary: 一句话说明
+role: Full-stack · Product   # 可选
+status: shipped             # idea | wip | shipped | archived
+stack: [Astro, TypeScript]
+url: https://example.com/   # 可选
+repo: https://github.com/...  # 可选
+cover: /covers/projects/x.svg
+relatedPosts: [my-post-slug]  # 可选
+featured: true              # About 摘要
+order: 10
+year: 2026
+```
+
+`url` / `repo` / `relatedPosts` 至少填一项。列表页：`/projects`。
+
 ## 站点身份
 
 作者名、简介、Now、社交链接等长期信息在 `src/data/site.ts`。  

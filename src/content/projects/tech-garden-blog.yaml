@@ -1,0 +1,11 @@
+name: 技术刊 · 数字花园
+summary: 杂志级阅读与双向链接花园的个人技术博客，Astro 静态站。
+role: Design · Engineering
+status: shipped
+stack: [Astro, TypeScript, Tailwind]
+url: https://blog.lzch.eu.org/
+repo: https://github.com/ChengSoon/tech-garden-blog
+cover: /avatar.webp
+featured: true
+order: 20
+year: 2026

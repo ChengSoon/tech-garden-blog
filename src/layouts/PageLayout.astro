@@ -5,10 +5,12 @@ interface Props {
   title: string;
   description?: string;
   lede?: string;
+  ogImage?: string;
+  canonicalPath?: string;
 }
-const { title, description, lede } = Astro.props;
+const { title, description, lede, ogImage, canonicalPath } = Astro.props;
 ---
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} ogImage={ogImage} canonicalPath={canonicalPath}>
   <div class="container page">
     <header class="page__header">
       <p class="eyebrow">Journal</p>

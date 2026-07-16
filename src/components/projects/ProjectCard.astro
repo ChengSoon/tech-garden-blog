@@ -1,0 +1,157 @@
+---
+import { projectStatusLabel, type Project } from '../../lib/projects';
+
+interface Props {
+  project: Project;
+  variant?: 'full' | 'compact';
+}
+
+const { project, variant = 'full' } = Astro.props;
+const status = projectStatusLabel[project.status];
+const isCompact = variant === 'compact';
+---
+<article class:list={['project-card', isCompact && 'project-card--compact']}>
+  {project.cover ? (
+    <div class="project-card__cover">
+      <img
+        src={project.cover}
+        alt=""
+        width={isCompact ? 96 : 320}
+        height={isCompact ? 72 : 200}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  ) : null}
+  <div class="project-card__body">
+    <div class="project-card__meta">
+      <span class="badge">{status}</span>
+      {project.year ? <span class="muted project-card__year">{project.year}</span> : null}
+      {project.role ? <span class="muted project-card__role">{project.role}</span> : null}
+    </div>
+    <h3 class="display project-card__title">{project.name}</h3>
+    <p class="project-card__summary">{project.summary}</p>
+    {project.stack.length ? (
+      <ul class="project-card__stack">
+        {project.stack.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    ) : null}
+    <div class="project-card__links">
+      {project.url ? (
+        <a class="btn" href={project.url} target="_blank" rel="noreferrer">
+          访问
+        </a>
+      ) : null}
+      {project.repo ? (
+        <a class="btn" href={project.repo} target="_blank" rel="noreferrer">
+          仓库
+        </a>
+      ) : null}
+      {project.relatedPosts.map((slug) => (
+        <a class="btn" href={`/posts/${slug}/`}>
+          相关文章
+        </a>
+      ))}
+    </div>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    display: grid;
+    grid-template-columns: minmax(140px, 220px) 1fr;
+    gap: 1.1rem;
+    padding: 1.15rem 0;
+    border-top: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .project-card--compact {
+    grid-template-columns: 96px 1fr;
+    gap: 0.9rem;
+    padding: 0.95rem 0;
+  }
+
+  .project-card__cover {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 8px);
+    overflow: hidden;
+    background: var(--bg-elevated, var(--bg));
+    aspect-ratio: 16 / 10;
+  }
+
+  .project-card__cover img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-card__body {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+  }
+
+  .project-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.7rem;
+    align-items: center;
+  }
+
+  .project-card__year,
+  .project-card__role {
+    font-size: 0.82rem;
+  }
+
+  .project-card__title {
+    margin: 0;
+    font-size: clamp(1.25rem, 2vw, 1.55rem);
+    line-height: 1.2;
+  }
+
+  .project-card__summary {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  .project-card__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.15rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .project-card__stack li {
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font: 500 0.75rem/1.3 var(--font-ui, var(--font-sans));
+    color: var(--text-muted);
+  }
+
+  .project-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 700px) {
+    .project-card,
+    .project-card--compact {
+      grid-template-columns: 1fr;
+    }
+
+    .project-card__cover {
+      max-width: 16rem;
+    }
+  }
+</style>

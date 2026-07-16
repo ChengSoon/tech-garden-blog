@@ -2,15 +2,30 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ImmersiveDeck from '../components/media/ImmersiveDeck';
 import CoverArt from '../components/post/CoverArt.astro';
+import ProjectCard from '../components/projects/ProjectCard.astro';
 import { site } from '../data/site';
 import { catalog } from '../data/listening';
 import { deriveTopics, getPublishedPosts, pickFeaturedPosts, postSlug } from '../lib/posts';
+import { loadFeaturedProjects } from '../lib/projects';
+import { absoluteUrl, personJsonLd } from '../lib/seo';
 
 const posts = await getPublishedPosts();
 const featured = pickFeaturedPosts(posts, 3);
 const topics = deriveTopics(posts, site.interests);
+const featuredProjects = await loadFeaturedProjects(3);
+const origin = Astro.site?.toString() ?? 'https://blog.lzch.eu.org';
+const personLd = personJsonLd({
+  name: site.fullName,
+  jobTitle: site.role,
+  url: absoluteUrl(origin, '/about/'),
+  image: absoluteUrl(origin, site.avatar),
+  description: site.bio,
+  sameAs: site.socials
+    .map((s) => s.href)
+    .filter((href) => href.startsWith('http')),
+});
 ---
-<BaseLayout title="关于" description={site.bio} bodyClass="has-bg-deck">
+<BaseLayout title="关于" description={site.bio} bodyClass="has-bg-deck" ogImage={site.avatar} canonicalPath="/about/" jsonLd={personLd}>
   <div class="about-shell">
     <ImmersiveDeck client:idle tracks={catalog} mode="bg" />
     <div class="container about-page-content">
@@ -58,6 +73,20 @@ const topics = deriveTopics(posts, site.interests);
             {topics.map((i) => <span class="badge">{i}</span>)}
           </div>
         </section>
+
+        {featuredProjects.length ? (
+          <section>
+            <div class="section-head">
+              <h2 class="display section-title">作品</h2>
+              <a href="/projects">全部作品 →</a>
+            </div>
+            <div class="project-preview">
+              {featuredProjects.map((project) => (
+                <ProjectCard project={project} variant="compact" />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section>
           <h2 class="display section-title">代表作</h2>
@@ -212,6 +241,33 @@ const topics = deriveTopics(posts, site.interests);
   .work p {
     margin: 0;
     font-size: 0.94rem;
+  }
+
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.6rem;
+    align-items: baseline;
+    margin-bottom: 0.2rem;
+  }
+
+  .section-head a {
+    color: var(--text-muted);
+    font: 500 0.8rem/1 var(--font-ui, var(--font-sans));
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .section-head a:hover {
+    color: var(--accent);
+  }
+
+  .project-preview {
+    display: grid;
+    gap: 0;
   }
 
   @media (max-width: 700px) {

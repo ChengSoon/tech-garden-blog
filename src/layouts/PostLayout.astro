@@ -13,6 +13,8 @@ import MobileToc from '../components/post/MobileToc.astro';
 import CoverArt from '../components/post/CoverArt.astro';
 import AuthorCard from '../components/post/AuthorCard.astro';
 import type { GraphNode, NeighborNode } from '../lib/types';
+import { site } from '../data/site';
+import { absoluteUrl, blogPostingJsonLd } from '../lib/seo';
 import '../styles/reader.css';
 
 interface Heading {
@@ -44,8 +46,27 @@ interface Props {
 const props = Astro.props;
 const showToc = props.type === 'essay' && props.headings.some((h) => h.depth === 2);
 const isEssay = props.type === 'essay';
+const origin = Astro.site?.toString() ?? 'https://blog.lzch.eu.org';
+const canonicalPath = `/posts/${props.slug}/`;
+const ogImage = props.hero || '/avatar.webp';
+const postJsonLd = blogPostingJsonLd({
+  headline: props.title,
+  description: props.description,
+  datePublished: props.date,
+  url: absoluteUrl(origin, canonicalPath),
+  image: absoluteUrl(origin, ogImage),
+  authorName: site.fullName,
+  authorUrl: absoluteUrl(origin, '/about/'),
+});
 ---
-<BaseLayout title={props.title} description={props.description}>
+<BaseLayout
+  title={props.title}
+  description={props.description}
+  ogImage={ogImage}
+  ogType="article"
+  canonicalPath={canonicalPath}
+  jsonLd={postJsonLd}
+>
   <ReadingProgress />
   <ReadingSession slug={props.slug} />
   <article class="container post" data-article data-slug={props.slug} data-line-width="normal">

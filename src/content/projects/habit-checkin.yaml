@@ -1,0 +1,10 @@
+name: 每日打卡
+summary: 给两个人的习惯系统：打卡、XP、闯关地图与双人同步。
+role: Full-stack · Product
+status: shipped
+stack: [Expo, Express, TypeScript]
+cover: /covers/projects/habit-checkin.svg
+relatedPosts: [daily-habit-checkin]
+featured: true
+order: 10
+year: 2026
