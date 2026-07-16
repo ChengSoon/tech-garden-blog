@@ -1,0 +1,87 @@
+---
+/**
+ * MDX 可运行 demo 槽位：本轮提供占位与说明，真正 iframe/sandbox 可后续接入。
+ */
+interface Props {
+  title?: string;
+  caption?: string;
+  src?: string;
+  height?: number;
+}
+
+const {
+  title = '可交互演示',
+  caption = '演示区域。若提供 src，将以内嵌方式加载；否则显示占位。',
+  src,
+  height = 320,
+} = Astro.props;
+---
+<figure class="demo-slot">
+  <figcaption class="demo-slot__caption">
+    <strong>{title}</strong>
+    <span class="muted">{caption}</span>
+  </figcaption>
+  {src ? (
+    <iframe
+      class="demo-slot__frame"
+      src={src}
+      title={title}
+      loading="lazy"
+      style={`height:${height}px`}
+      sandbox="allow-scripts allow-same-origin allow-forms"
+    />
+  ) : (
+    <div class="demo-slot__placeholder" role="note" style={`min-height:${height}px`}>
+      <p>Demo 槽位预留</p>
+      <p class="muted">在 MDX 中传入 <code>src</code> 即可嵌入可运行页面。</p>
+      <slot />
+    </div>
+  )}
+</figure>
+
+<style>
+  .demo-slot {
+    margin: 1.6rem 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-elevated, var(--bg));
+  }
+
+  .demo-slot__caption {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.75rem 0.95rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+
+  .demo-slot__caption strong {
+    font-family: var(--font-ui, var(--font-sans));
+    font-weight: 600;
+  }
+
+  .demo-slot__frame {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: #fff;
+  }
+
+  .demo-slot__placeholder {
+    display: grid;
+    place-content: center;
+    gap: 0.35rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .demo-slot__placeholder p {
+    margin: 0;
+  }
+
+  .demo-slot__placeholder code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+  }
+</style>

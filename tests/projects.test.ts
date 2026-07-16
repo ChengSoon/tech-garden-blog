@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   pickFeaturedProjects,
   projectHasLink,
+  projectPath,
   sortProjects,
   type Project,
 } from '../src/lib/projects';
@@ -44,5 +45,9 @@ describe('projects helpers', () => {
     expect(projectHasLink(p({ id: 'x', name: 'X', url: 'https://a.com' }))).toBe(true);
     expect(projectHasLink(p({ id: 'y', name: 'Y', relatedPosts: ['slug'] }))).toBe(true);
     expect(projectHasLink(p({ id: 'z', name: 'Z' }))).toBe(false);
+  });
+
+  it('builds detail path from id', () => {
+    expect(projectPath('habit-checkin')).toBe('/projects/habit-checkin/');
   });
 });

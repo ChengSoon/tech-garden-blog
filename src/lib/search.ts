@@ -41,18 +41,34 @@ function scoreDocument(document: SearchDocument, query: string): number {
   );
 }
 
+function tokenizeQuery(query: string): string[] {
+  return normalize(query)
+    .split(/[\s,，、/+|]+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
 export function rankSearch(
   documents: SearchDocument[],
   query: string,
 ): RankedSearchDocument[] {
-  const normalizedQuery = normalize(query.trim());
-  if (!normalizedQuery) return [];
+  const tokens = tokenizeQuery(query);
+  if (!tokens.length) return [];
 
   return documents
-    .map((document) => ({
-      ...document,
-      score: scoreDocument(document, normalizedQuery),
-    }))
+    .map((document) => {
+      const score = tokens.reduce((sum, token) => sum + scoreDocument(document, token), 0);
+      // 全部 token 至少命中一次时给予额外加权，避免“只沾边一个词”排太前
+      const haystack = normalize(
+        `${document.title} ${document.summary} ${document.tags.join(' ')} ${document.body}`,
+      );
+      const covered = tokens.filter((token) => haystack.includes(token)).length;
+      const coverageBonus = covered === tokens.length ? 40 : covered * 5;
+      return {
+        ...document,
+        score: score + coverageBonus,
+      };
+    })
     .filter((document) => document.score > 0)
     .sort(
       (left, right) =>

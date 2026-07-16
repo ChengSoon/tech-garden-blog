@@ -140,6 +140,10 @@ npm run cf:deploy
 若不想维护 Actions Token，可在 CF Dashboard → **Workers & Pages** → 项目 → **Settings → Builds** 里 **Connect to Git**，由 Cloudflare 直接构建（与 Actions 二选一即可，避免重复部署）。
 
 
+## 分享图
+
+默认 Open Graph 图：`public/og-default.png`（1200×630）。文章有 `hero` 时优先用封面。
+
 ## 唱机
 
 - 组件：`src/components/media/ImmersiveDeck.tsx`  

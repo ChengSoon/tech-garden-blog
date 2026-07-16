@@ -86,9 +86,23 @@ order: 10
 year: 2026
 ```
 
-`url` / `repo` / `relatedPosts` 至少填一项。列表页：`/projects`。
+`url` / `repo` / `relatedPosts` 至少填一项。列表页：`/projects`，详情：`/projects/{文件名}/`。
 
 ## 站点身份
 
 作者名、简介、Now、社交链接等长期信息在 `src/data/site.ts`。  
 **不要**在这里写文章 slug。
+
+
+## MDX 组件
+
+可在 `.mdx` 中 import：
+
+```mdx
+import DemoSlot from '../../components/mdx/DemoSlot.astro';
+import Sidenote from '../../components/mdx/Sidenote.astro';
+
+<DemoSlot title="示例" caption="说明" />
+```
+
+`DemoSlot` 可传 `src` 嵌入可运行页面；不传则显示占位。

@@ -1,0 +1,102 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { usesGroups, usesIntro } from '../data/uses';
+---
+<PageLayout
+  title="Uses"
+  description="我真正在用的工具与工作流"
+  lede={usesIntro}
+  ogImage="/og-default.png"
+  canonicalPath="/uses/"
+>
+  <div class="uses">
+    {usesGroups.map((group) => (
+      <section class="uses-group" aria-labelledby={`uses-${group.id}`}>
+        <header class="uses-group__head">
+          <p class="eyebrow">{group.id}</p>
+          <h2 id={`uses-${group.id}`} class="display uses-group__title">{group.title}</h2>
+          <p class="muted uses-group__desc">{group.description}</p>
+        </header>
+        <ul class="uses-list">
+          {group.items.map((item) => (
+            <li class="uses-item">
+              <div class="uses-item__title-row">
+                {item.href ? (
+                  <a class="uses-item__name" href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+                    {item.name}
+                  </a>
+                ) : (
+                  <strong class="uses-item__name">{item.name}</strong>
+                )}
+              </div>
+              <p class="uses-item__note">{item.note}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+    <p class="muted uses-foot">
+      想看工程成品，去 <a href="/projects/">作品</a>；想知道这季在忙什么，看 <a href="/now/">Now</a>。
+    </p>
+  </div>
+</PageLayout>
+
+<style>
+  .uses {
+    display: grid;
+    gap: 2.4rem;
+    max-width: 48rem;
+  }
+
+  .uses-group__head {
+    margin-bottom: 0.35rem;
+  }
+
+  .uses-group__title {
+    margin: 0.2rem 0 0.45rem;
+    font-size: clamp(1.55rem, 2.4vw, 2rem);
+  }
+
+  .uses-group__desc {
+    margin: 0;
+    max-width: 36rem;
+  }
+
+  .uses-list {
+    margin: 0.6rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .uses-item {
+    padding: 0.95rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .uses-item:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .uses-item__name {
+    color: inherit;
+    font-size: 1.08rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  a.uses-item__name:hover {
+    color: var(--accent);
+  }
+
+  .uses-item__note {
+    margin: 0.35rem 0 0;
+    color: var(--text-muted);
+    line-height: 1.65;
+    font-size: 0.95rem;
+  }
+
+  .uses-foot {
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>

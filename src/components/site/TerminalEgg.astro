@@ -1,0 +1,189 @@
+---
+/**
+ * 轻量终端彩蛋：点击开启伪终端，输入 help / garden / about / clear / exit。
+ */
+---
+<section class="term-egg" data-term-egg>
+  <button type="button" class="btn term-egg__toggle" data-term-toggle aria-expanded="false">
+    打开终端
+  </button>
+  <div class="term-egg__panel" data-term-panel hidden>
+    <div class="term-egg__chrome">
+      <span class="term-egg__dot" aria-hidden="true"></span>
+      <span class="term-egg__dot" aria-hidden="true"></span>
+      <span class="term-egg__dot" aria-hidden="true"></span>
+      <span class="term-egg__title">cheng@garden ~</span>
+    </div>
+    <div class="term-egg__screen" data-term-screen tabindex="0" role="log" aria-live="polite" aria-label="终端输出"></div>
+    <form class="term-egg__form" data-term-form>
+      <label class="sr-only" for="term-input">命令</label>
+      <span class="term-egg__prompt" aria-hidden="true">$</span>
+      <input id="term-input" class="term-egg__input" data-term-input autocomplete="off" spellcheck="false" />
+    </form>
+  </div>
+</section>
+
+<script>
+  type TermWindow = Window & { __termEggBound?: boolean };
+
+  const HELP = [
+    '可用命令：',
+    '  help     显示帮助',
+    '  about    打开关于页',
+    '  garden   打开数字花园',
+    '  projects 打开作品',
+    '  uses     打开 Uses',
+    '  clear    清屏',
+    '  exit     关闭终端',
+  ].join('\n');
+
+  function bind(root: HTMLElement) {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-term-toggle]');
+    const panel = root.querySelector<HTMLElement>('[data-term-panel]');
+    const screen = root.querySelector<HTMLElement>('[data-term-screen]');
+    const form = root.querySelector<HTMLFormElement>('[data-term-form]');
+    const input = root.querySelector<HTMLInputElement>('[data-term-input]');
+    if (!toggle || !panel || !screen || !form || !input) return;
+
+    const write = (line: string) => {
+      const row = document.createElement('div');
+      row.className = 'term-egg__line';
+      row.textContent = line;
+      screen.appendChild(row);
+      screen.scrollTop = screen.scrollHeight;
+    };
+
+    const open = () => {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.textContent = '收起终端';
+      if (!screen.dataset.booted) {
+        write('Technical Journal shell v0.1');
+        write('输入 help 查看命令。');
+        screen.dataset.booted = '1';
+      }
+      input.focus();
+    };
+
+    const close = () => {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '打开终端';
+    };
+
+    toggle.addEventListener('click', () => {
+      if (panel.hidden) open();
+      else close();
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const raw = input.value.trim();
+      write(`$ ${raw || ''}`);
+      input.value = '';
+      const cmd = raw.toLowerCase();
+      if (!cmd) return;
+      if (cmd === 'help') write(HELP);
+      else if (cmd === 'clear') screen.replaceChildren();
+      else if (cmd === 'exit') close();
+      else if (cmd === 'about') { write('→ /about/'); window.location.href = '/about/'; }
+      else if (cmd === 'garden') { write('→ /garden/'); window.location.href = '/garden/'; }
+      else if (cmd === 'projects') { write('→ /projects/'); window.location.href = '/projects/'; }
+      else if (cmd === 'uses') { write('→ /uses/'); window.location.href = '/uses/'; }
+      else write(`command not found: ${raw}`);
+    });
+  }
+
+  const boot = window as TermWindow;
+  if (!boot.__termEggBound) {
+    boot.__termEggBound = true;
+    const mount = () => document.querySelectorAll<HTMLElement>('[data-term-egg]').forEach(bind);
+    mount();
+    document.addEventListener('astro:page-load', mount);
+  }
+</script>
+
+<style>
+  .term-egg {
+    margin-top: 1.5rem;
+  }
+
+  .term-egg__panel {
+    margin-top: 0.75rem;
+    border: 1px solid var(--border-strong, var(--border));
+    border-radius: 8px;
+    overflow: hidden;
+    background: #101412;
+    color: #d7e0d8;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+
+  .term-egg__chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: #161b18;
+  }
+
+  .term-egg__dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: #5a655d;
+  }
+
+  .term-egg__dot:nth-child(1) { background: #c45c4a; }
+  .term-egg__dot:nth-child(2) { background: #c9a227; }
+  .term-egg__dot:nth-child(3) { background: #4f8f6a; }
+
+  .term-egg__title {
+    margin-left: 0.35rem;
+    font-size: 0.75rem;
+    opacity: 0.75;
+  }
+
+  .term-egg__screen {
+    min-height: 9rem;
+    max-height: 14rem;
+    overflow: auto;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+
+  .term-egg__form {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.75rem 0.7rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .term-egg__prompt {
+    color: #7dbe98;
+  }
+
+  .term-egg__input {
+    flex: 1;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

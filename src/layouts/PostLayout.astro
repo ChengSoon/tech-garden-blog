@@ -48,7 +48,7 @@ const showToc = props.type === 'essay' && props.headings.some((h) => h.depth ===
 const isEssay = props.type === 'essay';
 const origin = Astro.site?.toString() ?? 'https://blog.lzch.eu.org';
 const canonicalPath = `/posts/${props.slug}/`;
-const ogImage = props.hero || '/avatar.webp';
+const ogImage = props.hero || '/og-default.png';
 const postJsonLd = blogPostingJsonLd({
   headline: props.title,
   description: props.description,

@@ -25,7 +25,7 @@ interface Props {
 const {
   title,
   description = site.tagline,
-  ogImage = '/avatar.webp',
+  ogImage = '/og-default.png',
   bodyClass = '',
   canonicalPath,
   ogType = 'website',
@@ -64,7 +64,7 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
 }));
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -105,7 +105,8 @@ const searchItems = (await getPublishedPosts()).map((p) => ({
             if (value === 'dark') return true;
             if (value === 'light') return false;
           } catch {}
-          return window.matchMedia('(prefers-color-scheme: dark)').matches;
+          // No stored preference: default to dark.
+          return true;
         };
         const applyTo = (root) => {
           root.classList.toggle('dark', resolveDark());

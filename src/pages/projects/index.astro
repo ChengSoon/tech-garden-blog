@@ -4,7 +4,7 @@ import ProjectCard from '../../components/projects/ProjectCard.astro';
 import { loadProjects } from '../../lib/projects';
 
 const projects = await loadProjects();
-const ogImage = projects.find((p) => p.cover)?.cover ?? '/avatar.webp';
+const ogImage = projects.find((p) => p.cover)?.cover ?? '/og-default.png';
 ---
 <PageLayout
   title="作品"

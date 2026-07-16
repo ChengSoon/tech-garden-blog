@@ -1,5 +1,5 @@
 ---
-import { projectStatusLabel, type Project } from '../../lib/projects';
+import { projectPath, projectStatusLabel, type Project } from '../../lib/projects';
 
 interface Props {
   project: Project;
@@ -29,7 +29,9 @@ const isCompact = variant === 'compact';
       {project.year ? <span class="muted project-card__year">{project.year}</span> : null}
       {project.role ? <span class="muted project-card__role">{project.role}</span> : null}
     </div>
-    <h3 class="display project-card__title">{project.name}</h3>
+    <h3 class="display project-card__title">
+      <a class="project-card__title-link" href={projectPath(project.id)}>{project.name}</a>
+    </h3>
     <p class="project-card__summary">{project.summary}</p>
     {project.stack.length ? (
       <ul class="project-card__stack">
@@ -39,6 +41,9 @@ const isCompact = variant === 'compact';
       </ul>
     ) : null}
     <div class="project-card__links">
+      <a class="btn" href={projectPath(project.id)}>
+        详情
+      </a>
       {project.url ? (
         <a class="btn" href={project.url} target="_blank" rel="noreferrer">
           访问
@@ -111,6 +116,15 @@ const isCompact = variant === 'compact';
     margin: 0;
     font-size: clamp(1.25rem, 2vw, 1.55rem);
     line-height: 1.2;
+  }
+
+  .project-card__title-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .project-card__title-link:hover {
+    color: var(--accent);
   }
 
   .project-card__summary {

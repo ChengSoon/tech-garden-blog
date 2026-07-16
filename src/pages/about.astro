@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ImmersiveDeck from '../components/media/ImmersiveDeck';
 import CoverArt from '../components/post/CoverArt.astro';
 import ProjectCard from '../components/projects/ProjectCard.astro';
+import TerminalEgg from '../components/site/TerminalEgg.astro';
 import { site } from '../data/site';
 import { catalog } from '../data/listening';
 import { deriveTopics, getPublishedPosts, pickFeaturedPosts, postSlug } from '../lib/posts';
@@ -63,7 +64,9 @@ const personLd = personJsonLd({
                 </a>
               ))}
               <a class="btn" href="/now">Now</a>
+              <a class="btn" href="/uses">Uses</a>
             </div>
+            <TerminalEgg />
           </div>
         </section>
 

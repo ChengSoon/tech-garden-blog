@@ -1,0 +1,54 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+<PageLayout
+  title="隐私"
+  description="本站如何对待数据与统计"
+  lede="默认不追踪。阅读体验所需的本地状态只留在你的浏览器里。"
+  ogImage="/og-default.png"
+  canonicalPath="/privacy/"
+>
+  <article class="privacy prose">
+    <h2>我们不收集什么</h2>
+    <ul>
+      <li>没有第三方广告脚本</li>
+      <li>没有默认接入的访客画像 / 行为分析 SDK</li>
+      <li>不要求登录，不建立账号体系</li>
+    </ul>
+
+    <h2>本地会存什么</h2>
+    <p>
+      主题（深/浅色）、稍后读、阅读进度、字号与栏宽等偏好，使用
+      <code>localStorage</code> 保存在你的设备上。清除站点数据即可删除。这些信息不会上传到服务器。
+    </p>
+
+    <h2>托管与访问日志</h2>
+    <p>
+      站点静态托管在 Cloudflare Pages（及自建同步部署）。平台侧可能产生常规的边缘访问日志（IP、UA、路径等），
+      用于安全与可用性，不是本站自己写的分析产品。若你配置了自定义域名的 DNS / CDN，以对应服务商政策为准。
+    </p>
+
+    <h2>订阅</h2>
+    <p>
+      推荐通过 <a href="/subscribe/">RSS</a> 跟进更新。RSS 由你的阅读器拉取，本站不维护邮件列表。
+    </p>
+
+    <h2>外链</h2>
+    <p>
+      文章与作品中的外链会离开本站。对方站点有各自的隐私政策，请自行留意。
+    </p>
+
+    <p class="muted privacy__updated">最后更新：2026-07-16</p>
+  </article>
+</PageLayout>
+
+<style>
+  .privacy {
+    max-width: 42rem;
+  }
+
+  .privacy__updated {
+    margin-top: 2rem;
+    font-size: 0.88rem;
+  }
+</style>

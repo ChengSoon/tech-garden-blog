@@ -38,4 +38,22 @@ describe('rankSearch', () => {
   it('returns no items for a blank query', () => {
     expect(rankSearch(documents, '  ')).toEqual([]);
   });
+
+  it('prefers documents covering every query token', () => {
+    const ranked = rankSearch(
+      [
+        ...documents,
+        {
+          slug: 'both',
+          title: 'Astro 与岛屿架构',
+          summary: '组合',
+          tags: ['web'],
+          type: 'note' as const,
+          body: 'Astro 岛屿',
+        },
+      ],
+      'Astro 岛屿',
+    );
+    expect(ranked[0]?.slug).toBe('both');
+  });
 });

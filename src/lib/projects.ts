@@ -82,3 +82,12 @@ export async function loadProjects(): Promise<Project[]> {
 export async function loadFeaturedProjects(limit = 3): Promise<Project[]> {
   return pickFeaturedProjects(await loadProjects(), limit);
 }
+
+export async function getProjectById(id: string): Promise<Project | undefined> {
+  const projects = await loadProjects();
+  return projects.find((project) => project.id === id);
+}
+
+export function projectPath(id: string): string {
+  return `/projects/${id}/`;
+}

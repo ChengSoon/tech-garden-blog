@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { getPublishedPosts, postSlug } from '../lib/posts';
+import { loadProjects } from '../lib/projects';
 
 function abs(base: string, path: string): string {
   if (!path || path === '/') return `${base}/`;
@@ -11,6 +12,7 @@ export const GET: APIRoute = async ({ site }) => {
   const base = (site?.toString() ?? 'https://example.com').replace(/\/$/, '');
   const posts = await getPublishedPosts();
   const series = await getCollection('series');
+  const projects = await loadProjects();
   const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
 
   const paths = [
@@ -23,6 +25,9 @@ export const GET: APIRoute = async ({ site }) => {
     '/now/',
     '/friends/',
     '/subscribe/',
+    '/uses/',
+    '/privacy/',
+    ...projects.map((project) => `/projects/${project.id}/`),
     ...posts.map((p) => `/posts/${postSlug(p)}/`),
     ...series.map((s) => `/series/${s.id}/`),
     ...tags.map((t) => `/tags/${encodeURIComponent(t)}/`),

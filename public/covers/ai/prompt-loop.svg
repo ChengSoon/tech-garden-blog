@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14201c"/>
+      <stop offset="55%" stop-color="#1b3a34"/>
+      <stop offset="100%" stop-color="#1a2420"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <circle cx="980" cy="180" r="170" fill="#84b9a8" opacity="0.12"/>
+  <circle cx="220" cy="500" r="200" fill="#c9a227" opacity="0.08"/>
+  <text x="80" y="120" fill="#84b9a8" font-family="Sora, sans-serif" font-size="22" letter-spacing="6">NOTE · AI</text>
+  <text x="80" y="280" fill="#f4faf6" font-family="Georgia, serif" font-size="68" font-weight="600">提示词循环</text>
+  <text x="80" y="360" fill="#d7e4dc" font-family="Georgia, serif" font-size="34">从一次对话到可复用流程</text>
+  <text x="80" y="520" fill="#9ca8a1" font-family="Sora, sans-serif" font-size="20">AI 入门笔记 · 02</text>
+</svg>

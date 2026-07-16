@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
 ---
-<button type="button" class="theme-toggle btn" data-theme-toggle aria-label="切换到深色模式">
+<button type="button" class="theme-toggle btn" data-theme-toggle aria-label="切换到浅色模式">
   <span class="sun" aria-hidden="true"><Icon name="sun" size={18} /></span>
   <span class="moon" aria-hidden="true"><Icon name="moon" size={18} /></span>
 </button>
@@ -10,6 +10,7 @@ import Icon from './Icon.astro';
   type Theme = 'light' | 'dark';
 
   const KEY = 'theme';
+  const DEFAULT_THEME: Theme = 'dark';
   const LIGHT_CHROME = '#f1f3ef';
   const DARK_CHROME = '#101412';
 
@@ -31,12 +32,8 @@ import Icon from './Icon.astro';
     }
   }
 
-  function systemTheme(): Theme {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
   function resolveTheme(): Theme {
-    return readStoredTheme() ?? systemTheme();
+    return readStoredTheme() ?? DEFAULT_THEME;
   }
 
   function syncControls(theme: Theme) {
@@ -54,7 +51,7 @@ import Icon from './Icon.astro';
 
   function applyTheme(theme: Theme, options: { persist?: boolean; animate?: boolean } = {}) {
     const { persist = false, animate = false } = options;
-    const resolvedTheme = persist && !storeTheme(theme) ? systemTheme() : theme;
+    const resolvedTheme = persist && !storeTheme(theme) ? DEFAULT_THEME : theme;
     const root = document.documentElement;
 
     if (animate) {
