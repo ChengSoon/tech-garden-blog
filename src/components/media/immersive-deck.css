@@ -50,88 +50,99 @@ html.dark .bgdeck__wash {
     );
 }
 
-/* 亮色：碟机作为可见背景装置；正文靠更深字色 + 轻阴影，而非整块盖板 */
+/* 亮色策略：正文用实心底板保证可读；碟机作右侧/底部装饰，二者分层不互抢 */
 html:not(.dark) .bgdeck__wash {
-  opacity: 0.22;
-  filter: blur(6px) saturate(1.08) brightness(1.02);
+  opacity: 0.18;
+  filter: blur(7px) saturate(1.05);
 }
 
 html:not(.dark) .bgdeck__veil {
   background:
-    radial-gradient(760px 540px at 78% 46%, color-mix(in oklab, var(--deck-accent) 14%, transparent), transparent 66%),
+    radial-gradient(700px 500px at 82% 48%, color-mix(in oklab, var(--deck-accent) 12%, transparent), transparent 68%),
     linear-gradient(
-      105deg,
-      color-mix(in oklab, var(--bg) 92%, transparent) 0%,
-      color-mix(in oklab, var(--bg) 72%, transparent) 36%,
-      color-mix(in oklab, var(--bg) 28%, transparent) 62%,
-      color-mix(in oklab, var(--bg) 10%, transparent) 100%
+      100deg,
+      color-mix(in oklab, var(--bg) 97%, transparent) 0%,
+      color-mix(in oklab, var(--bg) 93%, transparent) 46%,
+      color-mix(in oklab, var(--bg) 55%, transparent) 72%,
+      color-mix(in oklab, var(--bg) 22%, transparent) 100%
     );
 }
 
 html:not(.dark) .bgdeck__machine {
-  opacity: 0.78;
+  opacity: 0.7;
 }
 
 html:not(.dark) .bgdeck__chassis {
-  opacity: 0.82;
+  opacity: 0.78;
   background:
     linear-gradient(
       160deg,
       color-mix(in oklab, #6a6158 48%, var(--bg-elevated)),
       color-mix(in oklab, #2f2924 75%, var(--bg-deep))
     );
-  border-color: color-mix(in oklab, var(--brass) 38%, var(--border-strong));
+  border-color: color-mix(in oklab, var(--brass) 36%, var(--border-strong));
   box-shadow:
-    inset 0 1px 0 color-mix(in oklab, white 30%, transparent),
-    inset 0 -18px 36px color-mix(in oklab, black 12%, transparent),
-    0 24px 52px color-mix(in oklab, #14110e 16%, transparent);
+    inset 0 1px 0 color-mix(in oklab, white 28%, transparent),
+    0 20px 48px color-mix(in oklab, #14110e 14%, transparent);
 }
 
 html:not(.dark) .bgdeck__mat {
   opacity: 1;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in oklab, white 14%, transparent),
-    0 18px 46px color-mix(in oklab, #14110e 20%, transparent);
-}
-
-html:not(.dark) .bgdeck__disc-face {
-  box-shadow:
-    inset 0 0 0 1px color-mix(in oklab, white 20%, transparent),
-    inset 0 0 40px color-mix(in oklab, black 45%, transparent),
-    0 12px 32px color-mix(in oklab, #14110e 18%, transparent);
 }
 
 html:not(.dark) .bgdeck__grooves {
-  opacity: 0.45;
+  opacity: 0.42;
 }
 
 html:not(.dark) .bgdeck__shine {
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 html:not(.dark) .bgdeck__caption {
-  opacity: 0.9;
+  opacity: 0.88;
   color: var(--text);
-  text-shadow:
-    0 1px 0 color-mix(in oklab, var(--bg) 88%, transparent),
-    0 0 16px color-mix(in oklab, var(--bg) 70%, transparent);
+  text-shadow: 0 1px 0 color-mix(in oklab, var(--bg) 85%, transparent);
 }
 
 html:not(.dark) .bgdeck__kicker {
-  color: color-mix(in oklab, var(--signal) 90%, #6a2a1c);
+  color: color-mix(in oklab, var(--signal) 88%, #6a2a1c);
 }
 
-/* 亮色正文轻雾：不盖住碟机，只抬字 */
-html:not(.dark) body.has-bg-deck .home-hero__title,
-html:not(.dark) body.has-bg-deck .home-hero__lede,
-html:not(.dark) body.has-bg-deck .growth-row__main strong,
-html:not(.dark) body.has-bg-deck .growth-row__main p,
-html:not(.dark) body.has-bg-deck .section-head h2,
-html:not(.dark) body.has-bg-deck .reading-path__copy h3,
-html:not(.dark) body.has-bg-deck .reading-path__copy p {
-  text-shadow:
-    0 0 10px color-mix(in oklab, var(--bg) 92%, transparent),
-    0 0 2px color-mix(in oklab, var(--bg) 88%, transparent);
+html:not(.dark) .bgdeck.is-bump .bgdeck__machine {
+  opacity: 0.62;
+}
+
+/* 亮色正文阅读面：子块实心底板，与背景碟机分层 */
+html:not(.dark) body.has-bg-deck .home-shell__content > *,
+html:not(.dark) body.has-bg-deck .now-page-content > *,
+html:not(.dark) body.has-bg-deck .about-page-content > *,
+html:not(.dark) body.has-bg-deck .friends-page-content > * {
+  position: relative;
+  z-index: 1;
+  background: color-mix(in oklab, var(--bg-elevated) 98%, white);
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 28px color-mix(in oklab, var(--text) 5%, transparent);
+  padding-inline: clamp(0.75rem, 2.5vw, 1.25rem);
+  padding-block: clamp(0.85rem, 2vw, 1.35rem);
+}
+
+html:not(.dark) body.has-bg-deck .home-shell__content,
+html:not(.dark) body.has-bg-deck .now-page-content,
+html:not(.dark) body.has-bg-deck .about-page-content,
+html:not(.dark) body.has-bg-deck .friends-page-content {
+  row-gap: 0.9rem;
+  padding-bottom: 4rem;
+}
+
+/* 桌面亮色：右侧大碟保持可见，不被正文列完全盖住 */
+@media (min-width: 861px) {
+  html:not(.dark) body.has-bg-deck .home-shell__content > *,
+  html:not(.dark) body.has-bg-deck .now-page-content > *,
+  html:not(.dark) body.has-bg-deck .about-page-content > *,
+  html:not(.dark) body.has-bg-deck .friends-page-content > * {
+    max-width: min(44rem, 100%);
+  }
 }
 
 /* THE machine — single big unit, right-biased background */
@@ -167,10 +178,6 @@ html:not(.dark) body.has-bg-deck .reading-path__copy p {
 .bgdeck.is-bump .bgdeck__machine {
   transform: translateY(-50%) scale(0.985);
   opacity: 0.88;
-}
-
-html:not(.dark) .bgdeck.is-bump .bgdeck__machine {
-  opacity: 0.7;
 }
 
 /* chassis behind platter */
@@ -545,46 +552,97 @@ body.has-bg-deck .friends-page-content {
     opacity: 0.55;
   }
 
-  /* 亮色手机：碟机居中偏下清晰可见，不做整块盖板 */
+  /* 亮色手机：正文实心卡片 + 右下角常驻迷你唱机（不再压在字下） */
   html:not(.dark) .bgdeck {
-    --deck-size: min(90vw, 400px);
-  }
-
-  html:not(.dark) .bgdeck__machine {
-    opacity: 0.72;
-    filter: none;
-    bottom: -0.5rem;
-  }
-
-  html:not(.dark) .bgdeck__caption {
-    opacity: 0.92;
+    --deck-size: 7.25rem;
+    z-index: 25; /* 浮在正文上，仅 machine 可点 */
   }
 
   html:not(.dark) .bgdeck__wash {
-    opacity: 0.2;
+    opacity: 0.08;
   }
 
   html:not(.dark) .bgdeck__veil {
     background:
       linear-gradient(
         180deg,
-        color-mix(in oklab, var(--bg) 88%, transparent) 0%,
-        color-mix(in oklab, var(--bg) 62%, transparent) 34%,
-        color-mix(in oklab, var(--bg) 28%, transparent) 55%,
-        color-mix(in oklab, var(--bg) 10%, transparent) 78%,
-        color-mix(in oklab, var(--bg) 6%, transparent) 100%
+        color-mix(in oklab, var(--bg) 98%, transparent) 0%,
+        color-mix(in oklab, var(--bg) 96%, transparent) 70%,
+        color-mix(in oklab, var(--bg) 88%, transparent) 100%
       );
   }
 
+  html:not(.dark) .bgdeck__machine {
+    right: 0.7rem;
+    left: auto;
+    top: auto;
+    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    transform: none;
+    width: calc(var(--deck-size) + 1.1rem);
+    height: calc(var(--deck-size) + 2.4rem);
+    opacity: 1;
+    filter: none;
+    z-index: 30;
+    border-radius: 1rem;
+    background: color-mix(in oklab, var(--bg-elevated) 92%, transparent);
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 28px color-mix(in oklab, var(--text) 12%, transparent);
+  }
+
+  html:not(.dark) .bgdeck__machine:hover,
   html:not(.dark) .bgdeck.is-bump .bgdeck__machine {
-    opacity: 0.64;
+    transform: translate3d(0, -2px, 0) scale(1.02);
+    opacity: 1;
+  }
+
+  html:not(.dark) .bgdeck__chassis {
+    display: none;
+  }
+
+  html:not(.dark) .bgdeck__caption {
+    position: absolute;
+    left: 50%;
+    bottom: 0.15rem;
+    transform: translateX(-50%);
+    gap: 0;
+    opacity: 1;
+    max-width: 100%;
+    padding: 0 0.2rem;
+  }
+
+  html:not(.dark) .bgdeck__kicker,
+  html:not(.dark) .bgdeck__meta,
+  html:not(.dark) .bgdeck__index {
+    display: none;
+  }
+
+  html:not(.dark) .bgdeck__title {
+    font-size: 0.68rem;
+    line-height: 1.15;
+    max-width: 6.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  html:not(.dark) .bgdeck__platter {
+    width: var(--deck-size);
+    height: var(--deck-size);
   }
 
   body.has-bg-deck .home-shell__content,
   body.has-bg-deck .now-page-content,
   body.has-bg-deck .about-page-content,
   body.has-bg-deck .friends-page-content {
-    padding-bottom: 14rem;
+    padding-bottom: 7.5rem;
+  }
+
+  html:not(.dark) body.has-bg-deck .home-shell__content > *,
+  html:not(.dark) body.has-bg-deck .now-page-content > *,
+  html:not(.dark) body.has-bg-deck .about-page-content > *,
+  html:not(.dark) body.has-bg-deck .friends-page-content > * {
+    background: var(--bg-elevated);
+    border-color: var(--border);
   }
 }
 
