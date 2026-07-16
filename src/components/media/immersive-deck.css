@@ -26,7 +26,7 @@
   transform: translate(-50%, -50%) scale(12);
   object-fit: cover;
   filter: blur(6px) saturate(1.15);
-  opacity: 0.14;
+  opacity: 0.32;
   pointer-events: none;
   will-change: auto;
   contain: strict;
@@ -40,94 +40,14 @@ html.dark .bgdeck__wash {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(900px 520px at 72% 42%, color-mix(in oklab, var(--deck-accent) 10%, transparent), transparent 60%),
+    radial-gradient(900px 520px at 72% 42%, color-mix(in oklab, var(--deck-accent) 16%, transparent), transparent 60%),
     linear-gradient(
       115deg,
-      color-mix(in oklab, var(--bg) 96%, transparent) 0%,
-      color-mix(in oklab, var(--bg) 88%, transparent) 34%,
-      color-mix(in oklab, var(--bg) 70%, transparent) 58%,
-      color-mix(in oklab, var(--bg) 84%, transparent) 100%
+      color-mix(in oklab, var(--bg) 94%, transparent) 0%,
+      color-mix(in oklab, var(--bg) 72%, transparent) 38%,
+      color-mix(in oklab, var(--bg) 40%, transparent) 62%,
+      color-mix(in oklab, var(--bg) 55%, transparent) 100%
     );
-}
-
-/* 亮色策略：正文用实心底板保证可读；碟机作右侧/底部装饰，二者分层不互抢 */
-html:not(.dark) .bgdeck__wash {
-  opacity: 0.18;
-  filter: blur(7px) saturate(1.05);
-}
-
-html:not(.dark) .bgdeck__veil {
-  background:
-    radial-gradient(700px 500px at 84% 48%, color-mix(in oklab, var(--deck-accent) 10%, transparent), transparent 70%),
-    linear-gradient(
-      100deg,
-      color-mix(in oklab, var(--bg) 98%, transparent) 0%,
-      color-mix(in oklab, var(--bg) 95%, transparent) 48%,
-      color-mix(in oklab, var(--bg) 70%, transparent) 74%,
-      color-mix(in oklab, var(--bg) 35%, transparent) 100%
-    );
-}
-
-html:not(.dark) .bgdeck__machine {
-  opacity: 0.58;
-}
-
-html:not(.dark) .bgdeck__chassis {
-  opacity: 0.78;
-  background:
-    linear-gradient(
-      160deg,
-      color-mix(in oklab, #6a6158 48%, var(--bg-elevated)),
-      color-mix(in oklab, #2f2924 75%, var(--bg-deep))
-    );
-  border-color: color-mix(in oklab, var(--brass) 36%, var(--border-strong));
-  box-shadow:
-    inset 0 1px 0 color-mix(in oklab, white 28%, transparent),
-    0 20px 48px color-mix(in oklab, #14110e 14%, transparent);
-}
-
-html:not(.dark) .bgdeck__mat {
-  opacity: 1;
-}
-
-html:not(.dark) .bgdeck__grooves {
-  opacity: 0.42;
-}
-
-html:not(.dark) .bgdeck__shine {
-  opacity: 0.55;
-}
-
-html:not(.dark) .bgdeck__caption {
-  opacity: 0.88;
-  color: var(--text);
-  text-shadow: 0 1px 0 color-mix(in oklab, var(--bg) 85%, transparent);
-}
-
-html:not(.dark) .bgdeck__kicker {
-  color: color-mix(in oklab, var(--signal) 88%, #6a2a1c);
-}
-
-html:not(.dark) .bgdeck.is-bump .bgdeck__machine {
-  opacity: 0.62;
-}
-
-/* 亮色正文：保持全宽自然排版，只用轻量通栏底提升对比，不切卡片/不限宽 */
-html:not(.dark) body.has-bg-deck .home-shell__content,
-html:not(.dark) body.has-bg-deck .now-page-content,
-html:not(.dark) body.has-bg-deck .about-page-content,
-html:not(.dark) body.has-bg-deck .friends-page-content {
-  position: relative;
-  z-index: 1;
-  background: color-mix(in oklab, var(--bg) 92%, white);
-  border-radius: 0;
-  box-shadow: none;
-}
-
-html:not(.dark) body.has-bg-deck .home-section,
-html:not(.dark) body.has-bg-deck .home-hero {
-  /* 恢复原有区块间距，不额外塞 padding 压缩版心 */
-  background: transparent;
 }
 
 /* THE machine — single big unit, right-biased background */
@@ -514,15 +434,15 @@ body.has-bg-deck .friends-page-content {
 
 @media (max-width: 860px) {
   .bgdeck {
-    --deck-size: min(88vw, 360px);
+    --deck-size: min(92vw, 420px);
   }
 
   .bgdeck__machine {
     right: 50%;
     top: auto;
-    bottom: -3.5rem;
+    bottom: -2rem;
     transform: translate(50%, 0);
-    opacity: 0.38;
+    opacity: 0.55;
   }
 
   .bgdeck__machine:hover {
@@ -534,101 +454,16 @@ body.has-bg-deck .friends-page-content {
   }
 
   .bgdeck__caption {
-    opacity: 0.55;
-  }
-
-  /* 亮色手机：正文实心卡片 + 右下角常驻迷你唱机（不再压在字下） */
-  html:not(.dark) .bgdeck {
-    --deck-size: 7.25rem;
-    z-index: 25; /* 浮在正文上，仅 machine 可点 */
-  }
-
-  html:not(.dark) .bgdeck__wash {
-    opacity: 0.08;
-  }
-
-  html:not(.dark) .bgdeck__veil {
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in oklab, var(--bg) 98%, transparent) 0%,
-        color-mix(in oklab, var(--bg) 96%, transparent) 70%,
-        color-mix(in oklab, var(--bg) 88%, transparent) 100%
-      );
-  }
-
-  html:not(.dark) .bgdeck__machine {
-    right: 0.7rem;
-    left: auto;
-    top: auto;
-    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
-    transform: none;
-    width: calc(var(--deck-size) + 1.1rem);
-    height: calc(var(--deck-size) + 2.4rem);
-    opacity: 1;
-    filter: none;
-    z-index: 30;
-    border-radius: 1rem;
-    background: color-mix(in oklab, var(--bg-elevated) 92%, transparent);
-    border: 1px solid var(--border);
-    box-shadow: 0 12px 28px color-mix(in oklab, var(--text) 12%, transparent);
-  }
-
-  html:not(.dark) .bgdeck__machine:hover,
-  html:not(.dark) .bgdeck.is-bump .bgdeck__machine {
-    transform: translate3d(0, -2px, 0) scale(1.02);
-    opacity: 1;
-  }
-
-  html:not(.dark) .bgdeck__chassis {
-    display: none;
-  }
-
-  html:not(.dark) .bgdeck__caption {
-    position: absolute;
-    left: 50%;
-    bottom: 0.15rem;
-    transform: translateX(-50%);
-    gap: 0;
-    opacity: 1;
-    max-width: 100%;
-    padding: 0 0.2rem;
-  }
-
-  html:not(.dark) .bgdeck__kicker,
-  html:not(.dark) .bgdeck__meta,
-  html:not(.dark) .bgdeck__index {
-    display: none;
-  }
-
-  html:not(.dark) .bgdeck__title {
-    font-size: 0.68rem;
-    line-height: 1.15;
-    max-width: 6.8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  html:not(.dark) .bgdeck__platter {
-    width: var(--deck-size);
-    height: var(--deck-size);
+    opacity: 0.85;
   }
 
   body.has-bg-deck .home-shell__content,
   body.has-bg-deck .now-page-content,
   body.has-bg-deck .about-page-content,
   body.has-bg-deck .friends-page-content {
+    /* 与全站 gutter 一致，仅给底部碟机留点击空间 */
     padding-bottom: 12rem;
   }
-
-  html:not(.dark) body.has-bg-deck .home-shell__content,
-  html:not(.dark) body.has-bg-deck .now-page-content,
-  html:not(.dark) body.has-bg-deck .about-page-content,
-  html:not(.dark) body.has-bg-deck .friends-page-content {
-    padding-bottom: 6.5rem;
-  }
-
 }
 
 @media (prefers-reduced-motion: reduce) {

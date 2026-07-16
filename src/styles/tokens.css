@@ -1,22 +1,20 @@
 :root {
   color-scheme: light;
 
-  /* 亮色：提高正文/次要文字对比度，避免灰绿底上发虚 */
   --bg: #f1f3ef;
-  --bg-elevated: #fbfcf9;
-  --bg-soft: #e2e8e2;
-  --bg-deep: #d0d8d1;
-  --text: #0e1210;
-  --text-muted: #3d4641;
-  --border: #bdc7c0;
-  --border-strong: #8f9c94;
-  --accent: #123f38;
-  --accent-hover: #0a2d28;
-  --accent-strong: #0c2f2a;
-  --signal: #a33b28;
-  --accent-soft: color-mix(in oklab, var(--accent) 14%, transparent);
-  --signal-soft: color-mix(in oklab, var(--signal) 16%, transparent);
-  --accent-ink: #fbfcf9;
+  --bg-elevated: #f8f9f6;
+  --bg-soft: #e4e9e3;
+  --bg-deep: #d7ded8;
+  --text: #141917;
+  --text-muted: #616b66;
+  --border: #ccd3ce;
+  --border-strong: #aeb9b2;
+  --accent: #174a42;
+  --accent-hover: #0e3832;
+  --signal: #c94f38;
+  --accent-soft: color-mix(in oklab, var(--accent) 12%, transparent);
+  --signal-soft: color-mix(in oklab, var(--signal) 14%, transparent);
+  --accent-ink: #f8f9f6;
 
   /* Compatibility aliases for existing article and garden styles. */
   --brass: var(--signal);
@@ -37,7 +35,7 @@
   --radius: 2px;
   --radius-lg: 6px;
 
-  --seedling: #4f6b52;
+  --seedling: #638064;
   --growing: var(--signal);
   --evergreen: var(--accent);
 
@@ -64,7 +62,6 @@ html.dark {
   --border-strong: #46534b;
   --accent: #84b9a8;
   --accent-hover: #a0cbbb;
-  --accent-strong: #b7d8cb;
   --signal: #ef8066;
   --accent-soft: color-mix(in oklab, var(--accent) 15%, transparent);
   --signal-soft: color-mix(in oklab, var(--signal) 16%, transparent);

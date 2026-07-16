@@ -108,30 +108,3 @@ main {
     transition-duration: 0.01ms !important;
   }
 }
-
-/* 亮色可读性：亚像素渲染更清晰，纸纹降噪，占位符加深 */
-html:not(.dark) {
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
-}
-
-html:not(.dark) body {
-  background-image:
-    linear-gradient(
-      color-mix(in oklab, var(--bg) 68%, transparent),
-      color-mix(in oklab, var(--bg) 68%, transparent)
-    ),
-    url("/textures/paper.svg");
-}
-
-::placeholder {
-  color: color-mix(in oklab, var(--text-muted) 88%, var(--text));
-  opacity: 1;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: color-mix(in oklab, var(--text-muted) 88%, var(--text));
-  opacity: 1;
-}
-
