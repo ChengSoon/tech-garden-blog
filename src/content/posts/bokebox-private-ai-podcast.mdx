@@ -1,0 +1,162 @@
+---
+title: BokeBox 播匣：把收藏夹变成听得完的私人播客
+date: 2026-07-18
+type: essay
+status: seedling
+tags: [ai, open-source, podcast, productivity, self-host]
+summary: 推荐开源项目 BokeBox：把视频、链接、文稿与会议材料转成可听完的私人 AI 播客，人设与音色可配，支持 MCP 与自托管。
+links: [ai-practical-guide, ai-prompt-loop, daily-habit-checkin]
+hero: /covers/listening/bokebox.svg
+featured: true
+featuredOrder: 3
+---
+
+import Sidenote from '../../components/mdx/Sidenote.astro';
+import PullQuote from '../../components/mdx/PullQuote.astro';
+
+收藏夹里总有「稍后处理」：技术分享、课程回放、会议纪要、长文。眼睛时间不够，整块时间更稀缺。通勤、洗碗、散步时明明想消化信息，手机里却常常只剩短视频噪音。
+
+最近在 GitHub 看到 [**BokeBox（播匣）**](https://github.com/vastsa/BokeBox/)：一句话概括就是——**内容进匣，AI 成播**。它不是又一个「某格式转音频」的转换器，而是一台**多源输入、只属于你的 AI 播客工作室**。
+
+官网：[bokebox.aiuo.net](https://bokebox.aiuo.net) · 仓库：[github.com/vastsa/BokeBox](https://github.com/vastsa/BokeBox/) · 协议：LGPL-3.0
+
+## 它在解决什么
+
+核心矛盾很朴素：**信息密度高的内容，占用的是眼睛和整块时间；碎片场景里你更想用耳朵。**
+
+BokeBox 的路径是：
+
+1. 理解内容（视频 / 链接 / 文稿 / 会议与课程材料）
+2. 重写成**口播结构**（开场、重点、收尾，而不是干巴巴念字幕）
+3. 用你指定的音色说出来
+4. 落成一档私人节目：可听、可回看闪卡、可跟进度
+
+<PullQuote cite="产品一句话">
+  不是更快生产内容，而是更好地消化内容。
+</PullQuote>
+
+这和「公域播客平台」不是一条赛道。它刻意做**单用户、私有部署**：任务与进度在你自己的机器上，不做广场、不做算法分发。
+
+## 界面体感：首页 · 播放 · 制作
+
+从作者提供的界面看，主路径很短：**库 → 听 → 造**。
+
+### 首页：播客库一眼扫完
+
+首页把已完成节目与进行中任务放在同一视野里，像私人电台台本，而不是任务管理器。适合「晚上回来，戴上耳机接着听」。
+
+<figure>
+  <img src="/images/bokebox/home.jpg" alt="BokeBox 首页：私人播客库与进行中任务" width="1120" height="1400" loading="lazy" />
+  <figcaption>图 1 · 首页：做好的节目与进行中的任务同屏，减少「内容去哪了」的心智负担</figcaption>
+</figure>
+
+### 播放页：听感完整一点
+
+沉浸播放器是产品第二张脸。进度记忆、倍速、睡眠定时这类细节，决定你愿不愿意把它当真·听播工具，而不是 demo 页面。
+
+<figure>
+  <img src="/images/bokebox/player.jpg" alt="BokeBox 播放页：沉浸式私人播客播放器" width="1120" height="1400" loading="lazy" />
+  <figcaption>图 2 · 播放页：进度、倍速与睡眠定时，把「AI 生成的音频」收成可日常使用的节目</figcaption>
+</figure>
+
+### 制作页：丢进去就能跑
+
+一键制作：上传视频、粘贴链接、投入文稿；顺手配人设与音色。然后你可以去忙别的——转写、写稿、配音、封面与闪卡在后台串起来。
+
+<figure>
+  <img src="/images/bokebox/create.jpg" alt="BokeBox 制作页：上传内容并配置人设与音色" width="1120" height="1400" loading="lazy" />
+  <figcaption>图 3 · 制作：输入多源内容，配置主播人设与音色，再交给后台流水线</figcaption>
+</figure>
+
+## 为什么值得多看一眼
+
+| 你在意的 | BokeBox 的取舍 |
+| --- | --- |
+| 真能听完 | AI 重写口播结构，不是字幕朗读 |
+| 输入不锁死 | 视频 / 链接 / 文稿；Source 插件可扩展 |
+| 听起来像人在讲 | 口播音色 + 语气标签（停顿、轻笑、语速） |
+| 人设你说了算 | 全局默认或单集临时改 |
+| AI 工作流 | 内置 MCP，Cursor / Claude 可创建节目、查任务 |
+| 听完不忘 | 自动知识闪卡 |
+| 隐私 | 单用户自托管，数据不出你的机器 |
+
+对独立开发者尤其顺手的一点是 **MCP**：把播客生成嵌进已有 AI 工具链，而不是再学一套封闭后台。
+
+```json
+{
+  "mcpServers": {
+    "bokebox": {
+      "url": "http://localhost:8787/mcp",
+      "headers": {
+        "Authorization": "Bearer <设置页 Token>"
+      }
+    }
+  }
+}
+```
+
+常用工具包括 `create_podcast_from_url`、`create_podcast_from_text`、`list_jobs`、`get_job` 等。
+
+<Sidenote title="和站内 AI 文同一条线">
+  这里仍然是「AI 出草稿，人定审美」：人设、音色、是否采用某一集，都在你手里。可对照 [AI 实用入门](/posts/ai-practical-guide/) 与 [提示词循环](/posts/ai-prompt-loop/)。
+</Sidenote>
+
+## 谁适合 / 谁不适合
+
+**适合：**
+
+- 课程、访谈、发布会、长文堆成山，只想用碎片时间听重点
+- 创作者 / 研究者：先把多源素材「听消化」，再写或剪
+- 一人公司：周会、链接、笔记统一收成自己的信息广播
+- 在意隐私、愿意自托管的人
+
+**不适合：**
+
+- 想做公域播客平台、多租户 SaaS
+- 需要团队在线协作编辑脚本
+- 完全不想碰 API Key / 本地部署的人
+
+## 怎么快速上手
+
+本地三步（需 Node.js ≥ 22.5、pnpm 9.x，以及 OpenAI 兼容的 Chat / ASR / TTS）：
+
+```bash
+git clone https://github.com/vastsa/BokeBox.git
+cd bokebox
+cp .env.example .env   # 填入 API Key
+./start.sh             # 开发：http://localhost:5173
+```
+
+更省事可以用 Docker：
+
+```bash
+cp .env.example .env
+docker pull ghcr.io/vastsa/bokebox:latest
+./start.sh docker
+# http://localhost:8787
+```
+
+大陆服务器可用 `./start.sh docker.cn`（国内镜像 + 系统 ffmpeg，减少下载超时）。
+
+## 我怎么看这个方向
+
+信息过载时代，工具大多帮你**生产更快**。BokeBox 站在另一侧：让已经存在、但你读不完的内容，变成**听得进、听得完、还能带走闪卡**的私人节目。
+
+路线图里还提到多集续听、更丰富音色、RSS 导出、桌面一键封装——如果这些落地，它会更像「个人知识电台」，而不是一次性 demo。
+
+如果你也常被收藏夹审判，不妨：
+
+1. 打开仓库看一眼 README 与界面
+2. 用自己的一篇长文或一节课试一期
+3. 觉得有用就 Star，给开源作者一点可见度
+
+**内容进匣，AI 成播。** 这是我这周最想安利的开源小匣子。
+
+---
+
+**项目信息**
+
+- 仓库：https://github.com/vastsa/BokeBox/
+- 主页：https://bokebox.aiuo.net
+- 栈：TypeScript 为主，LGPL-3.0
+- 本文截图来自项目界面展示，用于推荐说明
